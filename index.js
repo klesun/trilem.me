@@ -5,6 +5,7 @@ import {PLAYER_CODE_NAMES, RESOURCES} from "./src/Constants.js";
 import GetTurnInput from "./src/client/GetTurnInput.js";
 import Api from "./src/client/Api.js";
 import FightSession from "./src/FightSession.js";
+import Sound, {setSoundEnabled} from "./src/client/Sound.js";
 
 const gui = {
     tileMapHolder: document.querySelector('.tile-map-holder'),
@@ -15,13 +16,13 @@ const gui = {
 const ONLY_HOT_SEAT = false;
 
 const audios = [
-    new Audio('./assets/audio/tile_move.aac'),
-    new Audio('./assets/audio/tile_move2.aac'),
-    new Audio('./assets/audio/tile_move3.aac'),
+    Sound('./assets/audio/tile_move.aac'),
+    Sound('./assets/audio/tile_move2.aac'),
+    Sound('./assets/audio/tile_move3.aac'),
 ];
 
-const firstBloodAudio = new Audio('./assets/audio/ALLYOURBASEAREBELONGTOUS.mp3');
-firstBloodAudio.volume = 0.1;
+const firstBloodAudio = Sound('./assets/audio/ALLYOURBASEAREBELONGTOUS.mp3');
+firstBloodAudio.audio.volume = 0.1;
 
 const api = Api();
 
@@ -190,26 +191,26 @@ const initHideable = () => {
 };
 
 (async () => {
+    const enabledSvg = document.getElementById('sound-svg-enabled');
+    const disabledSvg = document.getElementById('sound-svg-disabled');
+
+    enabledSvg.onclick = e => {
+        enabledSvg.style.display = "none";
+        disabledSvg.style.display = "block";
+        setSoundEnabled(false);
+    };
+
+    disabledSvg.onclick = e => {
+        disabledSvg.style.display = "none";
+        enabledSvg.style.display = "block";
+        setSoundEnabled(true);
+    };
+
     let boardState = await getBoardState();
     initHideable();
     const table = drawTable();
     const main = async () => {
         const matrix = TileMapDisplay(boardState, gui.tileMapHolder);
-
-        const enabledSvg = document.getElementById('sound-svg-enabled');
-        const disabledSvg = document.getElementById('sound-svg-disabled');
-
-        enabledSvg.onclick = e => {
-            enabledSvg.style.display = "none";
-            disabledSvg.style.display = "block";
-            soundEnabled = false;
-        };
-
-        disabledSvg.onclick = e => {
-            disabledSvg.style.display = "none";
-            enabledSvg.style.display = "block";
-            soundEnabled = true;
-        };
 
         const getTile = ({col, row}) => {
             return (matrix[row] || {})[col] || null;
@@ -292,8 +293,8 @@ const initHideable = () => {
 
                 if (soundEnabled) {
                     const tileMoveSound = audios[audioIndex];
-                    tileMoveSound.currentTime = 0;
-                    tileMoveSound.volume = (audioIndex === 0 ? 1 : 0.75) * 0.05;
+                    tileMoveSound.audio.currentTime = 0;
+                    tileMoveSound.audio.volume = (audioIndex === 0 ? 1 : 0.75) * 0.05;
                     tileMoveSound.play();
                 }
 
