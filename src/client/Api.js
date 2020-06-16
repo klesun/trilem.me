@@ -17,6 +17,7 @@ const post = (route, params) => {
 
 const Api = () => {
     return {
+        /** @return {Promise<BoardState>} */
         getBoardState: ({uuid = ''}) => get('/api/getBoardState', {uuid}),
         /** @param {MakeTurnParams} params */
         makeTurn: (params) => post('/api/makeTurn', params),
