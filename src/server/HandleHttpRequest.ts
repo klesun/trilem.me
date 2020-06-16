@@ -7,9 +7,9 @@ import {
     BUFF_SKIP_TURN,
     NO_RES_DEAD_SPACE,
     NO_RES_EMPTY, PLAYER_CODE_NAMES,
-    PLAYER_DARK,
-    PLAYER_GREY,
-    PLAYER_LIGHT,
+    PLAYER_KEANU,
+    PLAYER_TRINITY,
+    PLAYER_MORPHEUS,
     RES_GOLD,
     RES_OIL,
     RES_WHEAT
@@ -31,7 +31,7 @@ export interface HandleHttpParams {
 }
 
 type BoardUuid = string;
-type PlayerCodeName = typeof PLAYER_DARK | typeof PLAYER_GREY | typeof PLAYER_LIGHT;
+type PlayerCodeName = typeof PLAYER_KEANU | typeof PLAYER_TRINITY | typeof PLAYER_MORPHEUS;
 type Resource = typeof RES_WHEAT | typeof RES_OIL | typeof RES_GOLD;
 type TileModifier = Resource | typeof NO_RES_DEAD_SPACE | typeof NO_RES_EMPTY;
 type PlayerBuff = typeof BUFF_SKIP_TURN;

@@ -1,9 +1,9 @@
 import {
     NO_RES_DEAD_SPACE,
     NO_RES_EMPTY, PLAYER_CODE_NAMES,
-    PLAYER_DARK,
-    PLAYER_GREY,
-    PLAYER_LIGHT,
+    PLAYER_KEANU,
+    PLAYER_TRINITY,
+    PLAYER_MORPHEUS,
     RES_GOLD,
     RES_OIL,
     RES_WHEAT
@@ -39,9 +39,9 @@ const GenerateBoard = ({
     const uuid = uuidv4();
     const playerToPosition = {
         // TODO: calc positions dynamically based on board size
-        [PLAYER_DARK]: {col: 9, row: 10},
-        [PLAYER_GREY]: {col: 11, row: 10},
-        [PLAYER_LIGHT]: {col: 11, row: 11},
+        [PLAYER_KEANU]: {col: 9, row: 10},
+        [PLAYER_TRINITY]: {col: 11, row: 10},
+        [PLAYER_MORPHEUS]: {col: 11, row: 11},
     };
     const playerToBuffs = {};
     for (const codeName of PLAYER_CODE_NAMES) {

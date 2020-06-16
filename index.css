@@ -347,52 +347,52 @@ polygon.effects-overlay {
 [data-possible-turn] polygon{
     stroke-width: 3px;
 }
-[data-possible-turn="DARK"] polygon.base-tile:hover {
+[data-possible-turn="KEANU"] polygon.base-tile:hover {
     fill: #945694;
 }
-[data-possible-turn="GREY"] polygon.base-tile:hover {
+[data-possible-turn="TRINITY"] polygon.base-tile:hover {
     fill: #68b2ca;
 }
-[data-possible-turn="LIGHT"] polygon.base-tile:hover {
+[data-possible-turn="MORPHEUS"] polygon.base-tile:hover {
     fill: #b5b547;
 }
-[data-possible-turn="DARK"] polygon:first-child {
+[data-possible-turn="KEANU"] polygon:first-child {
     stroke: #e4a3e4;
     animation: blink-possible-turn 1.5s ease-in-out infinite;
 }
-[data-possible-turn="LIGHT"] polygon:first-child {
+[data-possible-turn="MORPHEUS"] polygon:first-child {
     stroke: #eaea9b;
     animation: blink-possible-turn 1.5s ease-in-out infinite;
 }
-[data-possible-turn="GREY"] polygon:first-child {
+[data-possible-turn="TRINITY"] polygon:first-child {
     stroke: #a6e2e2;
     animation: blink-possible-turn 1.5s ease-in-out infinite;
 }
-[data-possible-turn="DARK"] polygon.effects-overlay {
+[data-possible-turn="KEANU"] polygon.effects-overlay {
     cursor: pointer;
     stroke: #e4a3e4;
     animation: blink-possible-turn 1.5s ease-in-out infinite;
 }
-[data-possible-turn="LIGHT"] polygon.effects-overlay {
+[data-possible-turn="MORPHEUS"] polygon.effects-overlay {
     cursor: pointer;
     stroke: #eaea9b;
     animation: blink-possible-turn 1.5s ease-in-out infinite;
 }
 
-[data-possible-turn="GREY"] polygon.effects-overlay {
+[data-possible-turn="TRINITY"] polygon.effects-overlay {
     cursor: pointer;
     stroke: #a6e2e2;
     animation: blink-possible-turn 1.5s ease-in-out infinite;
 }
-[data-possible-turn="DARK"] polygon.effects-overlay {
+[data-possible-turn="KEANU"] polygon.effects-overlay {
     stroke: #e4a3e4 !important;
     stroke-width: 3px !important;
 }
-[data-possible-turn="LIGHT"] polygon.effects-overlay {
+[data-possible-turn="MORPHEUS"] polygon.effects-overlay {
     stroke: #eaea9b !important;
     stroke-width: 3px !important;
 }
-[data-possible-turn="GREY"] polygon.effects-overlay {
+[data-possible-turn="TRINITY"] polygon.effects-overlay {
     stroke: #a6e2e2 !important;
     stroke-width: 3px !important;
 }
@@ -404,34 +404,34 @@ polygon.effects-overlay {
     stroke-width: 1px;
     display: unset;
 }
-[data-owner="DARK"] polygon.effects-overlay {
+[data-owner="KEANU"] polygon.effects-overlay {
     fill: #bd7abd;
     stroke: #484848;
 }
-[data-owner="DARK"] .player-name-holder { color: magenta; }
-[data-stander="DARK"] polygon.effects-overlay {
+[data-owner="KEANU"] .player-name-holder { color: magenta; }
+[data-stander="KEANU"] polygon.effects-overlay {
     stroke: #f3aff3;
     fill: magenta;
     stroke-width: 4px;
 }
 
-[data-owner="LIGHT"] polygon.effects-overlay {
+[data-owner="MORPHEUS"] polygon.effects-overlay {
     fill: rgb(146, 146, 99);
     stroke: #484848;
 }
-[data-owner="LIGHT"] .player-name-holder { color: yellow; }
-[data-stander="LIGHT"] polygon.effects-overlay {
+[data-owner="MORPHEUS"] .player-name-holder { color: yellow; }
+[data-stander="MORPHEUS"] polygon.effects-overlay {
     fill: yellow;
     stroke: #f3f3c8;
     stroke-width: 4px;
 }
 
-[data-owner="GREY"] polygon.effects-overlay {
+[data-owner="TRINITY"] polygon.effects-overlay {
     fill: #597b86;
     stroke: #484848;
 }
-[data-owner="GREY"] .player-name-holder { color: cyan; }
-[data-stander="GREY"] polygon.effects-overlay {
+[data-owner="TRINITY"] .player-name-holder { color: cyan; }
+[data-stander="TRINITY"] polygon.effects-overlay {
     fill: cyan;
     stroke: #dbffff;
     stroke-width: 4px;
