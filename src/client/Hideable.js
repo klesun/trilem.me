@@ -18,6 +18,8 @@ const Hideable = () => {
                 el.classList.add('hidden');
                 show.style.display = 'flex';
                 el.parentNode.insertBefore(show, el);
+            } else {
+                el.classList.remove('hidden');
             }
 
             show.classList.add('show-hideable');
