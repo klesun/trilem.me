@@ -138,9 +138,49 @@ const drawTable = () => {
 let firstBloodSpilled = false;
 let soundEnabled = true;
 
+const initHideable = () => {
+    const hideableEls = document.querySelectorAll('.hideable');
+    hideableEls.forEach( el => {
+        const title = el.querySelector('.hide-title');
+        const show = document.createElement('div');
+        const showText = document.createElement('span');
+
+        const isRight = el.classList.contains('hide-right');
+
+        let appended = false;
+
+        show.classList.add('show-hideable');
+        showText.innerHTML = 'Show';
+
+        show.appendChild(showText);
+        show.classList.add(isRight ? 'show-right' : 'show-left');
+
+        show.onclick = e => {
+            show.style.display = 'none';
+            el.classList.remove('hidden');
+        };
+
+        title.onclick = e => {
+            if (!el.classList.contains('hidden')) {
+                el.classList.add('hidden');
+
+                if (!appended) {
+                    show.style.display = 'none';
+                    el.parentNode.insertBefore(show, el);
+                }
+
+                setTimeout( () => {
+
+                    show.style.display = 'flex';
+                }, 200);
+            }
+        };
+    } );
+};
+
 (async () => {
     let boardState = await getBoardState();
-
+    initHideable();
     const table = drawTable();
     const main = async () => {
         const matrix = TileMapDisplay(boardState, gui.tileMapHolder);

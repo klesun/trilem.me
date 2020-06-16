@@ -68,9 +68,94 @@ body {
 .flex-remainder-wrap {
     padding: 12px;
 }
+.hideable {
+    opacity: 1;
+    transition: 0.2s ease-in;
+}
+.hide-title {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 24px;
+    cursor: pointer;
+}
+.hide-title:after {
+    content: '';
+    height: 1px;
+    width: 80%;
+    position: absolute;
+    display: block;
+    background: linear-gradient(to right, rgba(158, 86, 167, 0) 0%,rgb(161, 77, 182) 50%,rgba(0,0,0,0) 100%);
+    bottom: 0;
+}
+
+.hide-title:before {
+    content: '';
+    height: 1px;
+    width: 80%;
+    position: absolute;
+    display: block;
+    background: linear-gradient(to right, rgba(158, 86, 167, 0) 0%,rgb(161, 77, 182) 50%,rgba(0,0,0,0) 100%);
+    bottom: 0;
+    transition: 0.1s ease-in-out;
+}
+
+.hide-title > span {
+    font-size: 28px;
+    font-weight: 400;
+    color: #8d549c;
+}
+.hide-title:hover:before {
+    height: 4px;
+    width: 100%;
+    filter: blur(6px);
+    bottom: 0;
+}
+
+.hidden {
+    opacity: 0;
+}
+.hide-left.hidden {
+    transform: translateX(-200%);
+}
+.hide-right.hidden {
+    transform: translateX(200%);
+}
+.show-hideable {
+    user-select: none;
+    width: 160px;
+    height: 50px;
+    border: 1px solid #8d549c;
+    display: flex;
+    position: absolute;
+    top: 60px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.1s ease-in;
+}
+.show-hideable:hover {
+    border-color: #eca4ff;
+}
+.show-hideable:hover > span {
+    color: #eca4ff;
+}
+.show-hideable > span {
+    color: #8d549c;
+    font-size: 24px;
+    transition: 0.1s ease-in;
+}
+.show-hideable.show-left {
+    transform: rotate(90deg);
+    left: -55px;
+
+}
+.show-hideable.show-right {
+    transform: rotate(270deg);
+    right: -55px;
+}
 .game-rules {
     color: white;
-    transition: 0.2s ease-in;
 }
 .game-rules ul {
     padding: 24px;
@@ -93,6 +178,7 @@ body {
 }
 .flex-remainder {
     flex: 1;
+    position: relative;
 }
 
 .resource-svg {
@@ -450,6 +536,7 @@ footer .authorship-text {
     display: flex;
     justify-content: center;
     overflow: auto;
+    overflow-x: hidden;
 }
 
 .tile-map-holder {
