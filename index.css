@@ -260,6 +260,7 @@ body {
 }
 .stats-block table {
     border-collapse: collapse;
+    width: 100%;
 }
 .stats-block th {
     min-width: 30px;
@@ -286,6 +287,7 @@ body {
 }
 .lobby-list-block table {
     border-collapse: collapse;
+    width: 100%;
 }
 .lobby-list-block th, .lobby-list-block td {
     padding: 4px;
