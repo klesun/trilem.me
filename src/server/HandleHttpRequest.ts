@@ -101,8 +101,8 @@ const setupBoard = () => {
 const readPost = (rq: http.IncomingMessage) => new Promise<string>((ok, err) => {
     if (rq.method === 'POST') {
         let body = '';
-        rq.on('data', (data) => body += data);
-        rq.on('error', exc => err(exc));
+        rq.on('data', (data: string) => body += data);
+        rq.on('error', (exc: any) => err(exc));
         rq.on('end', () => ok(body));
     } else {
         ok('');

@@ -4,30 +4,24 @@ import TileMapDisplay from "./src/TileMapDisplay.js";
 import GetTurnInput from "./src/client/GetTurnInput.js";
 import Api from "./src/client/Api.js";
 import FightSession from "./src/FightSession.js";
-import Sound, {setSoundEnabled} from "./src/client/Sound.js";
 import Hideable from "./src/client/Hideable.js";
 import StatsTable from "./src/client/StatsTable.js";
+import SoundManager from "./src/client/SoundManager.js";
 
 const gui = {
     tileMapHolder: document.querySelector('.tile-map-holder'),
     turnsLeftHolder: document.querySelector('.turns-left-holder'),
     playerList: document.querySelector('.player-list'),
     gameRules: document.querySelector('.game-rules'),
+    soundSwitches: {
+        enabled: document.getElementById('sound-svg-enabled'),
+        disabled: document.getElementById('sound-svg-disabled'),
+    },
 };
 
 const ONLY_HOT_SEAT = false;
 
 let firstBloodSpilled = false;
-let soundEnabled = true;
-
-const audios = [
-    Sound('./assets/audio/tile_move.aac'),
-    Sound('./assets/audio/tile_move2.aac'),
-    Sound('./assets/audio/tile_move3.aac'),
-];
-
-const firstBloodAudio = Sound('./assets/audio/ALLYOURBASEAREBELONGTOUS.mp3');
-firstBloodAudio.audio.volume = 0.1;
 
 const api = Api();
 
@@ -49,20 +43,7 @@ const getBoardState = async () => {
 };
 
 (async () => {
-    const enabledSvg = document.getElementById('sound-svg-enabled');
-    const disabledSvg = document.getElementById('sound-svg-disabled');
-
-    enabledSvg.onclick = e => {
-        enabledSvg.style.display = "none";
-        disabledSvg.style.display = "block";
-        setSoundEnabled(false);
-    };
-
-    disabledSvg.onclick = e => {
-        disabledSvg.style.display = "none";
-        enabledSvg.style.display = "block";
-        setSoundEnabled(true);
-    };
+    const soundManager = SoundManager(gui.soundSwitches);
 
     Hideable().init();
 
@@ -110,7 +91,6 @@ const getBoardState = async () => {
         let releaseInput = () => {};
 
         const processTurn = async (codeName) => {
-            const audioIndex = Math.floor(Math.random() * 3);
 
             while (true) {
                 const input = GetTurnInput({
@@ -148,15 +128,9 @@ const getBoardState = async () => {
                 }
                 if (lastOwner && lastOwner !== codeName && !firstBloodSpilled) {
                     firstBloodSpilled = true;
-                    firstBloodAudio.play();
+                    soundManager.playFirstBloodSound();
                 }
-
-                if (soundEnabled) {
-                    const tileMoveSound = audios[audioIndex];
-                    tileMoveSound.audio.currentTime = 0;
-                    tileMoveSound.audio.volume = (audioIndex === 0 ? 1 : 0.75) * 0.05;
-                    tileMoveSound.play();
-                }
+                soundManager.playMoveSound();
 
                 break;
             }
