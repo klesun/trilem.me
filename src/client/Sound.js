@@ -1,6 +1,17 @@
+const audios = [];
 let soundEnabled = true;
 
-export const setSoundEnabled = bool => soundEnabled = bool;
+const stopSounds = () => {
+    audios.forEach( audio => {
+        audio.currentTime = 0;
+        audio.pause();
+    } );
+};
+
+export const setSoundEnabled = bool => {
+    stopSounds();
+    soundEnabled = bool
+};
 
 const Sound = (src = null) => {
     let audio;
@@ -19,6 +30,8 @@ const Sound = (src = null) => {
             audio.play();
         }
     };
+
+    audios.push(audio);
 
     return {
         audio: audio,
