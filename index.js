@@ -254,19 +254,15 @@ const initHideable = () => {
 
         const processTurn = async (codeName) => {
             const audioIndex = Math.floor(Math.random() * 3);
-            const svgEl = gui.tileMapHolder.querySelector(`[data-stander=${codeName}]`);
-            const col = +svgEl.getAttribute('data-col');
-            const row = +svgEl.getAttribute('data-row');
 
-            // glow possible turns
-            const possibleTurns = FightSession({boardState})
-                .getPossibleTurns(codeName)
-                .map(getTile);
-            possibleTurns.forEach( (tile) => {
-                tile.svgEl.setAttribute('data-possible-turn', codeName);
-            } );
             while (true) {
-                const input = GetTurnInput({col, row, possibleTurns});
+                const input = GetTurnInput({
+                    currentSvgEl: gui.tileMapHolder.querySelector(`[data-stander=${codeName}]`),
+                    // TODO: server to handle non-standard balance!
+                    possibleTurns: FightSession({boardState})
+                        .getPossibleTurns(codeName)
+                        .map(getTile),
+                });
                 releaseInput = input.cancel;
                 let newTile = null;
                 try {
@@ -307,8 +303,6 @@ const initHideable = () => {
 
                 break;
             }
-            // remove possible turns from last player
-            possibleTurns.forEach( (tile) => tile.svgEl.removeAttribute('data-possible-turn') );
         };
 
         const startGame = async () => {

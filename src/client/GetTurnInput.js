@@ -1,10 +1,18 @@
 
 /**
- * @param {Number} col - player's current position column
- * @param {Number} row - player's current position row
+ * @param {SVGElement} currentSvgEl
  */
-const GetTurnInput = ({col, row, possibleTurns}) => {
+const GetTurnInput = ({currentSvgEl, possibleTurns}) => {
     let cancel;
+    const col = +currentSvgEl.getAttribute('data-col');
+    const row = +currentSvgEl.getAttribute('data-row');
+    const codeName = currentSvgEl.getAttribute('data-stander');
+
+    // glow possible turns
+    possibleTurns.forEach( (tile) => {
+        tile.svgEl.setAttribute('data-possible-turn', codeName);
+    } );
+
     const whenTile = new Promise((resolve, reject) => {
         if (possibleTurns.length === 0) {
             return reject(new Error('Player has nowhere to go'));
@@ -13,6 +21,8 @@ const GetTurnInput = ({col, row, possibleTurns}) => {
         const cleanup = () => {
             window.removeEventListener('keydown', listener);
             tileCleanups.forEach(cleanup => cleanup());
+            // remove possible turns from last player
+            possibleTurns.forEach( (tile) => tile.svgEl.removeAttribute('data-possible-turn') );
         };
 
         cancel = () => {
