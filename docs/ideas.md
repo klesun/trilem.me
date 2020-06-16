@@ -1,0 +1,2 @@
+- +1 for every tile you own
+- New tile buff - Forts. Player needs to take this point (staying on tile for N turns). Grants nearby territories (+1-2 from Fort tile). Randomly place on map (0-2)
