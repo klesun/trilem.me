@@ -517,7 +517,7 @@ footer .authorship-text {
 }
 
 .game-title:before {
-    content: 'Trilemma';
+    content: 'Trilemma Online';
     position: absolute;
     mix-blend-mode: difference;
     filter: blur(2px);
