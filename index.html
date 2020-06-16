@@ -73,7 +73,7 @@
                                 each starts at one of the three tiles in the center of the board
                             </li>
                             <li>Every turn each player chooses one of up to three directions to move his triangular
-                                representation or skips his turn by pressing Esc. If player is blocked from all
+                                representation or skips his turn by pressing <i>Esc</i>. If player is blocked from all
                                 three ways and there is nowhere to go, turn is skipped automatically
                             </li>
                             <li>Stepping on any tile makes you it's owner, coloring it with your color, slowing down
@@ -95,7 +95,9 @@
                                 <code>(1 + 2) x (1 + 2) x (1 + 2) = 27</code>
                             </li>
                             <li>When there are no more turns left, the player with the greatest total score becomes the winner</li>
-                            <li>You can step on an enemy owned tile, this will make it belong to you, but you skip 1 turn after that as a penalty</li>
+                            <li>You can step on an enemy owned tile, this will make it belong to you, but if this tile does not hold a resource,
+                                you skip <span data-balance-value="TURNS_SKIPPED_ON_CAPTURING_EMPTY">?</span> turn(s) after that as a penalty
+                            </li>
                             <li>You can not step on a tile on which another player is currently standing. You can neither
                                 step on <i>Dead Space</i> randomly placed in place of some tiles on the board
                             </li>

@@ -51,6 +51,8 @@ interface BoardState {
         modifier: TileModifier,
         owner: PlayerCodeName,
     }[],
+
+    balance: Record<string, any>,
 }
 
 interface MakeTurnParams {

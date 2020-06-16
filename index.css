@@ -347,6 +347,10 @@ polygon.effects-overlay {
 [data-possible-turn] polygon{
     stroke-width: 3px;
 }
+[data-balance-value] {
+    font-weight: bold;
+    color: #60aeff;
+}
 [data-possible-turn="KEANU"] polygon.base-tile:hover {
     fill: #945694;
 }
@@ -460,6 +464,7 @@ footer {
 }
 footer .authorship-text {
     color: #8cb7a9;
+    font-size: 8px;
 }
 
 .title-neon-wrap {

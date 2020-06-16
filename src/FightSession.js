@@ -1,4 +1,6 @@
-import {BUFF_SKIP_TURN, NO_RES_DEAD_SPACE, PLAYER_CODE_NAMES} from "./Constants.js";
+import {BUFF_SKIP_TURN, NO_RES_DEAD_SPACE, PLAYER_CODE_NAMES, RESOURCES} from "./Constants.js";
+
+import DefaultBalance from './DefaultBalance.js';
 
 const FallbackRej = {
     NotFound: msg => Promise.reject(msg + ' - NotFound'),
@@ -11,7 +13,11 @@ const FallbackRej = {
  *
  * @param {boardState} boardState
  */
-const FightSession = ({boardState, Rej = FallbackRej}) => {
+const FightSession = ({
+    boardState,
+    Rej = FallbackRej,
+    balance = DefaultBalance(),
+}) => {
 
     const getTile = ({col, row}) => {
         // TODO: optimize - store as matrix!
@@ -94,7 +100,12 @@ const FightSession = ({boardState, Rej = FallbackRej}) => {
             }
 
             if (newTile.owner && newTile.owner !== codeName) {
-                boardState.playerToBuffs[codeName].push(BUFF_SKIP_TURN);
+                const turnsSkipped = RESOURCES.includes(newTile.modifier)
+                    ? balance.TURNS_SKIPPED_ON_CAPTURING_RESOURCE
+                    : balance.TURNS_SKIPPED_ON_CAPTURING_EMPTY;
+                for (let i = 0; i < turnsSkipped; ++i) {
+                    boardState.playerToBuffs[codeName].push(BUFF_SKIP_TURN);
+                }
             }
             newTile.owner = codeName;
             boardState.playerToPosition[codeName].row = newTile.row;

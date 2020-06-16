@@ -11,6 +11,7 @@ const gui = {
     tileMapHolder: document.querySelector('.tile-map-holder'),
     turnsLeftHolder: document.querySelector('.turns-left-holder'),
     playerList: document.querySelector('.player-list'),
+    gameRules: document.querySelector('.game-rules'),
 };
 
 const ONLY_HOT_SEAT = false;
@@ -206,10 +207,16 @@ const initHideable = () => {
         setSoundEnabled(true);
     };
 
-    let boardState = await getBoardState();
     initHideable();
     const table = drawTable();
+
     const main = async () => {
+        let boardState = await getBoardState();
+
+        [...gui.gameRules.querySelectorAll('[data-balance-value]')].forEach(holder => {
+            holder.textContent = boardState.balance[holder.getAttribute('data-balance-value')];
+        });
+
         const matrix = TileMapDisplay(boardState, gui.tileMapHolder);
 
         const getTile = ({col, row}) => {

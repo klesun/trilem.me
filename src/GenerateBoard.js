@@ -8,6 +8,7 @@ import {
     RES_OIL,
     RES_WHEAT
 } from "./Constants.js";
+import DefaultBalance from "./DefaultBalance.js";
 
 /** @see https://stackoverflow.com/a/2117523/2750743 */
 function uuidv4() {
@@ -17,24 +18,26 @@ function uuidv4() {
     });
 }
 
-const generateTileModifier = () => {
+const generateTileModifier = (balance) => {
+    const weights = balance.MODIFIER_WEIGHTS;
+    const sum = Object.values(weights).reduce((a,b) => a + b);
     const roll = Math.random();
-    if (roll < 0.02) {
-        return RES_GOLD;
-    } else if (roll < 0.08) {
-        return RES_OIL;
-    } else if (roll < 0.26) {
-        return RES_WHEAT;
-    } else if (roll < 0.35) {
-        return 'DEAD_SPACE';
-    } else {
-        return 'EMPTY';
+    let rollThreshold = 0;
+    for (const [mod, weight] of Object.entries(weights)) {
+        rollThreshold += weight / sum;
+        if (roll < rollThreshold) {
+            return mod;
+        }
     }
+    // I guess it's possible to exit this loop due to
+    // float division error if roll hits 0.99999999999999
+    return NO_RES_EMPTY;
 };
 
-/** @return {Board} */
+/** @return {BoardState} */
 const GenerateBoard = ({
     totalRows = 16,
+    balance = DefaultBalance(),
 } = {}) => {
     const uuid = uuidv4();
     const playerToPosition = {
@@ -60,7 +63,7 @@ const GenerateBoard = ({
                 modifier = NO_RES_EMPTY;
                 owner = stander;
             } else {
-                modifier = generateTileModifier();
+                modifier = generateTileModifier(balance);
                 owner = null;
             }
             tiles.push({row, col, modifier, owner});
@@ -78,6 +81,8 @@ const GenerateBoard = ({
         playerToBuffs: playerToBuffs,
         playerToPosition: playerToPosition,
         tiles: tiles,
+
+        balance: balance,
     };
 };
 
