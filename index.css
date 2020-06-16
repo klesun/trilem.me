@@ -29,6 +29,9 @@ body {
     /* please avoid absolute positioning if possible when you'll be updating markup after my changes */
     /*position: absolute;*/
     /*right: 130px;*/
+
+    /* reuse some of the space left by triangular board */
+    margin-left: -256px;
 }
 
 .title-block {
@@ -165,13 +168,13 @@ body {
 }
 /* a trick to make it look as if this triangular board has a margin */
 .game-rules li:nth-child(1) { margin-right: -360px; }
-.game-rules li:nth-child(2) { margin-right: -315px; }
-.game-rules li:nth-child(3) { margin-right: -270px; }
-.game-rules li:nth-child(4) { margin-right: -225px; }
-.game-rules li:nth-child(5) { margin-right: -180px; }
-.game-rules li:nth-child(6) { margin-right: -135px; }
-.game-rules li:nth-child(7) { margin-right: -90px; }
-.game-rules li:nth-child(8) { margin-right: -45px; }
+.game-rules li:nth-child(2) { margin-right: -312px; }
+.game-rules li:nth-child(3) { margin-right: -264px; }
+.game-rules li:nth-child(4) { margin-right: -216px; }
+.game-rules li:nth-child(5) { margin-right: -168px; }
+.game-rules li:nth-child(6) { margin-right: -120px; }
+.game-rules li:nth-child(7) { margin-right: -72px; }
+.game-rules li:nth-child(8) { margin-right: -24px; }
 
 .flex-parent {
     display: flex;
@@ -279,6 +282,7 @@ body {
 }
 .lobby-list-block {
     margin-top: 48px;
+    margin-left: -150px;
 }
 .lobby-list-block table {
     border-collapse: collapse;
