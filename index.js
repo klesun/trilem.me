@@ -6,6 +6,8 @@ import GetTurnInput from "./src/client/GetTurnInput.js";
 import Api from "./src/client/Api.js";
 import FightSession from "./src/FightSession.js";
 import Sound, {setSoundEnabled} from "./src/client/Sound.js";
+import Hideable from "./src/client/Hideable.js";
+import StatsTable, {calcScore} from "./src/client/StatsTable.js";
 
 const gui = {
     tileMapHolder: document.querySelector('.tile-map-holder'),
@@ -15,6 +17,9 @@ const gui = {
 };
 
 const ONLY_HOT_SEAT = false;
+
+let firstBloodSpilled = false;
+let soundEnabled = true;
 
 const audios = [
     Sound('./assets/audio/tile_move.aac'),
@@ -67,130 +72,6 @@ const collectPlayerResources = (matrix) => {
     return playerToResourceToSum;
 };
 
-const calcScore = (resourceToSum) => {
-    let multiplication = 1;
-    for (const resource of RESOURCES) {
-        multiplication *= resourceToSum[resource];
-    }
-    return multiplication;
-};
-
-const drawTable = () => {
-    const tableBody = gui.playerList;
-    const rows = [];
-
-    for (let player of PLAYER_CODE_NAMES) {
-        const cols = [];
-        const row = document.createElement('tr');
-        row.setAttribute('data-owner', player);
-        row.classList.add('turn-pending');
-
-        const nameCol = document.createElement('td');
-        nameCol.classList.add('player-name-holder');
-        nameCol.innerHTML = player;
-        cols.push(nameCol);
-
-        for (let res of RESOURCES) {
-            const resCol = document.createElement('td');
-            const actionCol = document.createElement('td');
-
-            resCol.setAttribute('data-resource', res);
-            resCol.innerHTML = "1";
-            actionCol.innerHTML = res === RESOURCES[RESOURCES.length - 1] ? "=" : "x";
-            cols.push(resCol, actionCol);
-        }
-
-        const scoreCol = document.createElement('td');
-        scoreCol.classList.add('score-holder');
-        scoreCol.innerHTML = "1";
-        cols.push(scoreCol);
-
-        cols.forEach( col => row.appendChild(col) );
-        rows.push(row);
-    }
-
-    const _redraw = (codeName, playerResources) => {
-        for (const tr of rows) {
-            const trOwner = tr.getAttribute('data-owner');
-            const turnPending = trOwner === codeName;
-            tr.classList.toggle('turn-pending', turnPending);
-            const resourceToSum = playerResources[trOwner];
-            const totalScore = calcScore(resourceToSum);
-            for (const td of tr.querySelectorAll('[data-resource]')) {
-                const resource = td.getAttribute('data-resource');
-                td.textContent = resourceToSum[resource];
-            }
-            tr.querySelector('.score-holder').textContent = totalScore.toString();
-        }
-
-        tableBody.innerHTML = "";
-        rows
-            .sort( (a, b) => {
-                const getScore = el => +el.querySelector('.score-holder').textContent;
-                return getScore(b) - getScore(a);
-            } )
-            .forEach( row => tableBody.appendChild(row) );
-    };
-
-    return {
-        redraw: _redraw,
-    };
-};
-
-let firstBloodSpilled = false;
-let soundEnabled = true;
-
-const initHideable = () => {
-    const hideableEls = document.querySelectorAll('.hideable');
-    hideableEls.forEach( el => {
-        const dataHide = el.getAttribute('data-hide');
-        const state = localStorage.getItem(dataHide);
-
-        const title = el.querySelector('.hide-title');
-        const show = document.createElement('div');
-        const showText = document.createElement('span');
-
-        const isRight = el.classList.contains('hide-right');
-
-        let appended = false;
-
-        if (state && state === "hide") {
-            el.classList.add('hidden');
-            show.style.display = 'flex';
-            el.parentNode.insertBefore(show, el);
-        }
-
-        show.classList.add('show-hideable');
-        showText.innerHTML = 'Show';
-
-        show.appendChild(showText);
-        show.classList.add(isRight ? 'show-right' : 'show-left');
-
-        show.onclick = e => {
-            show.style.display = 'none';
-            el.classList.remove('hidden');
-            localStorage.setItem(dataHide, 'show');
-        };
-
-        title.onclick = e => {
-            if (!el.classList.contains('hidden')) {
-                el.classList.add('hidden');
-
-                if (!appended) {
-                    show.style.display = 'none';
-                    el.parentNode.insertBefore(show, el);
-                }
-
-                localStorage.setItem(dataHide, 'hide');
-
-                setTimeout( () => {
-                    show.style.display = 'flex';
-                }, 200);
-            }
-        };
-    } );
-};
-
 (async () => {
     const enabledSvg = document.getElementById('sound-svg-enabled');
     const disabledSvg = document.getElementById('sound-svg-disabled');
@@ -207,8 +88,9 @@ const initHideable = () => {
         setSoundEnabled(true);
     };
 
-    initHideable();
-    const table = drawTable();
+    Hideable().init();
+
+    const table = StatsTable(gui.playerList);
 
     const main = async () => {
         let boardState = await getBoardState();
