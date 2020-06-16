@@ -547,6 +547,7 @@ footer .authorship-text {
 .tile-map-holder {
     margin-bottom: 82px;
     position: relative;
+    overflow: visible;
 }
 
 @keyframes blink-possible-turn {
