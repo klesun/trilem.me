@@ -85,13 +85,15 @@
                                 Owned resources form your total score by formula:
                                 <span data-resource="WHEAT">Wheat</span> x
                                 <span data-resource="OIL">Oil</span> x
-                                <span data-resource="GOLD">Gold</span>.
+                                <span data-resource="GOLD">Gold</span> +
+                                <span data-resource="EMPTY">Empty</span>.
                                 Each player starts with 1 permanent unit of each resource.
                                 Here is an example: if you captured
                                 2 tiles of <span data-resource="WHEAT">Wheat</span>,
                                 2 tiles of <span data-resource="OIL">Oil</span> and
-                                2 tiles of <span data-resource="GOLD">Gold</span>, your total score is
-                                <code>(1 + 2) x (1 + 2) x (1 + 2) = 27</code>
+                                2 tiles of <span data-resource="GOLD">Gold</span> and
+                                2 tiles of <span data-resource="EMPTY">Empty</span>, your total score is
+                                <code>(1 + 2) x (1 + 2) x (1 + 2) + 2 = 29</code>
                             </li>
                             <li>When there are no more turns left, the player with the greatest total score becomes the winner</li>
                             <li>You can step on an enemy owned tile, this will make it belong to you, but if this tile does not hold a resource,
@@ -126,6 +128,8 @@
                                 <th data-resource="OIL">Oil</th>
                                 <th>x</th>
                                 <th data-resource="GOLD">Gold</th>
+                                <th>+</th>
+                                <th data-resource="EMPTY">Empty</th>
                                 <th>=</th>
                                 <th>Score</th>
                             </tr>

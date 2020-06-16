@@ -1,13 +1,12 @@
 
 import GenerateBoard from "./src/GenerateBoard.js";
 import TileMapDisplay from "./src/TileMapDisplay.js";
-import {PLAYER_CODE_NAMES, RESOURCES} from "./src/Constants.js";
 import GetTurnInput from "./src/client/GetTurnInput.js";
 import Api from "./src/client/Api.js";
 import FightSession from "./src/FightSession.js";
 import Sound, {setSoundEnabled} from "./src/client/Sound.js";
 import Hideable from "./src/client/Hideable.js";
-import StatsTable, {calcScore} from "./src/client/StatsTable.js";
+import StatsTable from "./src/client/StatsTable.js";
 
 const gui = {
     tileMapHolder: document.querySelector('.tile-map-holder'),
@@ -49,29 +48,6 @@ const getBoardState = async () => {
     }
 };
 
-const collectPlayerResources = (matrix) => {
-    const playerToResourceToSum = {};
-    for (const codeName of PLAYER_CODE_NAMES) {
-        // players start with 1, because otherwise they would need
-        // to collect _each_ resource to at least _nominate_ for winning
-        // and I like the idea of rare resource sources quantity being random
-        playerToResourceToSum[codeName] = {};
-        for (const resource of RESOURCES) {
-            playerToResourceToSum[codeName][resource] = 1;
-        }
-    }
-    for (const row of Object.values(matrix)) {
-        for (const tile of Object.values(row)) {
-            const player = tile.svgEl.getAttribute('data-owner');
-            const resource = tile.svgEl.getAttribute('data-resource');
-            if (player && RESOURCES.includes(resource)) {
-                playerToResourceToSum[player][resource] += 1;
-            }
-        }
-    }
-    return playerToResourceToSum;
-};
-
 (async () => {
     const enabledSvg = document.getElementById('sound-svg-enabled');
     const disabledSvg = document.getElementById('sound-svg-disabled');
@@ -90,8 +66,6 @@ const collectPlayerResources = (matrix) => {
 
     Hideable().init();
 
-    const table = StatsTable(gui.playerList);
-
     const main = async () => {
         let boardState = await getBoardState();
 
@@ -100,6 +74,7 @@ const collectPlayerResources = (matrix) => {
         });
 
         const matrix = TileMapDisplay(boardState, gui.tileMapHolder);
+        const statsTable = StatsTable(gui.playerList, matrix);
 
         const getTile = ({col, row}) => {
             return (matrix[row] || {})[col] || null;
@@ -199,8 +174,7 @@ const collectPlayerResources = (matrix) => {
                 gui.turnsLeftHolder.textContent = boardState.turnsLeft;
                 const codeName = boardState.turnPlayersLeft[0];
                 TileMapDisplay.updateTilesState(matrix, boardState);
-                const playerResources = collectPlayerResources(matrix);
-                table.redraw(codeName, playerResources);
+                statsTable.update(codeName, matrix);
 
                 await processTurn(codeName).catch(exc => {
                     alert('Unexpected failure while processing turn - ' + exc);
@@ -208,10 +182,7 @@ const collectPlayerResources = (matrix) => {
                 });
             }
 
-            const playerResources = collectPlayerResources(matrix);
-            const bestScore = Object.values(playerResources)
-                .map(calcScore).sort((a,b) => b - a)[0];
-            const winners = PLAYER_CODE_NAMES.filter(p => calcScore(playerResources[p]) === bestScore);
+            const winners = statsTable.getWinners();
 
             alert('The winner is ' + winners.join(' and '));
             clearInterval(intervalId);

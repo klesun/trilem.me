@@ -331,6 +331,7 @@ polygon {
     }
 }
 
+[data-resource="EMPTY"] { color: #a9a9a9; }
 [data-resource="WHEAT"] { color: #4da04d; }
 [data-resource="WHEAT"] polygon.base-tile {
     //fill: #366536;
