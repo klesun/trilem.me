@@ -41,6 +41,7 @@ const FightSessionAdapter = (initialBoardState) => {
             codeName: codeName,
             col: newTile.col,
             row: newTile.row,
+            svg: newTile.svgEl,
         };
         if (!initialBoardState.hotSeat) {
             return boardState = await api.makeTurn(params);

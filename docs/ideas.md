@@ -28,6 +28,7 @@
 ### Monetisation
 
 - play custom audio file of user's choice for everyone on various events: first blood, getting the lead in score, winning, etc...
+- новые цвета игроков, мб эффекты красивые
 
 ### Accounts
 

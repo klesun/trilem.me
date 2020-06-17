@@ -106,6 +106,49 @@ body {
     bottom: 0;
     transition: 0.1s ease-in-out;
 }
+.tile-map-wrap {
+    position: relative;
+}
+
+.pop {
+    position: absolute;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    animation: popAnim 1s ease-in forwards;
+    transition: top 0.8s ease-out;
+    user-select: none;
+    pointer-events: none;
+    text-shadow:
+            2px 2px 0 var(--main-game-bg),
+            2px -2px 0 var(--main-game-bg),
+            -2px 2px 0 var(--main-game-bg),
+            -2px -2px 0 var(--main-game-bg),
+            2px 0 0 var(--main-game-bg),
+            0 2px 0 var(--main-game-bg),
+            -2px 0 0 var(--main-game-bg),
+            0 -2px 0 var(--main-game-bg);
+}
+
+[data-owner="KEANU"].pop {
+    color: #deabde;
+}
+[data-owner="TRINITY"].pop  {
+    color: #b4efef;
+}
+[data-owner="MORPHEUS"].pop {
+    color: #ffffbc;
+}
+
+@keyframes popAnim {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
 
 .hide-title > span {
     font-size: 28px;
