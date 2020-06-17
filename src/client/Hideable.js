@@ -15,10 +15,12 @@ const Hideable = () => {
             let appended = false;
 
             if (state && state === "hide") {
-                el.classList.remove('no-anim');
                 el.classList.add('hidden');
                 show.style.display = 'flex';
                 el.parentNode.insertBefore(show, el);
+                setTimeout( () => {
+                    el.classList.remove('no-anim');
+                }, 200);
             } else {
                 el.classList.remove('hidden');
             }
