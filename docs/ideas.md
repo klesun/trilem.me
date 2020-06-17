@@ -28,3 +28,7 @@
 ### Monetisation
 
 - play custom audio file of user's choice for everyone on various events: first blood, getting the lead in score, winning, etc...
+
+### Accounts
+
+- Make an "Account" button near the nickname. The buttons should open a dialog with fields: `Export Auth Token` with readonly text holding current auth token and `Import Auth Token` with input to copy the auth token from other device/browser - when you enter it, user should be re-logined with this token.
