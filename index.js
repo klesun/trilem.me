@@ -1,18 +1,17 @@
 
-import GenerateBoard from "./src/GenerateBoard.js";
 import TileMapDisplay from "./src/TileMapDisplay.js";
 import GetTurnInput from "./src/client/GetTurnInput.js";
-import Api from "./src/client/Api.js";
-import FightSession from "./src/FightSession.js";
 import Hideable from "./src/client/Hideable.js";
 import StatsTable from "./src/client/StatsTable.js";
 import SoundManager from "./src/client/SoundManager.js";
+import FightSessionAdapter, {getBoardState} from "./src/client/FightSessionAdapter.js";
 
 const gui = {
     mainGame: document.querySelector('.main-game'),
     tileMapHolder: document.querySelector('.tile-map-holder'),
     turnsLeftHolder: document.querySelector('.turns-left-holder'),
     playerList: document.querySelector('.player-list'),
+    nickNameField: document.querySelector('input.nick-name-field'),
     gameRules: document.querySelector('.game-rules'),
     soundSwitches: {
         enabled: document.getElementById('sound-svg-enabled'),
@@ -20,73 +19,22 @@ const gui = {
     },
 };
 
-const ONLY_HOT_SEAT = false;
-
 let firstBloodSpilled = false;
-
-const api = Api();
-
-/** @return {BoardState} */
-const getBoardState = async () => {
-    if (ONLY_HOT_SEAT) {
-        return {...GenerateBoard(), hotSeat: true};
-    } else {
-        return fetch('./api/getBoardState')
-            .then(rs => rs.status !== 200
-                ? Promise.reject(rs.statusText)
-                : rs.json())
-            .then(config => ({...config, hotSeat: false}))
-            .catch(exc => {
-                alert('Failed to fetch data from server. Falling back to hot-seat board. ' + exc);
-                return {...GenerateBoard(), hotSeat: true};
-            });
-    }
-};
 
 (async () => {
     const soundManager = SoundManager(gui.soundSwitches);
 
     Hideable().init();
 
-    let boardState = await getBoardState();
-
-    [...gui.gameRules.querySelectorAll('[data-balance-value]')].forEach(holder => {
-        holder.textContent = boardState.balance[holder.getAttribute('data-balance-value')];
-    });
-
-    const matrix = TileMapDisplay(boardState, gui.tileMapHolder);
+    const initialBoardState = await getBoardState();
+    const matrix = TileMapDisplay(initialBoardState, gui.tileMapHolder);
+    const fightSession = FightSessionAdapter({initialBoardState, matrix});
     const statsTable = StatsTable(gui.playerList, matrix);
 
-    const getTile = ({col, row}) => {
-        return (matrix[row] || {})[col] || null;
-    };
-
-    const makeTurn = async (codeName, newTile) => {
-        /** @type {MakeTurnParams} */
-        const params = {
-            uuid: boardState.uuid,
-            codeName: codeName,
-            col: newTile.col,
-            row: newTile.row,
-        };
-        if (!boardState.hotSeat) {
-            return api.makeTurn(params);
-        } else {
-            return FightSession({boardState}).makeTurn(params);
-        }
-    };
-
-    const skipTurn = async (codeName) => {
-        const params = {
-            uuid: boardState.uuid,
-            codeName: codeName,
-        };
-        if (!boardState.hotSeat) {
-            return api.skipTurn(params);
-        } else {
-            return FightSession({boardState}).skipTurn(params);
-        }
-    };
+    TileMapDisplay.updateTilesState(fightSession);
+    [...gui.gameRules.querySelectorAll('[data-balance-value]')].forEach(holder => {
+        holder.textContent = initialBoardState.balance[holder.getAttribute('data-balance-value')];
+    });
 
     let releaseInput = () => {};
 
@@ -96,9 +44,7 @@ const getBoardState = async () => {
             const input = GetTurnInput({
                 currentSvgEl: gui.tileMapHolder.querySelector(`[data-stander=${codeName}]`),
                 // TODO: better ask server to make sure we can handle non-standard balance
-                possibleTurns: FightSession({boardState})
-                    .getPossibleTurns(codeName)
-                    .map(getTile),
+                possibleTurns: await fightSession.getPossibleTurns(codeName),
             });
             releaseInput = input.cancel;
             let newTile = null;
@@ -112,7 +58,7 @@ const getBoardState = async () => {
             }
             if (!newTile) {
                 try {
-                    boardState = await skipTurn(codeName);
+                    await fightSession.skipTurn(codeName);
                     break;
                 } catch (exc) {
                     alert('Failed to skip this turn - ' + exc);
@@ -121,7 +67,7 @@ const getBoardState = async () => {
             }
             const lastOwner = newTile.svgEl.getAttribute('data-owner');
             try {
-                boardState = await makeTurn(codeName, newTile);
+                await fightSession.makeTurn(codeName, newTile);
             } catch (exc) {
                 alert('Failed to make this turn - ' + exc);
                 continue;
@@ -139,15 +85,18 @@ const getBoardState = async () => {
     const startGame = async () => {
         // TODO: websockets
         const intervalId = setInterval(async () => {
-            boardState = await api.getBoardState({uuid: boardState.uuid});
-            TileMapDisplay.updateTilesState(matrix, boardState);
+            const updated = await fightSession.checkForUpdates();
+            if (updated) {
+                TileMapDisplay.updateTilesState(fightSession);
+            }
             releaseInput();
+            releaseInput = () => {};
         }, 1000);
 
-        while (boardState.turnPlayersLeft.length > 0) {
-            gui.turnsLeftHolder.textContent = boardState.turnsLeft;
-            const codeName = boardState.turnPlayersLeft[0];
-            TileMapDisplay.updateTilesState(matrix, boardState);
+        while (fightSession.getState().turnPlayersLeft.length > 0) {
+            gui.turnsLeftHolder.textContent = fightSession.getState().turnsLeft;
+            const codeName = fightSession.getState().turnPlayersLeft[0];
+            TileMapDisplay.updateTilesState(fightSession);
             statsTable.update(codeName, matrix);
 
             await processTurn(codeName).catch(exc => {

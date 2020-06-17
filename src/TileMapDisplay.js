@@ -83,9 +83,10 @@ const fadeInRows = (ROWS) => {
 };
 
 /** @param {BoardState} boardState */
-const updateTilesState = (svgMatrix, boardState) => {
+const updateTilesState = (fightSessionAdapter) => {
+    const boardState = fightSessionAdapter.getState();
     for (const {row, col, modifier, owner} of boardState.tiles) {
-        const svgEl = svgMatrix[row][col].svgEl;
+        const svgEl = fightSessionAdapter.getTile({row, col}).svgEl;
         svgEl.setAttribute('data-resource', modifier);
         if (owner) {
             svgEl.setAttribute('data-owner', owner);
@@ -139,7 +140,6 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
         matrix[row] = matrix[row] || {};
         matrix[row][col] = {row, col, svgEl};
     }
-    updateTilesState(matrix, boardConfig);
 
     return matrix;
 };
