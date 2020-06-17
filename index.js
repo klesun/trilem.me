@@ -9,6 +9,7 @@ import StatsTable from "./src/client/StatsTable.js";
 import SoundManager from "./src/client/SoundManager.js";
 
 const gui = {
+    mainGame: document.querySelector('.main-game'),
     tileMapHolder: document.querySelector('.tile-map-holder'),
     turnsLeftHolder: document.querySelector('.turns-left-holder'),
     playerList: document.querySelector('.player-list'),
@@ -95,7 +96,7 @@ const getBoardState = async () => {
             while (true) {
                 const input = GetTurnInput({
                     currentSvgEl: gui.tileMapHolder.querySelector(`[data-stander=${codeName}]`),
-                    // TODO: server to handle non-standard balance!
+                    // TODO: better ask server to handle non-standard balance!
                     possibleTurns: FightSession({boardState})
                         .getPossibleTurns(codeName)
                         .map(getTile),

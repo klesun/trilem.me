@@ -62,7 +62,7 @@ const makeTile = (x, y, isEven) => {
             ...attrs,
         });
     };
-    return Svg('svg', {x, y}, [
+    return Svg('svg', {class: 'tile-root', x, y}, [
         makePoly({class: 'base-tile'}),
         makePoly({class: 'effects-overlay'}),
     ]);

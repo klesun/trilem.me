@@ -311,12 +311,12 @@ tr.turn-pending {
     background-color: #213b5d;
 }
 
-polygon {
+.tile-root polygon {
     fill: var(--triangle-color);
     stroke: var(--triangle-border-color);
     stroke-width: 1px;
     transition: 0.15s ease-in-out;
-    transform: scale(0.9);
+    transform: scale(0.85);
 }
 /*[data-row] {
     opacity: 0;

@@ -1,5 +1,9 @@
 import Sound, {setSoundEnabled} from "./Sound.js";
 
+/**
+ * Maybe it would make sense to move the code from Sound.js here?
+ * To make it one average-sized class instead of two tiny classes...
+ */
 const SoundManager = (soundSwitches) => {
     const audios = [
         Sound('./assets/audio/tile_move.aac'),
