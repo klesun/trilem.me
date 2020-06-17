@@ -66,6 +66,33 @@ const FightSession = ({
         }
     };
 
+    const applyBuffs = (newTile, codeName) => {
+        const buffs = [];
+
+        const isResource = RESOURCES.includes(newTile.modifier);
+        let turnsSkipped = 0;
+        if (!newTile.owner) {
+            turnsSkipped = isResource
+                ? balance.TURNS_SKIPPED_ON_STEP_NEUTRAL_EMPTY
+                : balance.TURNS_SKIPPED_ON_STEP_NEUTRAL_RESOURCE;
+        } else {
+            if (newTile.owner === codeName) {
+                turnsSkipped = isResource
+                    ? balance.TURNS_SKIPPED_ON_STEP_OWN_EMPTY
+                    : balance.TURNS_SKIPPED_ON_STEP_OWN_RESOURCE;
+            } else {
+                turnsSkipped = isResource
+                    ? balance.TURNS_SKIPPED_ON_CAPTURING_EMPTY
+                    : balance.TURNS_SKIPPED_ON_CAPTURING_RESOURCE;
+            }
+        }
+        for (let i = 0; i < turnsSkipped; ++i) {
+            buffs.push(BUFF_SKIP_TURN);
+        }
+
+        return buffs;
+    };
+
     return {
         getPossibleTurns: getPossibleTurns,
         skipTurn: ({codeName}) => {
@@ -99,14 +126,8 @@ const FightSession = ({
                 return Rej.Locked('Chosen tile is not in the list of available options');
             }
 
-            if (newTile.owner && newTile.owner !== codeName) {
-                const turnsSkipped = RESOURCES.includes(newTile.modifier)
-                    ? balance.TURNS_SKIPPED_ON_CAPTURING_RESOURCE
-                    : balance.TURNS_SKIPPED_ON_CAPTURING_EMPTY;
-                for (let i = 0; i < turnsSkipped; ++i) {
-                    boardState.playerToBuffs[codeName].push(BUFF_SKIP_TURN);
-                }
-            }
+            boardState.playerToBuffs[codeName].push(...applyBuffs(newTile, codeName));
+
             newTile.owner = codeName;
             boardState.playerToPosition[codeName].row = newTile.row;
             boardState.playerToPosition[codeName].col = newTile.col;

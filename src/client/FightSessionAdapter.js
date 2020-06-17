@@ -2,8 +2,13 @@ import Api from "./Api.js";
 import GenerateBoard from "../GenerateBoard.js";
 import FightSession from "../FightSession.js";
 
+const FORCE_HOT_SEAT = true;
+
 /** @return {BoardState} */
 export const getBoardState = async () => {
+    if (FORCE_HOT_SEAT) {
+        return {...GenerateBoard(), hotSeat: true};
+    }
     return fetch('./api/getBoardState')
         .then(rs => rs.status !== 200
             ? Promise.reject(rs.statusText)

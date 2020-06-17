@@ -57,6 +57,9 @@ const setupBoard = async () => {
     let releaseInput = () => {};
     // TODO: websockets
     const intervalId = setInterval(async () => {
+        if (fightSession.getState().hotSeat) {
+            return;
+        }
         const updated = await fightSession.checkForUpdates();
         if (updated) {
             updateComponents();
