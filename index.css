@@ -75,6 +75,9 @@ body {
     opacity: 1;
     transition: 0.2s ease-in;
 }
+.no-anim {
+    transition: unset !important;
+}
 .hide-title {
     display: flex;
     justify-content: center;

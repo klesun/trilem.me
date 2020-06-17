@@ -15,6 +15,7 @@ const Hideable = () => {
             let appended = false;
 
             if (state && state === "hide") {
+                el.classList.remove('no-anim');
                 el.classList.add('hidden');
                 show.style.display = 'flex';
                 el.parentNode.insertBefore(show, el);
@@ -35,6 +36,7 @@ const Hideable = () => {
             };
 
             title.onclick = e => {
+                el.classList.remove('no-anim');
                 if (!el.classList.contains('hidden')) {
                     el.classList.add('hidden');
 
