@@ -48,123 +48,119 @@ const getBoardState = async () => {
 
     Hideable().init();
 
-    const main = async () => {
-        let boardState = await getBoardState();
+    let boardState = await getBoardState();
 
-        [...gui.gameRules.querySelectorAll('[data-balance-value]')].forEach(holder => {
-            holder.textContent = boardState.balance[holder.getAttribute('data-balance-value')];
-        });
+    [...gui.gameRules.querySelectorAll('[data-balance-value]')].forEach(holder => {
+        holder.textContent = boardState.balance[holder.getAttribute('data-balance-value')];
+    });
 
-        const matrix = TileMapDisplay(boardState, gui.tileMapHolder);
-        const statsTable = StatsTable(gui.playerList, matrix);
+    const matrix = TileMapDisplay(boardState, gui.tileMapHolder);
+    const statsTable = StatsTable(gui.playerList, matrix);
 
-        const getTile = ({col, row}) => {
-            return (matrix[row] || {})[col] || null;
-        };
-
-        const makeTurn = async (codeName, newTile) => {
-            /** @type {MakeTurnParams} */
-            const params = {
-                uuid: boardState.uuid,
-                codeName: codeName,
-                col: newTile.col,
-                row: newTile.row,
-            };
-            if (!boardState.hotSeat) {
-                return api.makeTurn(params);
-            } else {
-                return FightSession({boardState}).makeTurn(params);
-            }
-        };
-
-        const skipTurn = async (codeName) => {
-            const params = {
-                uuid: boardState.uuid,
-                codeName: codeName,
-            };
-            if (!boardState.hotSeat) {
-                return api.skipTurn(params);
-            } else {
-                return FightSession({boardState}).skipTurn(params);
-            }
-        };
-
-        let releaseInput = () => {};
-
-        const processTurn = async (codeName) => {
-
-            while (true) {
-                const input = GetTurnInput({
-                    currentSvgEl: gui.tileMapHolder.querySelector(`[data-stander=${codeName}]`),
-                    // TODO: better ask server to handle non-standard balance!
-                    possibleTurns: FightSession({boardState})
-                        .getPossibleTurns(codeName)
-                        .map(getTile),
-                });
-                releaseInput = input.cancel;
-                let newTile = null;
-                try {
-                    newTile = await input.whenTile;
-                } catch (exc) {
-                    // TODO: programmatic!
-                    if (exc === 'OLOLO_CANCELLED_BY_GAME') {
-                        break;
-                    }
-                }
-                if (!newTile) {
-                    try {
-                        boardState = await skipTurn(codeName);
-                        break;
-                    } catch (exc) {
-                        alert('Failed to skip this turn - ' + exc);
-                        continue;
-                    }
-                }
-                const lastOwner = newTile.svgEl.getAttribute('data-owner');
-                try {
-                    boardState = await makeTurn(codeName, newTile);
-                } catch (exc) {
-                    alert('Failed to make this turn - ' + exc);
-                    continue;
-                }
-                if (lastOwner && lastOwner !== codeName && !firstBloodSpilled) {
-                    firstBloodSpilled = true;
-                    soundManager.playFirstBloodSound();
-                }
-                soundManager.playMoveSound();
-
-                break;
-            }
-        };
-
-        const startGame = async () => {
-            // TODO: websockets
-            const intervalId = setInterval(async () => {
-                boardState = await api.getBoardState({uuid: boardState.uuid});
-                TileMapDisplay.updateTilesState(matrix, boardState);
-                releaseInput();
-            }, 1000);
-
-            while (boardState.turnPlayersLeft.length > 0) {
-                gui.turnsLeftHolder.textContent = boardState.turnsLeft;
-                const codeName = boardState.turnPlayersLeft[0];
-                TileMapDisplay.updateTilesState(matrix, boardState);
-                statsTable.update(codeName, matrix);
-
-                await processTurn(codeName).catch(exc => {
-                    alert('Unexpected failure while processing turn - ' + exc);
-                    throw exc;
-                });
-            }
-
-            const winners = statsTable.getWinners();
-
-            alert('The winner is ' + winners.join(' and '));
-            clearInterval(intervalId);
-        };
-
-        await startGame();
+    const getTile = ({col, row}) => {
+        return (matrix[row] || {})[col] || null;
     };
 
-    return main();
+    const makeTurn = async (codeName, newTile) => {
+        /** @type {MakeTurnParams} */
+        const params = {
+            uuid: boardState.uuid,
+            codeName: codeName,
+            col: newTile.col,
+            row: newTile.row,
+        };
+        if (!boardState.hotSeat) {
+            return api.makeTurn(params);
+        } else {
+            return FightSession({boardState}).makeTurn(params);
+        }
+    };
+
+    const skipTurn = async (codeName) => {
+        const params = {
+            uuid: boardState.uuid,
+            codeName: codeName,
+        };
+        if (!boardState.hotSeat) {
+            return api.skipTurn(params);
+        } else {
+            return FightSession({boardState}).skipTurn(params);
+        }
+    };
+
+    let releaseInput = () => {};
+
+    const processTurn = async (codeName) => {
+
+        while (true) {
+            const input = GetTurnInput({
+                currentSvgEl: gui.tileMapHolder.querySelector(`[data-stander=${codeName}]`),
+                // TODO: better ask server to make sure we can handle non-standard balance
+                possibleTurns: FightSession({boardState})
+                    .getPossibleTurns(codeName)
+                    .map(getTile),
+            });
+            releaseInput = input.cancel;
+            let newTile = null;
+            try {
+                newTile = await input.whenTile;
+            } catch (exc) {
+                // TODO: programmatic!
+                if (exc === 'OLOLO_CANCELLED_BY_GAME') {
+                    break;
+                }
+            }
+            if (!newTile) {
+                try {
+                    boardState = await skipTurn(codeName);
+                    break;
+                } catch (exc) {
+                    alert('Failed to skip this turn - ' + exc);
+                    continue;
+                }
+            }
+            const lastOwner = newTile.svgEl.getAttribute('data-owner');
+            try {
+                boardState = await makeTurn(codeName, newTile);
+            } catch (exc) {
+                alert('Failed to make this turn - ' + exc);
+                continue;
+            }
+            if (lastOwner && lastOwner !== codeName && !firstBloodSpilled) {
+                firstBloodSpilled = true;
+                soundManager.playFirstBloodSound();
+            }
+            soundManager.playMoveSound();
+
+            break;
+        }
+    };
+
+    const startGame = async () => {
+        // TODO: websockets
+        const intervalId = setInterval(async () => {
+            boardState = await api.getBoardState({uuid: boardState.uuid});
+            TileMapDisplay.updateTilesState(matrix, boardState);
+            releaseInput();
+        }, 1000);
+
+        while (boardState.turnPlayersLeft.length > 0) {
+            gui.turnsLeftHolder.textContent = boardState.turnsLeft;
+            const codeName = boardState.turnPlayersLeft[0];
+            TileMapDisplay.updateTilesState(matrix, boardState);
+            statsTable.update(codeName, matrix);
+
+            await processTurn(codeName).catch(exc => {
+                alert('Unexpected failure while processing turn - ' + exc);
+                throw exc;
+            });
+        }
+
+        const winners = statsTable.getWinners();
+
+        alert('The winner is ' + winners.join(' and '));
+        clearInterval(intervalId);
+    };
+
+    await startGame();
 })();
