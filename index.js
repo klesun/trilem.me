@@ -5,6 +5,8 @@ import Hideable from "./src/client/Hideable.js";
 import StatsTable from "./src/client/StatsTable.js";
 import SoundManager from "./src/client/SoundManager.js";
 import FightSessionAdapter, {getBoardState} from "./src/client/FightSessionAdapter.js";
+import {NO_RES_EMPTY} from "./src/Constants.js";
+import drawHint from "./src/client/ScoreHint.js";
 
 const gui = {
     mainGame: document.querySelector('.main-game'),
@@ -83,6 +85,11 @@ const getBoardTools = async () => {
             const lastOwner = newTile.svgEl.getAttribute('data-owner');
             try {
                 await fightSession.makeTurn(codeName, newTile);
+                const tile = fightSession.getState().tiles.find( t => t.row === newTile.row && t.col === newTile.col );
+
+                if (tile.modifier !== NO_RES_EMPTY && lastOwner !== codeName) {
+                    drawHint(newTile.svgEl, codeName, `+1`);
+                }
             } catch (exc) {
                 alert('Failed to make this turn - ' + exc);
                 continue;

@@ -1,7 +1,6 @@
-import {BUFF_SKIP_TURN, NO_RES_DEAD_SPACE, PLAYER_CODE_NAMES, RESOURCES, NO_RES_EMPTY} from "./Constants.js";
+import {BUFF_SKIP_TURN, NO_RES_DEAD_SPACE, PLAYER_CODE_NAMES, RESOURCES} from "./Constants.js";
 
 import DefaultBalance from './DefaultBalance.js';
-import drawHint from "./client/ScoreHint.js";
 
 const FallbackRej = {
     NotFound: msg => Promise.reject(msg + ' - NotFound'),
@@ -98,10 +97,6 @@ const FightSession = ({
             });
             if (!newTile) {
                 return Rej.Locked('Chosen tile is not in the list of available options');
-            }
-
-            if (newTile.modifier !== NO_RES_EMPTY && newTile.owner !== codeName) {
-                drawHint(params.svg, codeName, `+1`);
             }
 
             if (newTile.owner && newTile.owner !== codeName) {
