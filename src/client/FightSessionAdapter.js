@@ -2,26 +2,17 @@ import Api from "./Api.js";
 import GenerateBoard from "../GenerateBoard.js";
 import FightSession from "../FightSession.js";
 
-
-const api = Api();
-
-const ONLY_HOT_SEAT = false;
-
 /** @return {BoardState} */
 export const getBoardState = async () => {
-    if (ONLY_HOT_SEAT) {
-        return {...GenerateBoard(), hotSeat: true};
-    } else {
-        return fetch('./api/getBoardState')
-            .then(rs => rs.status !== 200
-                ? Promise.reject(rs.statusText)
-                : rs.json())
-            .then(config => ({...config, hotSeat: false}))
-            .catch(exc => {
-                alert('Failed to fetch data from server. Falling back to hot-seat board. ' + exc);
-                return {...GenerateBoard(), hotSeat: true};
-            });
-    }
+    return fetch('./api/getBoardState')
+        .then(rs => rs.status !== 200
+            ? Promise.reject(rs.statusText)
+            : rs.json())
+        .then(config => ({...config, hotSeat: false}))
+        .catch(exc => {
+            alert('Failed to fetch data from server. Falling back to hot-seat board. ' + exc);
+            return {...GenerateBoard(), hotSeat: true};
+        });
 };
 
 /**
@@ -33,6 +24,7 @@ export const getBoardState = async () => {
  */
 const FightSessionAdapter = (initialBoardState) => {
     let boardState = initialBoardState;
+    const api = Api();
 
     const makeTurn = async (codeName, newTile) => {
         /** @type {MakeTurnParams} */
@@ -70,6 +62,7 @@ const FightSessionAdapter = (initialBoardState) => {
     return {
         makeTurn: makeTurn,
         skipTurn: skipTurn,
+        // TODO: better ask server to make sure we can handle non-standard balance
         getPossibleTurns: (codeName) => FightSession({boardState})
             .getPossibleTurns(codeName),
         getState: () => boardState,

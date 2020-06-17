@@ -7,6 +7,7 @@ import SoundManager from "./src/client/SoundManager.js";
 import FightSessionAdapter, {getBoardState} from "./src/client/FightSessionAdapter.js";
 import {NO_RES_EMPTY} from "./src/Constants.js";
 import drawHint from "./src/client/ScoreHint.js";
+import Api, {authenticate} from "./src/client/Api.js";
 
 const gui = {
     mainGame: document.querySelector('.main-game'),
@@ -23,7 +24,7 @@ const gui = {
 
 let firstBloodSpilled = false;
 
-const getBoardTools = async () => {
+const setupBoard = async () => {
     Hideable().init();
 
     const initialBoardState = await getBoardState();
@@ -51,16 +52,34 @@ const getBoardTools = async () => {
 
 (async () => {
     const soundManager = SoundManager(gui.soundSwitches);
-    const {fightSession, getTile, updateComponents, statsTable} = await getBoardTools();
+    const {fightSession, getTile, updateComponents, statsTable} = await setupBoard();
 
     let releaseInput = () => {};
+    // TODO: websockets
+    const intervalId = setInterval(async () => {
+        const updated = await fightSession.checkForUpdates();
+        if (updated) {
+            updateComponents();
+        }
+        releaseInput();
+        releaseInput = () => {};
+    }, 1000);
+
+    authenticate().then(({user, api}) => {
+        let name = user.name;
+        gui.nickNameField.value = name;
+        gui.nickNameField.addEventListener('blur', async () => {
+            if (gui.nickNameField.value !== name) {
+                await api.changeUserName({name: gui.nickNameField.value});
+                name = gui.nickNameField.value;
+            }
+        });
+    });
 
     const processTurn = async (codeName) => {
-
         while (true) {
             const input = GetTurnInput({
                 currentSvgEl: gui.tileMapHolder.querySelector(`[data-stander=${codeName}]`),
-                // TODO: better ask server to make sure we can handle non-standard balance
                 possibleTurns: (await fightSession.getPossibleTurns(codeName)).map(getTile),
             });
             releaseInput = input.cancel;
@@ -105,16 +124,6 @@ const getBoardTools = async () => {
     };
 
     const startGame = async () => {
-        // TODO: websockets
-        const intervalId = setInterval(async () => {
-            const updated = await fightSession.checkForUpdates();
-            if (updated) {
-                updateComponents();
-            }
-            releaseInput();
-            releaseInput = () => {};
-        }, 1000);
-
         while (fightSession.getState().turnPlayersLeft.length > 0) {
             gui.turnsLeftHolder.textContent = fightSession.getState().turnsLeft;
             updateComponents();
@@ -129,8 +138,8 @@ const getBoardTools = async () => {
         const winners = statsTable.getWinners();
 
         alert('The winner is ' + winners.join(' and '));
-        clearInterval(intervalId);
     };
 
     await startGame();
+    clearInterval(intervalId);
 })();

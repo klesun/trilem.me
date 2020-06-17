@@ -25,4 +25,28 @@ const Api = () => {
     };
 };
 
+export const authenticate = async () => {
+    const storageKey = 'TRILEMMA_AUTH_TOKEN';
+    let whenExistingUser;
+    const authToken = window.localStorage.getItem(storageKey);
+    if (authToken) {
+        whenExistingUser = post('/api/validateAuthToken', {authToken});
+    } else {
+        const msg = 'No token in local storage - first-time visitor';
+        whenExistingUser = Promise.reject(msg);
+    }
+    const user = await whenExistingUser.catch(async exc => {
+        console.warn('Auth token from local storage is not valid, registering new user', exc);
+        const user = await post('/api/generateAuthToken');
+        window.localStorage.setItem(storageKey, user.authToken);
+        return user;
+    });
+    return {
+        user,
+        api: {
+            changeUserName: ({name}) => post('/api/changeUserName', {authToken, name}),
+        },
+    };
+};
+
 export default Api;
