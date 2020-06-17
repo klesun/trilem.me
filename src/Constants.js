@@ -10,6 +10,8 @@ export const RES_GOLD = 'GOLD';
 export const NO_RES_EMPTY = 'EMPTY';
 export const NO_RES_DEAD_SPACE = 'DEAD_SPACE';
 
+export const MOD_WALL = 'WALL';
+
 export const BUFF_SKIP_TURN = 'SKIP_TURN';
 
 export const RESOURCES = [RES_WHEAT, RES_OIL, RES_GOLD];

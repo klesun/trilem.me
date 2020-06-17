@@ -2,57 +2,9 @@ import GenerateBoard from "../GenerateBoard";
 import * as http from "http";
 import {randomBytes} from "crypto";
 import FightSession from "../FightSession";
-import {
-    BUFF_SKIP_TURN,
-    NO_RES_DEAD_SPACE, NO_RES_EMPTY,
-    PLAYER_KEANU,
-    PLAYER_MORPHEUS,
-    PLAYER_TRINITY,
-    RES_GOLD,
-    RES_OIL,
-    RES_WHEAT
-} from "../Constants";
+import {BoardState, BoardUuid, SerialData, User} from "./TypeDefs";
 
 const Rej = require('klesun-node-tools/src/Rej.js');
-
-type BoardUuid = string;
-type PlayerCodeName = typeof PLAYER_KEANU | typeof PLAYER_TRINITY | typeof PLAYER_MORPHEUS;
-type Resource = typeof RES_WHEAT | typeof RES_OIL | typeof RES_GOLD;
-type TileModifier = Resource | typeof NO_RES_DEAD_SPACE | typeof NO_RES_EMPTY;
-type PlayerBuff = typeof BUFF_SKIP_TURN;
-
-interface BoardState {
-    uuid: BoardUuid,
-    totalRows: number,
-    totalTurns: number,
-
-    turnsLeft: number,
-    turnPlayersLeft: PlayerCodeName[],
-    playerToPosition: Record<PlayerCodeName, {col: number, row: number}>,
-    playerToBuffs: Record<PlayerCodeName, PlayerBuff[]>,
-    tiles: {
-        col: number,
-        row: number,
-        modifier: TileModifier,
-        owner: PlayerCodeName,
-    }[],
-
-    balance: Record<string, any>,
-}
-
-interface MakeTurnParams {
-    uuid: BoardUuid,
-    codeName: PlayerCodeName,
-    col: number,
-    row: number,
-}
-
-interface User {
-    name: string,
-}
-
-type Primitive = number | string | boolean;
-type SerialData = Primitive | {[k: string]: SerialData} | {[k: number]: SerialData};
 
 const uuidToBoard: Record<BoardUuid, BoardState> = {};
 const authTokenToUser: Record<string, User> = {};

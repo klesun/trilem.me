@@ -4,9 +4,6 @@ import {
     PLAYER_KEANU,
     PLAYER_TRINITY,
     PLAYER_MORPHEUS,
-    RES_GOLD,
-    RES_OIL,
-    RES_WHEAT
 } from "./Constants.js";
 import DefaultBalance from "./DefaultBalance.js";
 
@@ -18,7 +15,7 @@ function uuidv4() {
     });
 }
 
-const generateTileModifier = (balance) => {
+const generateTileModifiers = (balance) => {
     const weights = balance.MODIFIER_WEIGHTS;
     const sum = Object.values(weights).reduce((a,b) => a + b);
     const roll = Math.random();
@@ -26,12 +23,12 @@ const generateTileModifier = (balance) => {
     for (const [mod, weight] of Object.entries(weights)) {
         rollThreshold += weight / sum;
         if (roll < rollThreshold) {
-            return mod;
+            return mod === NO_RES_EMPTY ? [] : [mod];
         }
     }
     // I guess it's possible to exit this loop due to
     // float division error if roll hits 0.99999999999999
-    return NO_RES_EMPTY;
+    return [];
 };
 
 /** @return {BoardState} */
@@ -58,15 +55,18 @@ const GenerateBoard = ({
                     return playerToPosition[k].row === row
                         && playerToPosition[k].col === col;
                 });
-            let modifier, owner;
+            const modifiers = [];
+            let owner;
             if (stander) {
-                modifier = NO_RES_EMPTY;
+                // maybe having an empty array would make more sense, but
+                // we assign points for this modifier currently, so dunno
                 owner = stander;
             } else {
-                modifier = generateTileModifier(balance);
+                const mods = generateTileModifiers(balance);
+                modifiers.push(...mods);
                 owner = null;
             }
-            tiles.push({row, col, modifier, owner});
+            tiles.push({row, col, modifiers, owner});
         }
     }
     const totalCells = tiles.filter(t => t !== NO_RES_DEAD_SPACE).length;

@@ -11,7 +11,7 @@ const FallbackRej = {
 /**
  * actual game logic is located here
  *
- * @param {boardState} boardState
+ * @param {BoardState} boardState
  */
 const FightSession = ({
     boardState,
@@ -46,7 +46,7 @@ const FightSession = ({
             const tile = getTile(pos);
             return tile ? [tile] : [];
         }).filter(tile => {
-            return tile.modifier !== NO_RES_DEAD_SPACE;
+            return !tile.modifiers.includes(NO_RES_DEAD_SPACE);
         })
     };
 
@@ -66,10 +66,11 @@ const FightSession = ({
         }
     };
 
+    /** @param {Tile} newTile */
     const applyBuffs = (newTile, codeName) => {
         const buffs = [];
 
-        const isResource = RESOURCES.includes(newTile.modifier);
+        const isResource = newTile.modifiers.some(mod => RESOURCES.includes(mod));
         let turnsSkipped = 0;
         if (!newTile.owner) {
             turnsSkipped = isResource
@@ -104,6 +105,11 @@ const FightSession = ({
             }
 
             boardState.turnPlayersLeft.splice(turnPlayerIdx, 1);
+            const pos = boardState.playerToPosition[codeName];
+            if (pos) {
+                const tile = getTile(pos);
+
+            }
             checkOnPlayerTurnEnd();
 
             return Promise.resolve(boardState);

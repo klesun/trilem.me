@@ -1,4 +1,5 @@
-import {NO_RES_EMPTY, PLAYER_CODE_NAMES, RES_GOLD, RES_OIL, RES_WHEAT, RESOURCES} from "../Constants.js";
+import {PLAYER_CODE_NAMES, RES_GOLD, RES_OIL, RES_WHEAT, RESOURCES, NO_RES_EMPTY} from "../Constants.js";
+import {MOD_PREFIX} from "../TileMapDisplay.js";
 
 const calcScore = (resourceToSum) => {
     // maybe should have it as a formula, like array of recursive operands, so that
@@ -27,9 +28,19 @@ const collectPlayerResources = (matrix) => {
     for (const row of Object.values(matrix)) {
         for (const tile of Object.values(row)) {
             const player = tile.svgEl.getAttribute('data-owner');
-            const resource = tile.svgEl.getAttribute('data-resource');
+            const modifiers = [...tile.svgEl.classList].flatMap(cls => {
+                return cls.startsWith(MOD_PREFIX)
+                    ? [cls.slice(MOD_PREFIX.length)]
+                    : [];
+            });
+            const resources = modifiers.filter(mod => RESOURCES.includes(mod));
             if (player) {
-                playerToResourceToSum[player][resource] += 1;
+                for (const resource of resources) {
+                    playerToResourceToSum[player][resource] += 1;
+                }
+                if (resources.length === 0) {
+                    playerToResourceToSum[player][NO_RES_EMPTY] += 1;
+                }
             }
         }
     }

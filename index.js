@@ -5,7 +5,7 @@ import Hideable from "./src/client/Hideable.js";
 import StatsTable from "./src/client/StatsTable.js";
 import SoundManager from "./src/client/SoundManager.js";
 import FightSessionAdapter, {getBoardState} from "./src/client/FightSessionAdapter.js";
-import {NO_RES_EMPTY} from "./src/Constants.js";
+import {RESOURCES} from "./src/Constants.js";
 import drawHint from "./src/client/ScoreHint.js";
 import Api, {authenticate} from "./src/client/Api.js";
 
@@ -109,7 +109,7 @@ const setupBoard = async () => {
                 await fightSession.makeTurn(codeName, newTile);
                 const tile = fightSession.getState().tiles.find( t => t.row === newTile.row && t.col === newTile.col );
 
-                if (tile.modifier !== NO_RES_EMPTY && lastOwner !== codeName) {
+                if (tile.modifiers.some(mod => RESOURCES.includes(mod)) && lastOwner !== codeName) {
                     drawHint(newTile.svgEl, codeName, `+1`);
                 }
             } catch (exc) {

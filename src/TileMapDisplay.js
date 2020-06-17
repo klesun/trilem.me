@@ -1,5 +1,5 @@
 import {Svg} from "./client/Dom.js";
-import {RES_GOLD, RES_OIL, RES_WHEAT} from "./Constants.js";
+import {NO_RES_DEAD_SPACE, NO_RES_EMPTY, RES_GOLD, RES_OIL, RES_WHEAT, RESOURCES} from "./Constants.js";
 
 const TILE_WIDTH = 60;
 const TILE_HEIGHT = Math.sqrt(3) * TILE_WIDTH / 2;
@@ -82,11 +82,22 @@ const fadeInRows = (ROWS) => {
     }
 };
 
+export const MOD_PREFIX = 'modifier--';
+const LEGACY_MODS = [...RESOURCES, NO_RES_EMPTY, NO_RES_DEAD_SPACE];
+
 /** @param {BoardState} boardState */
 const updateTilesState = (boardState, getTile) => {
-    for (const {row, col, modifier, owner} of boardState.tiles) {
+    for (const {row, col, modifiers, owner} of boardState.tiles) {
         const svgEl = getTile({row, col}).svgEl;
-        svgEl.setAttribute('data-resource', modifier);
+        svgEl.classList.forEach(cls => {
+            if (cls.startsWith(MOD_PREFIX)) {
+                svgEl.classList.remove(cls);
+            }
+        });
+        for (const modifier of modifiers) {
+            // TODO: display multiple modifiers if any
+            svgEl.classList.add(MOD_PREFIX + modifier);
+        }
         if (owner) {
             svgEl.setAttribute('data-owner', owner);
         } else {
@@ -119,12 +130,12 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
     // commented because it delays page reload time
     //fadeInRows(ROWS);
 
-    for (const {row, col, modifier, owner} of boardConfig.tiles) {
+    for (const {row, col, modifiers, owner} of boardConfig.tiles) {
         const x = (col  - row - 1) * TILE_WIDTH / 2;
         const y = row * TILE_HEIGHT;
         const isEven = col % 2 === 0;
         const svgEl = makeTile(BOARD_WIDTH_PX / 2 + x, y, isEven);
-        const svgResource = resourceSvgs[modifier];
+        const svgResource = resourceSvgs[modifiers.filter(mod => LEGACY_MODS.includes(mod))[0]];
 
         // assign svg icon to resource tile
         if (svgResource) {

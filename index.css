@@ -384,21 +384,9 @@ tr.turn-pending {
 
 [data-resource="EMPTY"] { color: #a9a9a9; }
 [data-resource="WHEAT"] { color: #4da04d; }
-[data-resource="WHEAT"] polygon.base-tile {
-    //fill: #366536;
-}
 [data-resource="OIL"] { color: #8c90d0; }
-[data-resource="OIL"] polygon.base-tile {
-    //fill: #2b2b65;
-}
 [data-resource="GOLD"] { color: #e4c579; }
-[data-resource="GOLD"] polygon.base-tile {
-    //fill: #982626;
-}
-[data-resource="DEAD_SPACE"] polygon.base-tile {
-    fill: transparent;
-    stroke: transparent;
-}
+
 polygon.effects-overlay {
     display: none;
 }
@@ -504,7 +492,11 @@ polygon.base-tile:hover {
     cursor: pointer;
 }
 
-[data-resource="DEAD_SPACE"] polygon.base-tile:hover {
+.modifier--DEAD_SPACE polygon.base-tile {
+    fill: transparent;
+    stroke: transparent;
+}
+.modifier--DEAD_SPACE polygon.base-tile:hover {
     fill: transparent;
     cursor: default;
 }
