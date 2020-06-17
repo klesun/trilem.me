@@ -21,20 +21,35 @@ const gui = {
 
 let firstBloodSpilled = false;
 
-(async () => {
-    const soundManager = SoundManager(gui.soundSwitches);
-
+const getBoardTools = async () => {
     Hideable().init();
 
     const initialBoardState = await getBoardState();
-    const matrix = TileMapDisplay(initialBoardState, gui.tileMapHolder);
-    const fightSession = FightSessionAdapter({initialBoardState, matrix});
-    const statsTable = StatsTable(gui.playerList, matrix);
+    const fightSession = FightSessionAdapter(initialBoardState);
 
-    TileMapDisplay.updateTilesState(fightSession);
     [...gui.gameRules.querySelectorAll('[data-balance-value]')].forEach(holder => {
         holder.textContent = initialBoardState.balance[holder.getAttribute('data-balance-value')];
     });
+
+    const matrix = TileMapDisplay(initialBoardState, gui.tileMapHolder);
+    const statsTable = StatsTable(gui.playerList, matrix);
+
+    const getTile = ({col, row}) => {
+        return (matrix[row] || {})[col] || null;
+    };
+
+    const updateComponents = () => {
+        TileMapDisplay.updateTilesState(fightSession.getState(), getTile);
+        const currentTurnPlayer = fightSession.getState().turnPlayersLeft[0];
+        statsTable.update(currentTurnPlayer, matrix);
+    };
+
+    return {fightSession, getTile, updateComponents, statsTable};
+};
+
+(async () => {
+    const soundManager = SoundManager(gui.soundSwitches);
+    const {fightSession, getTile, updateComponents, statsTable} = await getBoardTools();
 
     let releaseInput = () => {};
 
@@ -44,7 +59,7 @@ let firstBloodSpilled = false;
             const input = GetTurnInput({
                 currentSvgEl: gui.tileMapHolder.querySelector(`[data-stander=${codeName}]`),
                 // TODO: better ask server to make sure we can handle non-standard balance
-                possibleTurns: await fightSession.getPossibleTurns(codeName),
+                possibleTurns: (await fightSession.getPossibleTurns(codeName)).map(getTile),
             });
             releaseInput = input.cancel;
             let newTile = null;
@@ -87,7 +102,7 @@ let firstBloodSpilled = false;
         const intervalId = setInterval(async () => {
             const updated = await fightSession.checkForUpdates();
             if (updated) {
-                TileMapDisplay.updateTilesState(fightSession);
+                updateComponents();
             }
             releaseInput();
             releaseInput = () => {};
@@ -95,10 +110,9 @@ let firstBloodSpilled = false;
 
         while (fightSession.getState().turnPlayersLeft.length > 0) {
             gui.turnsLeftHolder.textContent = fightSession.getState().turnsLeft;
-            const codeName = fightSession.getState().turnPlayersLeft[0];
-            TileMapDisplay.updateTilesState(fightSession);
-            statsTable.update(codeName, matrix);
+            updateComponents();
 
+            const codeName = fightSession.getState().turnPlayersLeft[0];
             await processTurn(codeName).catch(exc => {
                 alert('Unexpected failure while processing turn - ' + exc);
                 throw exc;

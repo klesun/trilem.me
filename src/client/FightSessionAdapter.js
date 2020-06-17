@@ -31,7 +31,7 @@ export const getBoardState = async () => {
  * @param {BoardState} boardState
  * @param matrix = TileMapDisplay()
  */
-const FightSessionAdapter = ({initialBoardState, matrix}) => {
+const FightSessionAdapter = (initialBoardState) => {
     let boardState = initialBoardState;
 
     const makeTurn = async (codeName, newTile) => {
@@ -61,10 +61,6 @@ const FightSessionAdapter = ({initialBoardState, matrix}) => {
         }
     };
 
-    const getTile = ({col, row}) => {
-        return (matrix[row] || {})[col] || null;
-    };
-
     const checkForUpdates = async () => {
         boardState = await api.getBoardState({uuid: initialBoardState.uuid});
         return true; // should eventually return false if no changes happened
@@ -74,9 +70,7 @@ const FightSessionAdapter = ({initialBoardState, matrix}) => {
         makeTurn: makeTurn,
         skipTurn: skipTurn,
         getPossibleTurns: (codeName) => FightSession({boardState})
-            .getPossibleTurns(codeName)
-            .map(getTile),
-        getTile: getTile,
+            .getPossibleTurns(codeName),
         getState: () => boardState,
         checkForUpdates: checkForUpdates,
     };

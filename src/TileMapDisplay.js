@@ -83,10 +83,9 @@ const fadeInRows = (ROWS) => {
 };
 
 /** @param {BoardState} boardState */
-const updateTilesState = (fightSessionAdapter) => {
-    const boardState = fightSessionAdapter.getState();
+const updateTilesState = (boardState, getTile) => {
     for (const {row, col, modifier, owner} of boardState.tiles) {
-        const svgEl = fightSessionAdapter.getTile({row, col}).svgEl;
+        const svgEl = getTile({row, col}).svgEl;
         svgEl.setAttribute('data-resource', modifier);
         if (owner) {
             svgEl.setAttribute('data-owner', owner);
