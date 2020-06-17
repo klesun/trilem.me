@@ -2,6 +2,7 @@
 :root {
     --main-game-bg: #151515;
     --game-title-color: #b456cc;
+    --main-text-color: #d9e1f9;
     --triangle-color: #313131;
     --triangle-border-color: #868686;
 }
@@ -63,10 +64,10 @@ body {
 }
 
 .stats-block * {
-    color: white;
+    color: var(--main-text-color);
 }
 .lobby-list-block * {
-    color: white;
+    color: var(--main-text-color);
 }
 .flex-remainder-wrap {
     padding: 12px;
@@ -161,7 +162,7 @@ body {
     right: -55px;
 }
 .game-rules {
-    color: white;
+    color: var(--main-text-color);
 }
 .game-rules ul {
     padding: 24px;
@@ -284,8 +285,12 @@ body {
 .stats-block tr:last-child td {
     border-bottom: none;
 }
-.lobby-list-block {
+.user-panel {
     margin-top: 48px;
+    margin-bottom: 12px;
+    color: var(--main-text-color);
+}
+.lobby-list-block {
     margin-left: -150px;
 }
 .lobby-list-block table {
