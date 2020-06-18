@@ -79,16 +79,20 @@ const FightSession = ({
                 : balance.TURNS_SKIPPED_ON_STEP_NEUTRAL_RESOURCE;
         } else {
             if (newTile.owner === codeName) {
-                turnsSkipped = isResource
-                    ? balance.TURNS_SKIPPED_ON_STEP_OWN_EMPTY
-                    : balance.TURNS_SKIPPED_ON_STEP_OWN_RESOURCE;
-            } else {
-                turnsSkipped = isResource
-                    ? balance.TURNS_SKIPPED_ON_CAPTURING_EMPTY
-                    : balance.TURNS_SKIPPED_ON_CAPTURING_RESOURCE;
-
                 if (newTile.modifiers.includes(MOD_WALL)) {
-                    turnsSkipped += balance.TURNS_SKIPPED_ON_STEP_ENEMY_WALL;
+                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_OWN_WALL;
+                } else if (isResource) {
+                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_OWN_RESOURCE;
+                } else {
+                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_OWN_EMPTY;
+                }
+            } else {
+                if (newTile.modifiers.includes(MOD_WALL)) {
+                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_WALL;
+                } else if (isResource) {
+                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_RESOURCE;
+                } else {
+                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_EMPTY;
                 }
             }
         }
