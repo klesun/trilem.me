@@ -15,6 +15,7 @@ const DefaultBalance = () => ({
     TURNS_SKIPPED_ON_STEP_OWN_RESOURCE: 1,
     TURNS_SKIPPED_ON_CAPTURING_EMPTY: 0,
     TURNS_SKIPPED_ON_CAPTURING_RESOURCE: 0,
+    TURNS_SKIPPED_ON_STEP_ENEMY_WALL: 3,
 });
 
 export default DefaultBalance;

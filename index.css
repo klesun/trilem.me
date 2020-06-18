@@ -387,7 +387,7 @@ tr.turn-pending {
 [data-resource="OIL"] { color: #8c90d0; }
 [data-resource="GOLD"] { color: #e4c579; }
 
-polygon.effects-overlay {
+polygon.owner-overlay {
     display: none;
 }
 [data-possible-turn] polygon{
@@ -418,31 +418,30 @@ polygon.effects-overlay {
     stroke: #a6e2e2;
     animation: blink-possible-turn 1.5s ease-in-out infinite;
 }
-[data-possible-turn="KEANU"] polygon.effects-overlay {
+[data-possible-turn] polygon.owner-overlay {
     cursor: pointer;
-    stroke: #e4a3e4;
     animation: blink-possible-turn 1.5s ease-in-out infinite;
+
 }
-[data-possible-turn="MORPHEUS"] polygon.effects-overlay {
-    cursor: pointer;
+[data-possible-turn="KEANU"] polygon.owner-overlay {
+    stroke: #e4a3e4;
+}
+[data-possible-turn="MORPHEUS"] polygon.owner-overlay {
     stroke: #eaea9b;
-    animation: blink-possible-turn 1.5s ease-in-out infinite;
 }
 
-[data-possible-turn="TRINITY"] polygon.effects-overlay {
-    cursor: pointer;
+[data-possible-turn="TRINITY"] polygon.owner-overlay {
     stroke: #a6e2e2;
-    animation: blink-possible-turn 1.5s ease-in-out infinite;
 }
-[data-possible-turn="KEANU"] polygon.effects-overlay {
+[data-possible-turn="KEANU"] polygon.owner-overlay {
     stroke: #e4a3e4 !important;
     stroke-width: 3px !important;
 }
-[data-possible-turn="MORPHEUS"] polygon.effects-overlay {
+[data-possible-turn="MORPHEUS"] polygon.owner-overlay {
     stroke: #eaea9b !important;
     stroke-width: 3px !important;
 }
-[data-possible-turn="TRINITY"] polygon.effects-overlay {
+[data-possible-turn="TRINITY"] polygon.owner-overlay {
     stroke: #a6e2e2 !important;
     stroke-width: 3px !important;
 }
@@ -450,41 +449,50 @@ polygon.effects-overlay {
     fill: #313131;
 }
 
-[data-owner] polygon.effects-overlay {
+[data-owner] polygon.owner-overlay {
     stroke-width: 1px;
     display: unset;
 }
-[data-owner="KEANU"] polygon.effects-overlay {
+[data-owner="KEANU"] polygon.owner-overlay {
     fill: #bd7abd;
     stroke: #484848;
 }
+[data-stander] polygon.owner-overlay {
+    stroke-width: 2px;
+}
 [data-owner="KEANU"] .player-name-holder { color: magenta; }
-[data-stander="KEANU"] polygon.effects-overlay {
+[data-stander="KEANU"] polygon.owner-overlay {
     stroke: #f3aff3;
     fill: magenta;
-    stroke-width: 4px;
 }
 
-[data-owner="MORPHEUS"] polygon.effects-overlay {
+[data-owner="MORPHEUS"] polygon.owner-overlay {
     fill: rgb(146, 146, 99);
     stroke: #484848;
 }
 [data-owner="MORPHEUS"] .player-name-holder { color: yellow; }
-[data-stander="MORPHEUS"] polygon.effects-overlay {
+[data-stander="MORPHEUS"] polygon.owner-overlay {
     fill: yellow;
     stroke: #f3f3c8;
-    stroke-width: 4px;
 }
 
-[data-owner="TRINITY"] polygon.effects-overlay {
+[data-owner="TRINITY"] polygon.owner-overlay {
     fill: #597b86;
     stroke: #484848;
 }
 [data-owner="TRINITY"] .player-name-holder { color: cyan; }
-[data-stander="TRINITY"] polygon.effects-overlay {
+[data-stander="TRINITY"] polygon.owner-overlay {
     fill: cyan;
     stroke: #dbffff;
-    stroke-width: 4px;
+}
+polygon.modifiers-overlay {
+    fill: none;
+    stroke: none;
+}
+.modifier--WALL polygon.modifiers-overlay {
+    stroke: rgba(255, 255, 255, 0.4);
+    stroke-width: 8px;
+    /*background: ;*/
 }
 
 polygon.base-tile:hover {

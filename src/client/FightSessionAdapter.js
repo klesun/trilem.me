@@ -2,7 +2,7 @@ import Api from "./Api.js";
 import GenerateBoard from "../GenerateBoard.js";
 import FightSession from "../FightSession.js";
 
-const FORCE_HOT_SEAT = true;
+const FORCE_HOT_SEAT = false;
 
 /** @return {BoardState} */
 export const getBoardState = async () => {

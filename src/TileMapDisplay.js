@@ -64,7 +64,8 @@ const makeTile = (x, y, isEven) => {
     };
     return Svg('svg', {class: 'tile-root', x, y}, [
         makePoly({class: 'base-tile'}),
-        makePoly({class: 'effects-overlay'}),
+        makePoly({class: 'owner-overlay'}),
+        makePoly({class: 'modifiers-overlay'}),
     ]);
 };
 
@@ -135,11 +136,13 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
         const y = row * TILE_HEIGHT;
         const isEven = col % 2 === 0;
         const svgEl = makeTile(BOARD_WIDTH_PX / 2 + x, y, isEven);
-        const svgResource = resourceSvgs[modifiers.filter(mod => LEGACY_MODS.includes(mod))[0]];
+        for (const modifier of modifiers) {
+            const svgResource = resourceSvgs[modifier];
 
-        // assign svg icon to resource tile
-        if (svgResource) {
-            svgEl.appendChild(svgResource(isEven));
+            // assign svg icon to resource tile
+            if (svgResource) {
+                svgEl.appendChild(svgResource(isEven));
+            }
         }
 
         svgEl.setAttribute('data-col', col);

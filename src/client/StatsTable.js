@@ -13,6 +13,7 @@ const calcScore = (resourceToSum) => {
 
 const USED_MODIFIERS = [...RESOURCES, NO_RES_EMPTY];
 
+// TODO: use BoardState instead of matrix
 const collectPlayerResources = (matrix) => {
     const playerToResourceToSum = {};
     for (const codeName of PLAYER_CODE_NAMES) {

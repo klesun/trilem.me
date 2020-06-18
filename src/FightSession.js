@@ -1,4 +1,4 @@
-import {BUFF_SKIP_TURN, NO_RES_DEAD_SPACE, PLAYER_CODE_NAMES, RESOURCES} from "./Constants.js";
+import {BUFF_SKIP_TURN, MOD_WALL, NO_RES_DEAD_SPACE, PLAYER_CODE_NAMES, RESOURCES} from "./Constants.js";
 
 import DefaultBalance from './DefaultBalance.js';
 
@@ -19,6 +19,7 @@ const FightSession = ({
     balance = DefaultBalance(),
 }) => {
 
+    /** @return {Tile} */
     const getTile = ({col, row}) => {
         // TODO: optimize - store as matrix!
         return boardState.tiles.find(t => t.col == col && t.row == row);
@@ -85,6 +86,10 @@ const FightSession = ({
                 turnsSkipped = isResource
                     ? balance.TURNS_SKIPPED_ON_CAPTURING_EMPTY
                     : balance.TURNS_SKIPPED_ON_CAPTURING_RESOURCE;
+
+                if (newTile.modifiers.includes(MOD_WALL)) {
+                    turnsSkipped += balance.TURNS_SKIPPED_ON_STEP_ENEMY_WALL;
+                }
             }
         }
         for (let i = 0; i < turnsSkipped; ++i) {
@@ -108,7 +113,9 @@ const FightSession = ({
             const pos = boardState.playerToPosition[codeName];
             if (pos) {
                 const tile = getTile(pos);
-
+                if (!tile.modifiers.includes(MOD_WALL)) {
+                    tile.modifiers.push(MOD_WALL);
+                }
             }
             checkOnPlayerTurnEnd();
 
