@@ -33,3 +33,8 @@
 ### Accounts
 
 - Make an "Account" button near the nickname. The buttons should open a dialog with fields: `Export Auth Token` with readonly text holding current auth token and `Import Auth Token` with input to copy the auth token from other device/browser - when you enter it, user should be re-logined with this token.
+
+### AI for 2 and 1 human player games
+
+- Monkey: always chooses random tile, but prioritizes tiles that do not belong to the AI
+- Pathfinding Monkey: chooses closest resource tile that does not belong to the AI
