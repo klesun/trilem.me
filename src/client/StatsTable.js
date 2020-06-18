@@ -20,8 +20,6 @@ const calcScore = (resourceToSum) => {
     return multiplication + resourceToSum[NO_RES_EMPTY];
 };
 
-const USED_MODIFIERS = [...RESOURCES, NO_RES_EMPTY];
-
 /** @param {BoardState} boardState */
 const collectPlayerResources = (boardState) => {
     const playerToResourceToSum = {};
@@ -52,66 +50,37 @@ const collectPlayerResources = (boardState) => {
 
 /** @param {BoardState} boardState */
 const StatsTable = (tableBody, boardState) => {
-    const rows = [];
-
-    for (let player of PLAYER_CODE_NAMES) {
-        const cols = [];
-
-        cols.push(Dom('td', {
-            class: 'player-name-holder',
-        }, player));
-
-        cols.push(Dom('td', {
-            class: 'ready-in-holder',
-        }));
-
-        for (let res of USED_MODIFIERS) {
-            const followingOperator = {
-                [RES_WHEAT]: 'x',
-                [RES_OIL]: 'x',
-                [RES_GOLD]: '+',
-                [NO_RES_EMPTY]: '=',
-            }[res];
-            cols.push(Dom('td', {'data-resource': res}, '1'));
-            cols.push(Dom('td', {}, followingOperator));
-        }
-
-        const scoreCol = document.createElement('td');
-        scoreCol.classList.add('score-holder');
-        scoreCol.innerHTML = "1";
-        cols.push(scoreCol);
-
-        rows.push(Dom('tr', {
-            'data-owner': player,
-        }, cols));
-    }
-
     const update = (codeName, newBoardState) => {
         boardState = newBoardState;
         const playerResources = collectPlayerResources(boardState);
-        for (const tr of rows) {
-            const trOwner = tr.getAttribute('data-owner');
-            const turnPending = trOwner === codeName;
-            tr.classList.toggle('turn-pending', turnPending);
+        const getScore = trOwner => calcScore(playerResources[trOwner]);
+        const sortedPlayers = PLAYER_CODE_NAMES
+            .sort((a, b) => getScore(b) - getScore(a));
+
+        const rows = sortedPlayers.map(trOwner => {
             const resourceToSum = playerResources[trOwner];
-            const totalScore = calcScore(resourceToSum);
-            for (const td of tr.querySelectorAll('[data-resource]')) {
-                const resource = td.getAttribute('data-resource');
-                td.textContent = resourceToSum[resource];
-            }
-            tr.querySelector('.ready-in-holder').textContent =
-                boardState.playerToBuffs[trOwner]
-                    .filter(b => b === BUFF_SKIP_TURN).length;
-            tr.querySelector('.score-holder').textContent = totalScore.toString();
-        }
+            const readyIn = boardState.playerToBuffs[trOwner]
+                .filter(b => b === BUFF_SKIP_TURN).length;
+            return Dom('tr', {
+                'data-owner': trOwner,
+                class: trOwner === codeName ? 'turn-pending' : '',
+            }, [
+                Dom('td', {class: 'player-name-holder'}, trOwner),
+                Dom('td', {class: 'ready-in-holder'}, readyIn),
+                Dom('td', {'data-resource': RES_WHEAT}, resourceToSum[RES_WHEAT]),
+                Dom('td', {}, 'x'),
+                Dom('td', {'data-resource': RES_OIL}, resourceToSum[RES_OIL]),
+                Dom('td', {}, 'x'),
+                Dom('td', {'data-resource': RES_GOLD}, resourceToSum[RES_GOLD]),
+                Dom('td', {}, '+'),
+                Dom('td', {'data-resource': NO_RES_EMPTY}, resourceToSum[NO_RES_EMPTY]),
+                Dom('td', {}, '='),
+                Dom('td', {class: 'score-holder'}, calcScore(resourceToSum)),
+            ]);
+        });
 
         tableBody.innerHTML = "";
-        rows
-            .sort( (a, b) => {
-                const getScore = el => +el.querySelector('.score-holder').textContent;
-                return getScore(b) - getScore(a);
-            } )
-            .forEach( row => tableBody.appendChild(row) );
+        rows.forEach( row => tableBody.appendChild(row) );
     };
 
     const getWinners = () => {
