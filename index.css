@@ -310,7 +310,6 @@ body {
     width: 100%;
 }
 .stats-block th {
-    min-width: 30px;
     padding: 4px 8px;
 }
 .stats-block td {
