@@ -36,5 +36,5 @@
 
 ### AI for 2 and 1 human player games
 
-- Monkey: always chooses random tile, but prioritizes tiles that do not belong to the AI
+- Monkey: always chooses random tile, but prioritizes tiles that do not belong to the AI. When stepping own tiles, prioritizes tiles that were not stepped for longest time.
 - Pathfinding Monkey: chooses closest resource tile that does not belong to the AI
