@@ -1,5 +1,14 @@
-import {PLAYER_CODE_NAMES, RES_GOLD, RES_OIL, RES_WHEAT, RESOURCES, NO_RES_EMPTY} from "../Constants.js";
+import {
+    PLAYER_CODE_NAMES,
+    RES_GOLD,
+    RES_OIL,
+    RES_WHEAT,
+    RESOURCES,
+    NO_RES_EMPTY,
+    BUFF_SKIP_TURN
+} from "../Constants.js";
 import {MOD_PREFIX} from "../TileMapDisplay.js";
+import {Dom} from "./Dom.js";
 
 const calcScore = (resourceToSum) => {
     // maybe should have it as a formula, like array of recursive operands, so that
@@ -13,8 +22,8 @@ const calcScore = (resourceToSum) => {
 
 const USED_MODIFIERS = [...RESOURCES, NO_RES_EMPTY];
 
-// TODO: use BoardState instead of matrix
-const collectPlayerResources = (matrix) => {
+/** @param {BoardState} boardState */
+const collectPlayerResources = (boardState) => {
     const playerToResourceToSum = {};
     for (const codeName of PLAYER_CODE_NAMES) {
         // players start with 1, because otherwise they would need
@@ -26,55 +35,45 @@ const collectPlayerResources = (matrix) => {
         }
         playerToResourceToSum[codeName][NO_RES_EMPTY] = 0;
     }
-    for (const row of Object.values(matrix)) {
-        for (const tile of Object.values(row)) {
-            const player = tile.svgEl.getAttribute('data-owner');
-            const modifiers = [...tile.svgEl.classList].flatMap(cls => {
-                return cls.startsWith(MOD_PREFIX)
-                    ? [cls.slice(MOD_PREFIX.length)]
-                    : [];
-            });
-            const resources = modifiers.filter(mod => RESOURCES.includes(mod));
-            if (player) {
-                for (const resource of resources) {
-                    playerToResourceToSum[player][resource] += 1;
-                }
-                if (resources.length === 0) {
-                    playerToResourceToSum[player][NO_RES_EMPTY] += 1;
-                }
+    for (const tile of boardState.tiles) {
+        const player = tile.owner;
+        const resources = tile.modifiers.filter(mod => RESOURCES.includes(mod));
+        if (player) {
+            for (const resource of resources) {
+                playerToResourceToSum[player][resource] += 1;
+            }
+            if (resources.length === 0) {
+                playerToResourceToSum[player][NO_RES_EMPTY] += 1;
             }
         }
     }
     return playerToResourceToSum;
 };
 
-const StatsTable = (tableBody, matrix) => {
+/** @param {BoardState} boardState */
+const StatsTable = (tableBody, boardState) => {
     const rows = [];
 
     for (let player of PLAYER_CODE_NAMES) {
         const cols = [];
-        const row = document.createElement('tr');
-        row.setAttribute('data-owner', player);
-        row.classList.add('turn-pending');
 
-        const nameCol = document.createElement('td');
-        nameCol.classList.add('player-name-holder');
-        nameCol.innerHTML = player;
-        cols.push(nameCol);
+        cols.push(Dom('td', {
+            class: 'player-name-holder',
+        }, player));
+
+        cols.push(Dom('td', {
+            class: 'ready-in-holder',
+        }));
 
         for (let res of USED_MODIFIERS) {
-            const resCol = document.createElement('td');
-            const actionCol = document.createElement('td');
-
-            resCol.setAttribute('data-resource', res);
-            resCol.innerHTML = "1";
-            actionCol.innerHTML = {
+            const followingOperator = {
                 [RES_WHEAT]: 'x',
                 [RES_OIL]: 'x',
                 [RES_GOLD]: '+',
                 [NO_RES_EMPTY]: '=',
             }[res];
-            cols.push(resCol, actionCol);
+            cols.push(Dom('td', {'data-resource': res}, '1'));
+            cols.push(Dom('td', {}, followingOperator));
         }
 
         const scoreCol = document.createElement('td');
@@ -82,13 +81,14 @@ const StatsTable = (tableBody, matrix) => {
         scoreCol.innerHTML = "1";
         cols.push(scoreCol);
 
-        cols.forEach( col => row.appendChild(col) );
-        rows.push(row);
+        rows.push(Dom('tr', {
+            'data-owner': player,
+        }, cols));
     }
 
-    const update = (codeName, newMatrix) => {
-        matrix = newMatrix;
-        const playerResources = collectPlayerResources(matrix);
+    const update = (codeName, newBoardState) => {
+        boardState = newBoardState;
+        const playerResources = collectPlayerResources(boardState);
         for (const tr of rows) {
             const trOwner = tr.getAttribute('data-owner');
             const turnPending = trOwner === codeName;
@@ -99,6 +99,9 @@ const StatsTable = (tableBody, matrix) => {
                 const resource = td.getAttribute('data-resource');
                 td.textContent = resourceToSum[resource];
             }
+            tr.querySelector('.ready-in-holder').textContent =
+                boardState.playerToBuffs[trOwner]
+                    .filter(b => b === BUFF_SKIP_TURN).length;
             tr.querySelector('.score-holder').textContent = totalScore.toString();
         }
 
@@ -112,7 +115,7 @@ const StatsTable = (tableBody, matrix) => {
     };
 
     const getWinners = () => {
-        const playerResources = collectPlayerResources(matrix);
+        const playerResources = collectPlayerResources(boardState);
         const bestScore = Object.values(playerResources)
             .map(calcScore).sort((a,b) => b - a)[0];
         return PLAYER_CODE_NAMES.filter(p => {

@@ -35,7 +35,7 @@ const setupBoard = async () => {
     });
 
     const matrix = TileMapDisplay(initialBoardState, gui.tileMapHolder);
-    const statsTable = StatsTable(gui.playerList, matrix);
+    const statsTable = StatsTable(gui.playerList, initialBoardState);
 
     const getTile = ({col, row}) => {
         return (matrix[row] || {})[col] || null;
@@ -44,7 +44,7 @@ const setupBoard = async () => {
     const updateComponents = () => {
         TileMapDisplay.updateTilesState(fightSession.getState(), getTile);
         const currentTurnPlayer = fightSession.getState().turnPlayersLeft[0];
-        statsTable.update(currentTurnPlayer, matrix);
+        statsTable.update(currentTurnPlayer, fightSession.getState());
     };
 
     return {fightSession, getTile, updateComponents, statsTable};
