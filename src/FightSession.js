@@ -25,6 +25,7 @@ const FightSession = ({
         return boardState.tiles.find(t => t.col == col && t.row == row);
     };
 
+    /** @return {Tile[]} */
     const getPossibleTurns = (codeName) => {
         const oldPos = boardState.playerToPosition[codeName];
         if (!oldPos) {

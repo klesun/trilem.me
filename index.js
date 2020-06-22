@@ -16,6 +16,7 @@ const gui = {
     playerList: document.querySelector('.player-list'),
     nickNameField: document.querySelector('input.nick-name-field'),
     gameRules: document.querySelector('.game-rules'),
+    createLobbyForm: document.querySelector('form.create-lobby'),
     soundSwitches: {
         enabled: document.getElementById('sound-svg-enabled'),
         disabled: document.getElementById('sound-svg-disabled'),
@@ -68,7 +69,7 @@ const setupBoard = async () => {
         releaseInput = () => {};
     }, 1000);
 
-    authenticate().then(({user, api}) => {
+    const whenAuth = authenticate().then(({user, api}) => {
         let name = user.name;
         gui.nickNameField.value = name;
         gui.nickNameField.addEventListener('blur', async () => {
@@ -77,6 +78,22 @@ const setupBoard = async () => {
                 name = gui.nickNameField.value;
             }
         });
+        return {user, api};
+    });
+
+    gui.createLobbyForm.addEventListener('submit', evt => {
+        evt.preventDefault();
+        const form = evt.target;
+        const lobbyData = {
+            name: form.elements['name'].value,
+            playerSlots: [...form.querySelectorAll('[data-owner]')]
+                .map(slotForm => ({
+                    codeName: slotForm.getAttribute('data-owner'),
+                    aiBase: slotForm.querySelector('[name="aiBase"]').value,
+                    allowPlaceHuman: slotForm.querySelector('[name="allowPlaceHuman"]').checked,
+                })),
+        };
+        console.log('ololo create lobby', lobbyData);
     });
 
     const processTurn = async (codeName) => {

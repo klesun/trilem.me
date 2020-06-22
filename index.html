@@ -75,8 +75,8 @@
                             <li>Every turn each player chooses one of up to three directions to move his triangular
                                 representation or skips his turn by pressing <i>Esc</i>. If there is nowhere to go, turn is skipped automatically
                             </li>
-                            <li>Stepping on any tile makes you it's owner: coloring it with your color, making it an
-                                obstacle for enemies and increasing your respective resource quantity if it yields one
+                            <li>Stepping on any tile makes you it's owner: coloring it with your color,
+                                and increasing your respective resource quantity if it yields one
                             </li>
                             <li>There are three kinds of resources randomly placed on some tiles:
                                 <span data-resource="WHEAT">Wheat</span>,
@@ -95,9 +95,17 @@
                                 2 tiles of <span data-resource="EMPTY">Empty</span>, your total score is
                                 <code>(1 + 2) x (1 + 2) x (1 + 2) + 2 = 29</code>
                             </li>
-                            <li>When there are no more turns left, the player with the greatest total score becomes the winner</li>
-                            <li>You can step on an enemy owned tile, this will make it belong to you, but if this tile does not hold a resource,
-                                you skip <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_EMPTY">?</span> turn(s) after that as a penalty
+                            <li>When there are no more turns left, the player with the greatest total score becomes <i>the winner</i></li>
+                            <li>Stepping on a tile that does not belong to anyone costs you <span data-balance-value="TURNS_SKIPPED_ON_STEP_NEUTRAL_EMPTY">?</span> extra turn(s).
+                                Stepping on your own tile costs you <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_EMPTY">?</span> extra turn(s).
+                                Stepping on enemy tiles give you <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_EMPTY">?</span> turn(s) penalty,
+                                meaning that stealing enemy's tiles is faster than making new ones yourself
+                            </li>
+                            <li>When you skip your turn by pressing <i>Esc</i>, a <i>Wall</i> appears on your current tile.
+                                If enemy tries to capture a <i>Wall</i>-ed tile, he gets penalized by
+                                <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_WALL">?</span> turns skipped. Additionally wall changes
+                                your penalty for stepping your own tile from <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_EMPTY">?</span>
+                                to <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_WALL">?</span>.
                             </li>
                             <li>You can not step on a tile on which another player is currently standing. You can neither
                                 step on <i>Dead Space</i> randomly placed in place of some tiles on the board
@@ -162,7 +170,7 @@
                                 <td>12ddb37c</td>
                                 <td>Vasya</td>
                                 <td>Petya</td>
-                                <td><button onclick="alert('TODO: implement!')">Join</button></td>
+                                <td><button class="beautiful-btn" onclick="alert('TODO: implement!')">Join</button></td>
                             </tr>
                             <tr>
                                 <td>abc123</td>
@@ -172,12 +180,65 @@
                             </tr>
                             <tr>
                                 <td>dca356</td>
-                                <td><button onclick="alert('TODO: implement!')">Join</button></td>
-                                <td><button onclick="alert('TODO: implement!')">Join</button></td>
+                                <td><button onclick="alert('TODO: implement!')" class="beautiful-btn">Join</button></td>
+                                <td><button onclick="alert('TODO: implement!')" class="beautiful-btn">Join</button></td>
                                 <td>Anonymous</td>
                             </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="create-lobby-block">
+                        <label class="beautiful-btn" for="show-create-lobby-form">Create Lobby</label>
+                        <input type="checkbox" id="show-create-lobby-form"/>
+                        <div class="create-lobby-form-holder">
+                            <form class="create-lobby">
+                                <label>
+                                    <span>Name</span>
+                                    <input type="text" name="name" value="Vasya's pro only"/>
+                                </label>
+                                <div data-owner="TRINITY">
+                                    <h4>Trinity AI</h4>
+                                    <div>
+                                        <label>
+                                            <span>Base</span>
+                                            <select name="aiBase">
+                                                <option>No AI (Skip Turns)</option>
+                                                <option>Pure Random</option>
+                                                <option>Least Recent Tiles First</option>
+                                                <option>Closest Resource Pathfinding</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <span>Allow Place Human</span>
+                                            <input name="allowPlaceHuman" type="checkbox" checked="checked"/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div data-owner="MORPHEUS">
+                                    <h4>Morpheus AI</h4>
+                                    <div>
+                                        <label>
+                                            <span>Base</span>
+                                            <select name="aiBase">
+                                                <option>No AI (Skip Turns)</option>
+                                                <option>Pure Random</option>
+                                                <option>Least Recent Tiles First</option>
+                                                <option>Closest Resource Pathfinding</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <span>Allow Place Human</span>
+                                            <input name="allowPlaceHuman" type="checkbox" checked="checked"/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button class="beautiful-btn">Go Ja Sozdal</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
