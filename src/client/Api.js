@@ -15,36 +15,38 @@ const post = (route, params) => {
         : rs.json());
 };
 
+/** public API, no auth required */
 const Api = () => {
     return {
+        /** @return {Promise<GetLobbyListResult>} */
+        getLobbyList: () => get('/api/getLobbyList'),
         /** @return {Promise<BoardState>} */
         getBoardState: ({uuid = ''}) => get('/api/getBoardState', {uuid}),
-        /** @param {MakeTurnParams} params */
-        makeTurn: (params) => post('/api/makeTurn', params),
-        skipTurn: (params) => post('/api/skipTurn', params),
+        getPossibleTurns: (params) => get('/api/getPossibleTurns', params),
     };
 };
 
 export const authenticate = async () => {
     const storageKey = 'TRILEMMA_AUTH_TOKEN';
-    let whenExistingUser;
-    const authToken = window.localStorage.getItem(storageKey);
+    let user;
+    let authToken = window.localStorage.getItem(storageKey);
     if (authToken) {
-        whenExistingUser = post('/api/validateAuthToken', {authToken});
+        user = await post('/api/validateAuthToken', {authToken});
     } else {
-        const msg = 'No token in local storage - first-time visitor';
-        whenExistingUser = Promise.reject(msg);
+        ({authToken, ...user} = await post('/api/generateAuthToken'));
+        window.localStorage.setItem(storageKey, authToken);
     }
-    const user = await whenExistingUser.catch(async exc => {
-        console.warn('Auth token from local storage is not valid, registering new user', exc);
-        const user = await post('/api/generateAuthToken');
-        window.localStorage.setItem(storageKey, user.authToken);
-        return user;
-    });
     return {
         user,
+        /** auth-only API */
         api: {
             changeUserName: ({name}) => post('/api/changeUserName', {authToken, name}),
+            createLobby: (params) => post('/api/createLobby', {authToken, ...params}),
+            joinLobby: (params) => post('/api/joinLobby', {authToken, ...params}),
+            getLobby: () => post('/api/getLobby', {authToken}),
+            /** @param {MakeTurnParams} params */
+            makeTurn: (params) => post('/api/makeTurn', {authToken, ...params}),
+            skipTurn: (params) => post('/api/skipTurn', {authToken, ...params}),
         },
     };
 };

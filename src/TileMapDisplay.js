@@ -84,7 +84,6 @@ const fadeInRows = (ROWS) => {
 };
 
 export const MOD_PREFIX = 'modifier--';
-const LEGACY_MODS = [...RESOURCES, NO_RES_EMPTY, NO_RES_DEAD_SPACE];
 
 /** @param {BoardState} boardState */
 const updateTilesState = (boardState, getTile) => {
@@ -125,6 +124,7 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
     const BOARD_WIDTH_PX = ROWS * TILE_WIDTH;
     const BOARD_HEIGHT_PX = ROWS * TILE_HEIGHT;
 
+    tileMapHolder.innerHTML = '';
     tileMapHolder.style.width = BOARD_WIDTH_PX + 'px';
     tileMapHolder.style.height = BOARD_HEIGHT_PX + 'px';
 

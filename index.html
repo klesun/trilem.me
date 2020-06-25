@@ -97,13 +97,13 @@
                             </li>
                             <li>When there are no more turns left, the player with the greatest total score becomes <i>the winner</i></li>
                             <li>Stepping on a tile that does not belong to anyone costs you <span data-balance-value="TURNS_SKIPPED_ON_STEP_NEUTRAL_EMPTY">?</span> extra turn(s).
-                                Stepping on your own tile costs you <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_EMPTY">?</span> extra turn(s).
+                                Stepping on your own tile also costs you <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_EMPTY">?</span> extra turn(s).
                                 Stepping on enemy tiles give you <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_EMPTY">?</span> turn(s) penalty,
                                 meaning that stealing enemy's tiles is faster than making new ones yourself
                             </li>
                             <li>When you skip your turn by pressing <i>Esc</i>, a <i>Wall</i> appears on your current tile.
                                 If enemy tries to capture a <i>Wall</i>-ed tile, he gets penalized by
-                                <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_WALL">?</span> turns skipped. Additionally wall changes
+                                <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_WALL">?</span> turns skipped. Additionally wall reduces
                                 your penalty for stepping your own tile from <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_EMPTY">?</span>
                                 to <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_WALL">?</span>.
                             </li>
@@ -158,32 +158,20 @@
                         <h3>Lobby List</h3>
                         <table>
                             <thead>
-                            <tr>
-                                <th>uuid</th>
-                                <th data-owner="KEANU"><span class="player-name-holder">KEANU</span></th>
-                                <th data-owner="TRINITY"><span class="player-name-holder">TRINITY</span></th>
-                                <th data-owner="MORPHEUS"><span class="player-name-holder">MORPHEUS</span></th>
-                            </tr>
+                                <tr>
+                                    <th>name</th>
+                                    <th data-owner="KEANU"><span class="player-name-holder">KEANU</span></th>
+                                    <th data-owner="TRINITY"><span class="player-name-holder">TRINITY</span></th>
+                                    <th data-owner="MORPHEUS"><span class="player-name-holder">MORPHEUS</span></th>
+                                </tr>
                             </thead>
                             <tbody class="lobby-list">
-                            <tr>
-                                <td>12ddb37c</td>
-                                <td>Vasya</td>
-                                <td>Petya</td>
-                                <td><button class="beautiful-btn" onclick="alert('TODO: implement!')">Join</button></td>
-                            </tr>
-                            <tr>
-                                <td>abc123</td>
-                                <td>Vova</td>
-                                <td>Misha</td>
-                                <td>Anonymous</td>
-                            </tr>
-                            <tr>
-                                <td>dca356</td>
-                                <td><button onclick="alert('TODO: implement!')" class="beautiful-btn">Join</button></td>
-                                <td><button onclick="alert('TODO: implement!')" class="beautiful-btn">Join</button></td>
-                                <td>Anonymous</td>
-                            </tr>
+                                <tr>
+                                    <td>Petya and noobs</td>
+                                    <td>Vasya</td>
+                                    <td>Petya</td>
+                                    <td><button class="beautiful-btn" onclick="alert('TODO: implement!')">Join</button></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -202,10 +190,11 @@
                                         <label>
                                             <span>Base</span>
                                             <select name="aiBase">
-                                                <option>No AI (Skip Turns)</option>
-                                                <option>Pure Random</option>
-                                                <option>Least Recent Tiles First</option>
-                                                <option>Closest Resource Pathfinding</option>
+                                                <option value="SKIP_TURNS">No AI (Skip Turns)</option>
+                                                <option value="PURE_RANDOM">Pure Random</option>
+                                                <option value="LEAST_RECENT_TILES">Least Recent Tiles First</option>
+                                                <option value="RESOURCE_PATHFINDING">Closest Resource Pathfinding</option>
+                                                <option value="COMBINATORICS">Combinatorics</option>
                                             </select>
                                         </label>
                                     </div>
@@ -222,10 +211,11 @@
                                         <label>
                                             <span>Base</span>
                                             <select name="aiBase">
-                                                <option>No AI (Skip Turns)</option>
-                                                <option>Pure Random</option>
-                                                <option>Least Recent Tiles First</option>
-                                                <option>Closest Resource Pathfinding</option>
+                                                <option value="SKIP_TURNS">No AI (Skip Turns)</option>
+                                                <option value="PURE_RANDOM">Pure Random</option>
+                                                <option value="LEAST_RECENT_TILES">Least Recent Tiles First</option>
+                                                <option value="RESOURCE_PATHFINDING">Closest Resource Pathfinding</option>
+                                                <option value="COMBINATORICS">Combinatorics</option>
                                             </select>
                                         </label>
                                     </div>

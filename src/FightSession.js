@@ -12,11 +12,13 @@ const FallbackRej = {
  * actual game logic is located here
  *
  * @param {BoardState} boardState
+ * @param {AiPlayerSlot[]} aiPlayerSlots
  */
 const FightSession = ({
     boardState,
     Rej = FallbackRej,
     balance = DefaultBalance(),
+    aiPlayerSlots = [],
 }) => {
 
     /** @return {Tile} */
@@ -52,7 +54,7 @@ const FightSession = ({
         })
     };
 
-    const checkOnPlayerTurnEnd = () => {
+    const checkTurnPlayersLeft = () => {
         if (boardState.turnPlayersLeft.length === 0) {
             while (boardState.turnsLeft > 0 && boardState.turnPlayersLeft.length === 0) {
                 --boardState.turnsLeft;
@@ -65,6 +67,31 @@ const FightSession = ({
                     }
                 }
             }
+        }
+    };
+
+    const checkAiTurns = () => {
+        for (const {codeName, aiBase} of aiPlayerSlots) {
+            while (boardState.turnPlayersLeft.includes(codeName)) {
+                const possibleTurns = getPossibleTurns(codeName);
+                if (aiBase === 'SKIP_TURNS' || possibleTurns.length === 0) {
+                    skipTurn({codeName});
+                } else if (aiBase === 'PURE_RANDOM') {
+                    const {col, row} = possibleTurns[Math.floor(Math.random() * possibleTurns.length)];
+                    makeTurn({codeName, col, row});
+                } else {
+                    throw new Error('Unsupported AI base - ' + aiBase);
+                }
+            }
+        }
+    };
+
+    const checkOnPlayerTurnEnd = () => {
+        checkTurnPlayersLeft();
+        try {
+            checkAiTurns();
+        } catch (exc) {
+            exc.message = 'Failed to process AI turn - ' + exc;
         }
     };
 
@@ -104,57 +131,61 @@ const FightSession = ({
         return buffs;
     };
 
+    const skipTurn = ({codeName}) => {
+        const turnPlayerIdx = boardState.turnPlayersLeft.indexOf(codeName);
+        if (turnPlayerIdx < 0) {
+            const msg = 'It is not your turn yet, ' + codeName +
+                ', please wait for other players: ' + boardState.turnPlayersLeft.join(', ');
+            throw new Error(msg);
+        }
+
+        boardState.turnPlayersLeft.splice(turnPlayerIdx, 1);
+        const pos = boardState.playerToPosition[codeName];
+        if (pos) {
+            const tile = getTile(pos);
+            if (!tile.modifiers.includes(MOD_WALL)) {
+                tile.modifiers.push(MOD_WALL);
+            }
+        }
+        checkOnPlayerTurnEnd();
+
+        return boardState;
+    };
+
+    /** @param {MakeTurnParams} params */
+    const makeTurn = (params) => {
+        const {codeName, ...newPos} = params;
+        const turnPlayerIdx = boardState.turnPlayersLeft.indexOf(codeName);
+        if (turnPlayerIdx < 0) {
+            const msg = 'It is not your turn yet, ' + codeName +
+                ', please wait for other players: ' + boardState.turnPlayersLeft.join(', ');
+            throw new Error(msg);
+        }
+        const possibleTurns = getPossibleTurns(codeName);
+        const newTile = possibleTurns.find(tile => {
+            return tile.col === newPos.col
+                && tile.row === newPos.row;
+        });
+        if (!newTile) {
+            throw new Error('Chosen tile is not in the list of available options');
+        }
+
+        boardState.playerToBuffs[codeName].push(...applyBuffs(newTile, codeName));
+
+        newTile.owner = codeName;
+        boardState.playerToPosition[codeName].row = newTile.row;
+        boardState.playerToPosition[codeName].col = newTile.col;
+
+        boardState.turnPlayersLeft.splice(turnPlayerIdx, 1);
+        checkOnPlayerTurnEnd();
+
+        return boardState;
+    };
+
     return {
         getPossibleTurns: getPossibleTurns,
-        skipTurn: ({codeName}) => {
-            const turnPlayerIdx = boardState.turnPlayersLeft.indexOf(codeName);
-            if (turnPlayerIdx < 0) {
-                const msg = 'It is not your turn yet, ' + codeName +
-                    ', please wait for other players: ' + boardState.turnPlayersLeft.join(', ');
-                return Rej.TooEarly(msg);
-            }
-
-            boardState.turnPlayersLeft.splice(turnPlayerIdx, 1);
-            const pos = boardState.playerToPosition[codeName];
-            if (pos) {
-                const tile = getTile(pos);
-                if (!tile.modifiers.includes(MOD_WALL)) {
-                    tile.modifiers.push(MOD_WALL);
-                }
-            }
-            checkOnPlayerTurnEnd();
-
-            return Promise.resolve(boardState);
-        },
-        /** @param {MakeTurnParams} params */
-        makeTurn: (params) => {
-            const {codeName, ...newPos} = params;
-            const turnPlayerIdx = boardState.turnPlayersLeft.indexOf(codeName);
-            if (turnPlayerIdx < 0) {
-                const msg = 'It is not your turn yet, ' + codeName +
-                    ', please wait for other players: ' + boardState.turnPlayersLeft.join(', ');
-                return Rej.TooEarly(msg);
-            }
-            const possibleTurns = getPossibleTurns(codeName);
-            const newTile = possibleTurns.find(tile => {
-                return tile.col === newPos.col
-                    && tile.row === newPos.row;
-            });
-            if (!newTile) {
-                return Rej.Locked('Chosen tile is not in the list of available options');
-            }
-
-            boardState.playerToBuffs[codeName].push(...applyBuffs(newTile, codeName));
-
-            newTile.owner = codeName;
-            boardState.playerToPosition[codeName].row = newTile.row;
-            boardState.playerToPosition[codeName].col = newTile.col;
-
-            boardState.turnPlayersLeft.splice(turnPlayerIdx, 1);
-            checkOnPlayerTurnEnd();
-
-            return Promise.resolve(boardState);
-        },
+        skipTurn: skipTurn,
+        makeTurn: makeTurn,
     };
 };
 

@@ -1,35 +1,14 @@
 import Api from "./Api.js";
-import GenerateBoard from "../GenerateBoard.js";
 import FightSession from "../FightSession.js";
-
-const FORCE_HOT_SEAT = false;
-
-/** @return {BoardState} */
-export const getBoardState = async () => {
-    if (FORCE_HOT_SEAT) {
-        return {...GenerateBoard(), hotSeat: true};
-    }
-    return fetch('./api/getBoardState')
-        .then(rs => rs.status !== 200
-            ? Promise.reject(rs.statusText)
-            : rs.json())
-        .then(config => ({...config, hotSeat: false}))
-        .catch(exc => {
-            alert('Failed to fetch data from server. Falling back to hot-seat board. ' + exc);
-            return {...GenerateBoard(), hotSeat: true};
-        });
-};
 
 /**
  * encapsulates the communication with server that can
  * be transparently switched to offline hot-seat game
  *
- * @param {BoardState} boardState
- * @param matrix = TileMapDisplay()
+ * @param {BoardState} initialBoardState
  */
-const FightSessionAdapter = (initialBoardState) => {
+const FightSessionAdapter = ({initialBoardState, api}) => {
     let boardState = initialBoardState;
-    const api = Api();
 
     const makeTurn = async (codeName, newTile) => {
         /** @type {MakeTurnParams} */
@@ -59,19 +38,25 @@ const FightSessionAdapter = (initialBoardState) => {
         }
     };
 
-    const checkForUpdates = async () => {
-        boardState = await api.getBoardState({uuid: initialBoardState.uuid});
-        return true; // should eventually return false if no changes happened
+    const getPossibleTurns = async (codeName) => {
+        const params = {
+            uuid: initialBoardState.uuid,
+            codeName: codeName,
+        };
+        if (!boardState.hotSeat) {
+            return Api().getPossibleTurns(params);
+        } else {
+            return FightSession({boardState})
+                .getPossibleTurns(codeName);
+        }
     };
 
     return {
         makeTurn: makeTurn,
         skipTurn: skipTurn,
-        // TODO: better ask server to make sure we can handle non-standard balance
-        getPossibleTurns: (codeName) => FightSession({boardState})
-            .getPossibleTurns(codeName),
+        getPossibleTurns: getPossibleTurns,
         getState: () => boardState,
-        checkForUpdates: checkForUpdates,
+        setState: (newState) => boardState = newState,
     };
 };
 
