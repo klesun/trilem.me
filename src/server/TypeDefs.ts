@@ -24,7 +24,7 @@ export interface Tile {
     owner: PlayerCodeName,
 }
 
-export interface BoardState {
+export type BoardState = SerialData & {
     uuid: BoardUuid,
     totalRows: number,
     totalTurns: number,

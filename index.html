@@ -184,6 +184,27 @@
                                     <span>Name</span>
                                     <input type="text" name="name" value="Vasya's pro only"/>
                                 </label>
+                                <div data-owner="KEANU">
+                                    <h4>Keanu AI</h4>
+                                    <div>
+                                        <label>
+                                            <span>Base</span>
+                                            <select name="aiBase">
+                                                <option value="SKIP_TURNS">No AI (Skip Turns)</option>
+                                                <option value="PURE_RANDOM">Pure Random</option>
+                                                <option value="LEAST_RECENT_TILES">Least Recent Tiles First</option>
+                                                <option value="RESOURCE_PATHFINDING">Closest Resource Pathfinding</option>
+                                                <option value="COMBINATORICS">Combinatorics</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <span>Allow Place Human</span>
+                                            <input name="allowPlaceHuman" type="checkbox" checked="checked"/>
+                                        </label>
+                                    </div>
+                                </div>
                                 <div data-owner="TRINITY">
                                     <h4>Trinity AI</h4>
                                     <div>

@@ -2,12 +2,6 @@ import {BUFF_SKIP_TURN, MOD_WALL, NO_RES_DEAD_SPACE, PLAYER_CODE_NAMES, RESOURCE
 
 import DefaultBalance from './DefaultBalance.js';
 
-const FallbackRej = {
-    NotFound: msg => Promise.reject(msg + ' - NotFound'),
-    Locked: msg => Promise.reject(msg + ' - Locked'),
-    TooEarly: msg => Promise.reject(msg + ' - TooEarly'),
-};
-
 /**
  * actual game logic is located here
  *
@@ -16,9 +10,7 @@ const FallbackRej = {
  */
 const FightSession = ({
     boardState,
-    Rej = FallbackRej,
     balance = DefaultBalance(),
-    aiPlayerSlots = [],
 }) => {
 
     /** @return {Tile} */
@@ -70,29 +62,8 @@ const FightSession = ({
         }
     };
 
-    const checkAiTurns = () => {
-        for (const {codeName, aiBase} of aiPlayerSlots) {
-            while (boardState.turnPlayersLeft.includes(codeName)) {
-                const possibleTurns = getPossibleTurns(codeName);
-                if (aiBase === 'SKIP_TURNS' || possibleTurns.length === 0) {
-                    skipTurn({codeName});
-                } else if (aiBase === 'PURE_RANDOM') {
-                    const {col, row} = possibleTurns[Math.floor(Math.random() * possibleTurns.length)];
-                    makeTurn({codeName, col, row});
-                } else {
-                    throw new Error('Unsupported AI base - ' + aiBase);
-                }
-            }
-        }
-    };
-
     const checkOnPlayerTurnEnd = () => {
         checkTurnPlayersLeft();
-        try {
-            checkAiTurns();
-        } catch (exc) {
-            exc.message = 'Failed to process AI turn - ' + exc;
-        }
     };
 
     /** @param {Tile} newTile */

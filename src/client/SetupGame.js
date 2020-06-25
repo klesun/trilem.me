@@ -85,9 +85,10 @@ const SetupGame = async ({fightSession, codeName, gui}) => {
     };
 
     const startGame = async () => {
+        updateComponents(fightSession.getState());
         while (fightSession.getState().turnPlayersLeft.length > 0) {
             if (!fightSession.getState().turnPlayersLeft.includes(codeName)) {
-                await new Promise((ok) => setTimeout(ok, 50));
+                await new Promise((ok) => setTimeout(ok, 500));
                 continue; // waiting for other players turns
             }
             gui.turnsLeftHolder.textContent = fightSession.getState().turnsLeft;
