@@ -55,6 +55,12 @@ export interface CreateLobbyParams {
     playerSlots: AiPlayerSlot[],
 }
 
+export type Lobby = CreateLobbyParams & {
+    boardUuid: BoardUuid,
+    players: Record<PlayerCodeName, PlayerId>,
+    history: {codeName: PlayerCodeName, row: number, col: number}[],
+};
+
 export interface User {
     name: string,
     id: PlayerId,

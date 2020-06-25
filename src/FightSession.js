@@ -11,6 +11,7 @@ import DefaultBalance from './DefaultBalance.js';
 const FightSession = ({
     boardState,
     balance = DefaultBalance(),
+    history = [],
 }) => {
 
     /** @return {Tile} */
@@ -117,6 +118,7 @@ const FightSession = ({
             if (!tile.modifiers.includes(MOD_WALL)) {
                 tile.modifiers.push(MOD_WALL);
             }
+            history.push({codeName, col: pos.col, row: pos.row});
         }
         checkOnPlayerTurnEnd();
 
@@ -125,7 +127,7 @@ const FightSession = ({
 
     /** @param {MakeTurnParams} params */
     const makeTurn = (params) => {
-        const {codeName, ...newPos} = params;
+        const {codeName, col, row} = params;
         const turnPlayerIdx = boardState.turnPlayersLeft.indexOf(codeName);
         if (turnPlayerIdx < 0) {
             const msg = 'It is not your turn yet, ' + codeName +
@@ -134,8 +136,8 @@ const FightSession = ({
         }
         const possibleTurns = getPossibleTurns(codeName);
         const newTile = possibleTurns.find(tile => {
-            return tile.col === newPos.col
-                && tile.row === newPos.row;
+            return tile.col === col
+                && tile.row === row;
         });
         if (!newTile) {
             throw new Error('Chosen tile is not in the list of available options');
@@ -146,6 +148,7 @@ const FightSession = ({
         newTile.owner = codeName;
         boardState.playerToPosition[codeName].row = newTile.row;
         boardState.playerToPosition[codeName].col = newTile.col;
+        history.push({codeName, col, row});
 
         boardState.turnPlayersLeft.splice(turnPlayerIdx, 1);
         checkOnPlayerTurnEnd();

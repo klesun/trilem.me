@@ -2,8 +2,9 @@ import GenerateBoard from "../GenerateBoard";
 import * as http from "http";
 import {randomBytes} from "crypto";
 import FightSession from "../FightSession";
-import {BoardState, BoardUuid, CreateLobbyParams, PlayerCodeName, PlayerId, SerialData, User} from "./TypeDefs";
+import {BoardState, BoardUuid, CreateLobbyParams, Lobby, PlayerCodeName, PlayerId, SerialData, User} from "./TypeDefs";
 import {PLAYER_CODE_NAMES, PLAYER_KEANU, PLAYER_MORPHEUS, PLAYER_TRINITY} from "../Constants";
+import CheckAiTurns from "../common/CheckAiTurns";
 
 const Rej = require('klesun-node-tools/src/Rej.js');
 const {coverExc} = require('klesun-node-tools/src/Lang.js');
@@ -12,10 +13,6 @@ const uuidToBoard: Record<BoardUuid, BoardState> = {};
 const authTokenToUserId: Record<string, number> = {};
 const users: User[] = [];
 
-type Lobby = CreateLobbyParams & {
-    boardUuid: BoardUuid,
-    players: Record<PlayerCodeName, PlayerId>,
-};
 const boardUuidToLobby: Record<BoardUuid, Lobby> = {};
 
 const setupBoard = () => {
@@ -104,7 +101,7 @@ const leaveLobby = (user: User, lobby: Lobby) => {
             const boardState = uuidToBoard[lobby.boardUuid];
             delete lobby.players[codeName];
             // finish all pending turns after leaving the lobby
-            checkAiTurns({boardState, lobby, fight: FightSession({boardState})});
+            CheckAiTurns({boardState, lobby, fight: FightSession({boardState})});
         }
     }
     if (Object.keys(boardUuidToLobby[boardUuid].players).length === 0) {
@@ -129,6 +126,7 @@ const createLobbyBy = async ({user, params}: {
         ...params,
         boardUuid: board.uuid,
         players: players,
+        history: [],
     };
     boardUuidToLobby[board.uuid] = lobby;
     return {lobby, board};
@@ -190,9 +188,9 @@ const getLobby = async (rq: http.IncomingMessage) => {
             user, params: {
                 name: 'by ' + user.name,
                 playerSlots: [
-                    {aiBase: 'PURE_RANDOM', codeName: PLAYER_KEANU},
-                    {aiBase: 'PURE_RANDOM', codeName: PLAYER_TRINITY},
-                    {aiBase: 'PURE_RANDOM', codeName: PLAYER_MORPHEUS},
+                    {aiBase: 'LEAST_RECENT_TILES', codeName: PLAYER_KEANU},
+                    {aiBase: 'LEAST_RECENT_TILES', codeName: PLAYER_TRINITY},
+                    {aiBase: 'LEAST_RECENT_TILES', codeName: PLAYER_MORPHEUS},
                 ],
             }
         })
@@ -215,50 +213,21 @@ const getFight = async (rq: http.IncomingMessage) => {
     if (!codeName) {
         return Rej.BadRequest('You are not participating in this match');
     }
-    const fight = FightSession({boardState});
+    const fight = FightSession({boardState, history: lobby.history});
 
     return {fight, lobby, codeName, actionParams};
-};
-
-const checkAiTurns = ({boardState, lobby, fight}: {
-    boardState: BoardState,
-    lobby: Lobby,
-    fight: ReturnType<typeof FightSession>,
-}) => {
-    const aiPlayerSlots = lobby.playerSlots
-        .filter(slot => !lobby.players[slot.codeName]);
-    let hadTurns = true;
-    while (hadTurns) {
-        hadTurns = false;
-        for (const {codeName, aiBase} of aiPlayerSlots) {
-            if (boardState.turnPlayersLeft.includes(codeName)) {
-                hadTurns = true;
-                const possibleTurns = fight.getPossibleTurns(codeName);
-                if (aiBase === 'SKIP_TURNS' || possibleTurns.length === 0) {
-                    boardState = fight.skipTurn({codeName});
-                } else if (aiBase === 'PURE_RANDOM') {
-                    const {col, row} = possibleTurns[Math.floor(Math.random() * possibleTurns.length)];
-                    boardState = fight.makeTurn({codeName, col, row});
-                } else {
-                    hadTurns = false;
-                    throw new Error('Unsupported AI base - ' + aiBase);
-                }
-            }
-        }
-    }
-    return boardState;
 };
 
 const makeTurn = async (rq: http.IncomingMessage) => {
     const {fight, lobby, codeName, actionParams} = await getFight(rq);
     const boardState = fight.makeTurn({...actionParams, codeName});
-    return checkAiTurns({boardState, lobby, fight});
+    return CheckAiTurns({boardState, lobby, fight});
 };
 
 const skipTurn = async (rq: http.IncomingMessage) => {
     const {fight, lobby, codeName, actionParams} = await getFight(rq);
     const boardState = fight.skipTurn({...actionParams, codeName});
-    return checkAiTurns({boardState, lobby, fight});
+    return CheckAiTurns({boardState, lobby, fight});
 };
 
 const getBoardState = (rq: http.IncomingMessage) => {
@@ -301,7 +270,7 @@ const getPossibleTurns = (rq: http.IncomingMessage) => {
     if (!boardState) {
         return Rej.NotFound('Board ' + uuid + ' not found');
     }
-    const fight = FightSession({boardState, Rej});
+    const fight = FightSession({boardState});
     return fight.getPossibleTurns(codeName);
 };
 
