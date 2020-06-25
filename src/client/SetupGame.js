@@ -84,9 +84,16 @@ const SetupGame = async ({fightSession, codeName, gui}) => {
         }
     };
 
+    /** sorry if this is a shitcode, I'm yet to learn how to work with such constructs properly */
+    let discarded = false;
+    const discard = () => discarded = true;
+
     const startGame = async () => {
         updateComponents(fightSession.getState());
         while (fightSession.getState().turnPlayersLeft.length > 0) {
+            if (discarded) {
+                return;
+            }
             if (!fightSession.getState().turnPlayersLeft.includes(codeName)) {
                 await new Promise((ok) => setTimeout(ok, 500));
                 continue; // waiting for other players turns
@@ -116,6 +123,7 @@ const SetupGame = async ({fightSession, codeName, gui}) => {
     return {
         whenFinished: whenFinished,
         updateStateFromServer: updateStateFromServer,
+        discard: discard,
     };
 };
 

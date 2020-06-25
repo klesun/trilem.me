@@ -72,7 +72,10 @@ const setupGame = async ({user, api, lobby, board}) => {
         fightSession.setState(newState);
         game.updateStateFromServer(newState);
     }, 1000);
-    cleanupLastGame = () => clearInterval(intervalId);
+    cleanupLastGame = () => {
+        clearInterval(intervalId);
+        game.discard();
+    };
 };
 
 (async () => {
