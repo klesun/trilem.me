@@ -9,7 +9,7 @@ const shouldBuildWall = (tile: Tile) => {
     return tile.modifiers.includes(RES_GOLD) && Math.random() < 0.9
         || tile.modifiers.includes(RES_OIL) && Math.random() < 0.45
         || tile.modifiers.includes(RES_WHEAT) && Math.random() < 0.15
-        || Math.random() < 0.03;
+        || Math.random() < 0.09;
 };
 
 const CheckAiTurns = ({boardState, lobby, fight}: {
@@ -37,11 +37,12 @@ const CheckAiTurns = ({boardState, lobby, fight}: {
             values.push(-countTurnsSinceLastStep(tile, codeName));
         } else {
             values.push(false);
+            values.push(tile.modifiers.includes(MOD_WALL));
             const resScore = RESOURCES.findIndex(r => {
                 return tile.modifiers.includes(<TileModifier>r);
             });
             values.push(-resScore);
-            values.push(tile.modifiers.includes(MOD_WALL));
+            // maybe not prioritize this player tile if he is losing?
             values.push(!tile.owner);
         }
         return values;
