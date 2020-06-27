@@ -26,14 +26,6 @@ body {
             -10px 0 117px #541c54,
             10px 0 80px #364e4e;
 }
-.stats-block {
-    /* please avoid absolute positioning if possible when you'll be updating markup after my changes */
-    /*position: absolute;*/
-    /*right: 130px;*/
-
-    /* reuse some of the space left by triangular board */
-    margin-left: -256px;
-}
 
 .title-block {
     filter: brightness(170%);
@@ -620,6 +612,17 @@ footer .authorship-text {
         overflow: auto;
         overflow-x: hidden;
     }
+
+
+    .stats-block {
+        /* please avoid absolute positioning if possible when you'll be updating markup after my changes */
+        /*position: absolute;*/
+        /*right: 130px;*/
+
+        /* reuse some of the space left by triangular board */
+        margin-left: -256px;
+    }
+
     /* a trick to make it look as if this triangular board has a margin */
     .game-rules li:nth-child(1) { margin-right: -360px; }
     .game-rules li:nth-child(2) { margin-right: -312px; }
