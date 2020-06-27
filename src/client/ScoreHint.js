@@ -10,11 +10,6 @@ const drawHint = (tileSvg, owner, text) => {
 
     tileMapWrap.appendChild(pop);
 
-    // animate floating top
-    setTimeout( () => {
-        pop.style.top = parseFloat(pop.style.top) - 60 + "px";
-    }, 10);
-
     // clear dom
     setTimeout( () => {
         tileMapWrap.removeChild(pop);
