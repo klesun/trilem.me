@@ -87,7 +87,7 @@ export const MOD_PREFIX = 'modifier--';
 
 /** @param {BoardState} boardState */
 const updateTilesState = (boardState, getTile) => {
-    for (const {row, col, modifiers, owner} of boardState.tiles) {
+    for (const {row, col, modifiers, owner, improvementsBuilt} of boardState.tiles) {
         const svgEl = getTile({row, col}).svgEl;
         svgEl.classList.forEach(cls => {
             if (cls.startsWith(MOD_PREFIX)) {
@@ -102,6 +102,11 @@ const updateTilesState = (boardState, getTile) => {
             svgEl.setAttribute('data-owner', owner);
         } else {
             svgEl.removeAttribute('data-owner');
+        }
+        if (improvementsBuilt > 0) {
+            svgEl.setAttribute('data-improvements-built', improvementsBuilt);
+        } else {
+            svgEl.removeAttribute('data-improvements-built');
         }
         const stander = Object.keys(boardState.playerToPosition)
             .find(k => {

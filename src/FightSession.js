@@ -116,7 +116,9 @@ const FightSession = ({
         const pos = boardState.playerToPosition[codeName];
         if (pos) {
             const tile = getTile(pos);
-            if (!tile.modifiers.includes(MOD_WALL)) {
+            if (RESOURCES.some(r => tile.modifiers.includes(r))) {
+                ++tile.improvementsBuilt;
+            } else if (!tile.modifiers.includes(MOD_WALL)) {
                 tile.modifiers.push(MOD_WALL);
             }
             history.push({codeName, col: pos.col, row: pos.row});
