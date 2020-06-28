@@ -104,9 +104,9 @@ const updateTilesState = (boardState, getTile) => {
             svgEl.removeAttribute('data-owner');
         }
         if (improvementsBuilt > 0) {
-            svgEl.setAttribute('data-improvements-built', improvementsBuilt);
+            svgEl.querySelector('.improvement-counter').textContent = 1 + improvementsBuilt * boardState.balance.IMPROVEMENT_BONUS;
         } else {
-            svgEl.removeAttribute('data-improvements-built');
+            svgEl.querySelector('.improvement-counter').textContent = '';
         }
         const stander = Object.keys(boardState.playerToPosition)
             .find(k => {
@@ -136,7 +136,7 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
     // commented because it delays page reload time
     //fadeInRows(ROWS);
 
-    for (const {row, col, modifiers, owner} of boardConfig.tiles) {
+    for (const {row, col, modifiers} of boardConfig.tiles) {
         const x = (col  - row - 1) * TILE_WIDTH / 2;
         const y = row * TILE_HEIGHT;
         const isEven = col % 2 === 0;
@@ -149,6 +149,9 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
                 svgEl.appendChild(svgResource(isEven));
             }
         }
+        svgEl.appendChild(
+            Svg('text', {x: '21px', y: '36px', class: 'improvement-counter', stroke: 'lightgrey'}, ''),
+        );
 
         svgEl.setAttribute('data-col', col);
         svgEl.setAttribute('data-row', row);
