@@ -15,7 +15,7 @@ const DefaultBalance = () => ({
     TURNS_SKIPPED_ON_STEP_OWN_WALL: 0,
     TURNS_SKIPPED_ON_STEP_OWN_EMPTY: 1,
     TURNS_SKIPPED_ON_STEP_OWN_RESOURCE: 1,
-    TURNS_SKIPPED_ON_STEP_ENEMY_WALL: 3,
+    TURNS_SKIPPED_ON_STEP_ENEMY_WALL: 4,
     // to make aggressive game more preferable than
     // peacefully capturing tiles in a corner
     TURNS_SKIPPED_ON_STEP_ENEMY_EMPTY: 0,
