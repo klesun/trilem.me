@@ -65,7 +65,6 @@ const makeTile = (x, y, isEven) => {
     return Svg('svg', {class: 'tile-root', x, y}, [
         makePoly({class: 'base-tile'}),
         makePoly({class: 'owner-overlay'}),
-        makePoly({class: 'modifiers-overlay'}),
     ]);
 };
 
