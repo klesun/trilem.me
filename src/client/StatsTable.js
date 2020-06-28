@@ -43,7 +43,7 @@ const collectPlayerResources = (boardState) => {
         if (player) {
             for (const resource of resources) {
                 playerToResourceToSum[player][resource] += 1;
-                playerToResourceToSum[player][resource] += tile.improvementsBuilt * 1 / 4;
+                playerToResourceToSum[player][resource] += tile.improvementsBuilt * boardState.balance.IMPROVEMENT_BONUS;
             }
             if (resources.length === 0) {
                 playerToResourceToSum[player][NO_RES_EMPTY] += 1;
@@ -59,7 +59,7 @@ const collectPlayerResources = (boardState) => {
  * 4.0000 -> 4
  */
 const formatDecimal = (value) => {
-    return value % 1 > 0 ? value.toFixed(2) : value;
+    return value % 1 > 0.000001 ? value.toFixed(2) : value;
 };
 
 /** @param {BoardState} boardState */

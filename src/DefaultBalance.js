@@ -9,6 +9,7 @@ const DefaultBalance = () => ({
         [NO_RES_DEAD_SPACE]: 9,
         [NO_RES_EMPTY]: 65,
     },
+    IMPROVEMENT_BONUS: 0.1,
     TURNS_SKIPPED_ON_STEP_NEUTRAL_EMPTY: 1,
     TURNS_SKIPPED_ON_STEP_NEUTRAL_RESOURCE: 1,
     // WALL > EMPTY/RESOURCE
