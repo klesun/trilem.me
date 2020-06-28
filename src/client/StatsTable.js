@@ -39,6 +39,7 @@ const collectPlayerResources = (boardState) => {
         if (player) {
             for (const resource of resources) {
                 playerToResourceToSum[player][resource] += 1;
+                playerToResourceToSum[player][resource] += tile.improvementsBuilt * 1 / 3;
             }
             if (resources.length === 0) {
                 playerToResourceToSum[player][NO_RES_EMPTY] += 1;
@@ -46,6 +47,15 @@ const collectPlayerResources = (boardState) => {
         }
     }
     return playerToResourceToSum;
+};
+
+/**
+ * @param {Number} value
+ * 3.666666666 -> 3.66
+ * 4.0000 -> 4
+ */
+const formatDecimal = (value) => {
+    return value % 1 > 0 ? value.toFixed(2) : value;
 };
 
 /** @param {BoardState} boardState */
@@ -67,15 +77,15 @@ const StatsTable = (tableBody, boardState) => {
             }, [
                 Dom('td', {class: 'player-name-holder'}, trOwner),
                 Dom('td', {class: 'ready-in-holder'}, readyIn),
-                Dom('td', {'data-resource': RES_WHEAT}, resourceToSum[RES_WHEAT]),
+                Dom('td', {'data-resource': RES_WHEAT}, formatDecimal(resourceToSum[RES_WHEAT])),
                 Dom('td', {}, 'x'),
-                Dom('td', {'data-resource': RES_OIL}, resourceToSum[RES_OIL]),
+                Dom('td', {'data-resource': RES_OIL}, formatDecimal(resourceToSum[RES_OIL])),
                 Dom('td', {}, 'x'),
-                Dom('td', {'data-resource': RES_GOLD}, resourceToSum[RES_GOLD]),
+                Dom('td', {'data-resource': RES_GOLD}, formatDecimal(resourceToSum[RES_GOLD])),
                 Dom('td', {}, '+'),
                 Dom('td', {'data-resource': NO_RES_EMPTY}, resourceToSum[NO_RES_EMPTY]),
                 Dom('td', {}, '='),
-                Dom('td', {class: 'score-holder'}, calcScore(resourceToSum)),
+                Dom('td', {class: 'score-holder'}, formatDecimal(calcScore(resourceToSum))),
             ]);
         });
 
