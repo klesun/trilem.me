@@ -77,10 +77,25 @@ body {
 .hide-title {
     display: flex;
     justify-content: center;
+    align-items: center;
     position: relative;
     margin-bottom: 24px;
     cursor: pointer;
+    user-select: none;
+    color: #8d549c;
 }
+.hide-title > span {
+    font-size: 28px;
+    font-weight: 400;
+    margin: 0 12px;
+}
+.hide-title:hover:before {
+    height: 4px;
+    width: 100%;
+    filter: blur(6px);
+    bottom: 0;
+}
+
 .hide-title:after {
     content: '';
     height: 1px;
@@ -111,7 +126,7 @@ body {
     text-align: center;
     color: white;
     font-size: 20px;
-    animation: popAnim 1s ease-in forwards;
+    animation: popAnim 1s ease-in-out forwards;
     transition: top 0.8s ease-out;
     user-select: none;
     pointer-events: none;
@@ -141,21 +156,14 @@ body {
         opacity: 1;
     }
 
+    55% {
+        transform: translateY(-50px);
+    }
+
     100% {
         opacity: 0;
+        transform: translateY(-85px);
     }
-}
-
-.hide-title > span {
-    font-size: 28px;
-    font-weight: 400;
-    color: #8d549c;
-}
-.hide-title:hover:before {
-    height: 4px;
-    width: 100%;
-    filter: blur(6px);
-    bottom: 0;
 }
 
 .hidden {
