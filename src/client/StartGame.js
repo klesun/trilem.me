@@ -26,7 +26,7 @@ const setupBoard = async ({fightSession, gui}) => {
     return {fightSession, getTile, statsTable};
 };
 
-const SetupGame = async ({fightSession, codeName, gui}) => {
+const StartGame = async ({fightSession, codeName, gui}) => {
     releaseInput();
     const soundManager = SoundManager(gui.soundSwitches);
     const {getTile, statsTable} = await setupBoard({fightSession, gui});
@@ -127,4 +127,4 @@ const SetupGame = async ({fightSession, codeName, gui}) => {
     };
 };
 
-export default SetupGame;
+export default StartGame;

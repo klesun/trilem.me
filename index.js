@@ -2,7 +2,7 @@
 import {PLAYER_KEANU, PLAYER_MORPHEUS, PLAYER_TRINITY} from "./src/Constants.js";
 import Api, {authenticate} from "./src/client/Api.js";
 import {Dom} from "./src/client/Dom.js";
-import SetupGame from "./src/client/SetupGame.js";
+import StartGame from "./src/client/StartGame.js";
 import Hideable from "./src/client/Hideable.js";
 import FightSessionAdapter from "./src/client/FightSessionAdapter.js";
 
@@ -60,7 +60,7 @@ const setupGame = async ({user, api, lobby, board}) => {
     const codeName = Object.entries(lobby.players)
         .flatMap(([k,v]) => v === user.id ? [k] : [])[0];
 
-    const game = await SetupGame({fightSession, codeName, gui});
+    const game = await StartGame({fightSession, codeName, gui});
 
     // TODO: websockets
     const intervalId = setInterval(async () => {
