@@ -20,7 +20,11 @@ const calcScore = (resourceToSum) => {
     return multiplication + resourceToSum[NO_RES_EMPTY];
 };
 
-/** @param {BoardState} boardState */
+/**
+ * @param {BoardState} boardState
+ *
+ * TODO: move to FightSession.js since this is pure game logic, not frontend stuff
+ */
 const collectPlayerResources = (boardState) => {
     const playerToResourceToSum = {};
     for (const codeName of PLAYER_CODE_NAMES) {
@@ -39,7 +43,7 @@ const collectPlayerResources = (boardState) => {
         if (player) {
             for (const resource of resources) {
                 playerToResourceToSum[player][resource] += 1;
-                playerToResourceToSum[player][resource] += tile.improvementsBuilt * 1 / 3;
+                playerToResourceToSum[player][resource] += tile.improvementsBuilt * 1 / 4;
             }
             if (resources.length === 0) {
                 playerToResourceToSum[player][NO_RES_EMPTY] += 1;
