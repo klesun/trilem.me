@@ -327,9 +327,6 @@ body {
     margin-bottom: 12px;
     color: var(--main-text-color);
 }
-.lobby-list-block {
-    margin-left: -150px;
-}
 .lobby-list-block table {
     border-collapse: collapse;
     width: 100%;
@@ -621,7 +618,6 @@ footer .authorship-text {
         overflow-x: hidden;
     }
 
-
     .stats-block {
         /* please avoid absolute positioning if possible when you'll be updating markup after my changes */
         /*position: absolute;*/
@@ -629,6 +625,9 @@ footer .authorship-text {
 
         /* reuse some of the space left by triangular board */
         margin-left: -256px;
+    }
+    .lobby-list-block {
+        margin-left: -150px;
     }
 
     /* a trick to make it look as if this triangular board has a margin */
