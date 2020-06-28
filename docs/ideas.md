@@ -3,10 +3,6 @@
 - New tile buff - Forts. Player needs to take this point (staying on tile for N turns). Grants nearby territories (+1-2 from Fort tile). Randomly place on map (0-2)
     - I would propose, rather than randomly place them on map, to allow players (up to max 2 times max) press "skip turn" 5 or so times to build the fort 
 
-- Destroy wall when it's tile is captured
-
-- When you skip a turn on a resource tile, instead of building a wall, build an _improvement_ which increases the yield by 0.33 and can stack. This will make a dilemma for player of whether to capture more tiles, or improve existing ones, making it more strategies to play the game.
-
 ### UI quality of life improvements
 
 - сделать возможным зажать и держать мышь и протянуть чтоб цепочку ходом заказать (и шифтом несколько команд)
@@ -16,9 +12,32 @@
 
 - make it possible to skip turn with a button on page, not just "Esc". Preferably show "build wall" if it's empty tile and "improve" if it's a resource
 
-### Backend
+### Accounts
 
-- авто-тесты нада сделать
+- Make an "Account" button near the nickname. The buttons should open a dialog with fields: `Export Auth Token` with readonly text holding current auth token and `Import Auth Token` with input to copy the auth token from other device/browser - when you enter it, user should be re-logined with this token.
+
+### Multiplayer
+
+- Make a limit of 10 seconds for player to decide on his turn. Give a 60 seconds credit of "penalty" time for each player for whole game. If penalty time is exhausted, player automatically skips turn. Penalty time is counted only if at least one human player is waiting.
+
+- When two players step on same tile during one turn, I think it would be fair to make it belong to the third player and add it a wall
+
+### AI for 2 and 1 human player games
+
+- Fix AI after the improvements update
+
+- Pathfinding Monkey: chooses closest resource tile that does not belong to the AI
+
+- AI chat trash talk messages:
+    - I'm noob, don't be harsh on me pls
+    - How do you play this map?
+    - Host pidr
+    - Putin vor
+    - Still better than civ 6
+    - I'm an AI, I have no soul
+    - (when someone captures his tile) I thought we were friends ;c
+    - (when captures your tile) >:D
+
 
 ### TBD
 
@@ -33,28 +52,3 @@
 
 - play custom audio file of user's choice for everyone on various events: first blood, getting the lead in score, winning, etc...
 - новые цвета игроков, мб эффекты красивые
-
-### Accounts
-
-- Make an "Account" button near the nickname. The buttons should open a dialog with fields: `Export Auth Token` with readonly text holding current auth token and `Import Auth Token` with input to copy the auth token from other device/browser - when you enter it, user should be re-logined with this token.
-
-### Multiplayer
-
-- Make a limit of 10 seconds for player to decide on his turn. Give a 60 seconds credit of "penalty" time for each player for whole game. If penalty time is exhausted, player automatically skips turn. Penalty time is counted only if at least one human player is waiting.
-
-- When two players step on same tile during one turn, I think it would be fair to make it belong to the third player and add it a wall
-
-### AI for 2 and 1 human player games
-
-- Monkey: always chooses random tile, but prioritizes tiles that do not belong to the AI. When stepping own tiles, prioritizes tiles that were not stepped for longest time.
-- Pathfinding Monkey: chooses closest resource tile that does not belong to the AI
-
-- AI chat trash talk messages:
-    - I'm noob, don't be harsh on me pls
-    - How do you play this map?
-    - Host pidr
-    - Putin vor
-    - Still better than civ 6
-    - I'm an AI, I have no soul
-    - (when someone captures his tile) I thought we were friends ;c
-    - (when captures your tile) >:D
