@@ -88,6 +88,7 @@ const FightSession = ({
                 }
             } else {
                 if (newTile.modifiers.includes(MOD_WALL)) {
+                    newTile.modifiers.splice(newTile.modifiers.indexOf(MOD_WALL), 1);
                     turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_WALL;
                 } else if (isResource) {
                     turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_RESOURCE;
@@ -140,7 +141,7 @@ const FightSession = ({
                 && tile.row === row;
         });
         if (!newTile) {
-            throw new Error('Chosen tile is not in the list of available options');
+            throw new Error(`Chosen tile ${row}x${col} is not in the list of available options`);
         }
 
         boardState.playerToBuffs[codeName].push(...applyBuffs(newTile, codeName));

@@ -22,6 +22,7 @@ export interface Tile {
     row: number,
     modifiers: TileModifier[],
     owner: PlayerCodeName,
+    improvementsBuilt: number;
 }
 
 export type BoardState = SerialData & {

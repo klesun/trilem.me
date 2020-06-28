@@ -66,7 +66,7 @@ const GenerateBoard = ({
                 modifiers.push(...mods);
                 owner = null;
             }
-            tiles.push({row, col, modifiers, owner});
+            tiles.push({row, col, modifiers, owner, improvementsBuilt: 0});
         }
     }
     const totalCells = tiles.filter(t => t !== NO_RES_DEAD_SPACE).length;
