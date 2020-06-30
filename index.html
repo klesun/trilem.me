@@ -103,11 +103,14 @@
                                 Stepping on enemy tiles give you <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_EMPTY">?</span> turn(s) penalty,
                                 meaning that stealing enemy's tiles is faster than making new ones yourself
                             </li>
-                            <li>When you skip your turn by pressing <i>Esc</i>, a <i>Wall</i> appears on your current tile.
+                            <li>When you skip turn by pressing <i>Esc</i> on an <span data-resource="EMPTY">Empty</span> tile,
+                                a <i>Wall</i> appears on your current tile.
                                 If enemy tries to capture a <i>Wall</i>-ed tile, he gets penalized by
                                 <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_WALL">?</span> turns skipped. Additionally wall reduces
                                 your penalty for stepping your own tile from <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_EMPTY">?</span>
                                 to <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_WALL">?</span>.
+                            </li>
+                            <li>When you skip turn on a <i>Resourceful</i> tile, an improvement is built on top of it. Improvements can be stacked indefinitely on same tile. Each improvement increases resource yield by <span data-balance-value="IMPROVEMENT_BONUS">?</span>
                             </li>
                             <li>You can not step on a tile on which another player is currently standing. You can neither
                                 step on <i>Dead Space</i> randomly placed in place of some tiles on the board
