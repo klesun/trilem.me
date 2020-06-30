@@ -151,4 +151,16 @@ const setupGame = async ({user, api, lobby, board}) => {
     });
 
     api.getLobby().then(reloadGame);
+
+    const socketIo = window.io('/', {secure: true, transport: ['websocket']});
+    socketIo.on('message', (data, reply) => {
+        console.log('ololo message from server', data);
+        reply('sam huj');
+    });
+    socketIo.on('connect', () => {
+        console.log('Connected to GRECT Web Socket');
+        socketIo.send('conected yopta', (response) => {
+            console.log('server acknowledges that we are connected yopta');
+        });
+    });
 })();

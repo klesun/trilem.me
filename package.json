@@ -17,9 +17,11 @@
   "dependencies": {
     "klesun-node-tools": "git+https://github.com/klesun-misc/klesun-node-tools.git#bf555291e0aab4f42ce2f65769b1a6246189dc69",
     "typescript": "*",
-    "ts-node": "^8.10.2"
+    "ts-node": "^8.10.2",
+    "socket.io": "latest"
   },
   "devDependencies": {
-    "@types/node": "^14.0.13"
+    "@types/node": "^14.0.13",
+    "@types/socket.io": "latest"
   }
 }
