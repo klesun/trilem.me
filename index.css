@@ -461,6 +461,11 @@ body.show-dialog {
     text-align: center;
     font-size: 22px;
 }
+.decimal-holder {
+    /* to make 2.700 visually distinctive from 2700 */
+    font-family: monospace;
+    font-size: 14px;
+}
 .stats-block table {
     border-collapse: collapse;
     width: 100%;

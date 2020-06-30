@@ -104,7 +104,7 @@ const updateTilesState = (boardState, getTile) => {
             svgEl.removeAttribute('data-owner');
         }
         if (improvementsBuilt > 0) {
-            svgEl.querySelector('.improvement-counter').textContent = 1 + improvementsBuilt * boardState.balance.IMPROVEMENT_BONUS;
+            svgEl.querySelector('.improvement-counter').textContent = (1 + improvementsBuilt * boardState.balance.IMPROVEMENT_BONUS).toFixed(1);
         } else {
             svgEl.querySelector('.improvement-counter').textContent = '';
         }

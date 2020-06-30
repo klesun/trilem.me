@@ -58,8 +58,8 @@ const collectPlayerResources = (boardState) => {
  * 3.666666666 -> 3.66
  * 4.0000 -> 4
  */
-const formatDecimal = (value) => {
-    return value % 1 > 0.000001 ? value.toFixed(2) : value;
+const formatDecimal = (value, places = 1) => {
+    return value % 1 > 0.000001 ? value.toFixed(places) : value;
 };
 
 /** @param {BoardState} boardState */
@@ -73,23 +73,24 @@ const StatsTable = (tableBody, boardState) => {
 
         const rows = sortedPlayers.map(trOwner => {
             const resourceToSum = playerResources[trOwner];
-            const readyIn = boardState.playerToBuffs[trOwner]
-                .filter(b => b === BUFF_SKIP_TURN).length;
+            const readyIn = boardState.turnPlayersLeft.includes(trOwner) ? 0 :
+                1 + boardState.playerToBuffs[trOwner]
+                    .filter(b => b === BUFF_SKIP_TURN).length;
             return Dom('tr', {
                 'data-owner': trOwner,
                 class: trOwner === codeName ? 'turn-pending' : '',
             }, [
                 Dom('td', {class: 'player-name-holder'}, trOwner),
-                Dom('td', {class: 'ready-in-holder'}, readyIn),
-                Dom('td', {'data-resource': RES_WHEAT}, formatDecimal(resourceToSum[RES_WHEAT])),
+                Dom('td', {class: 'decimal-holder ready-in-holder'}, readyIn),
+                Dom('td', {class: 'decimal-holder', 'data-resource': RES_WHEAT}, formatDecimal(resourceToSum[RES_WHEAT])),
                 Dom('td', {}, 'x'),
-                Dom('td', {'data-resource': RES_OIL}, formatDecimal(resourceToSum[RES_OIL])),
+                Dom('td', {class: 'decimal-holder', 'data-resource': RES_OIL}, formatDecimal(resourceToSum[RES_OIL])),
                 Dom('td', {}, 'x'),
-                Dom('td', {'data-resource': RES_GOLD}, formatDecimal(resourceToSum[RES_GOLD])),
+                Dom('td', {class: 'decimal-holder', 'data-resource': RES_GOLD}, formatDecimal(resourceToSum[RES_GOLD])),
                 Dom('td', {}, '+'),
-                Dom('td', {'data-resource': NO_RES_EMPTY}, resourceToSum[NO_RES_EMPTY]),
+                Dom('td', {class: 'decimal-holder', 'data-resource': NO_RES_EMPTY}, resourceToSum[NO_RES_EMPTY]),
                 Dom('td', {}, '='),
-                Dom('td', {class: 'score-holder'}, formatDecimal(calcScore(resourceToSum))),
+                Dom('td', {class: 'decimal-holder score-holder'}, formatDecimal(calcScore(resourceToSum), 2)),
             ]);
         });
 
