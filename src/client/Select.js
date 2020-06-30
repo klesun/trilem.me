@@ -41,11 +41,15 @@ const Select = props => {
 
     const handleOpen = e => {
         wrapper.classList.add('active');
+        caret.children[0].classList.add('fa-caret-up');
+        caret.children[0].classList.remove('fa-caret-down');
         document.addEventListener('click', handleClickOutside);
     };
 
     const handleClose = e => {
         wrapper.classList.remove('active');
+        caret.children[0].classList.add('fa-caret-down');
+        caret.children[0].classList.remove('fa-caret-up');
         document.removeEventListener('click', handleClickOutside);
     };
 
