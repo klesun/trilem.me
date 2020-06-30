@@ -5,7 +5,7 @@ import {Dom} from "./src/client/Dom.js";
 import StartGame from "./src/client/StartGame.js";
 import Hideable from "./src/client/Hideable.js";
 import FightSessionAdapter from "./src/client/FightSessionAdapter.js";
-import createDialog from "./src/client/Modal.js";
+import CreateLobbyDialog from "./src/client/CreateLobby.js";
 
 const gui = {
     mainGame: document.querySelector('.main-game'),
@@ -83,27 +83,7 @@ const setupGame = async ({user, api, lobby, board}) => {
     Hideable().init();
 
     document.querySelector('[for="show-create-lobby-form"]').addEventListener('click', () => {
-        const dialog = createDialog({
-            title: 'Some random dialog title',
-            body: 'ras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in' +
-                ', egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna,' +
-                ' vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ' +
-                'ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo' +
-                ' cursus magna, vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Cras justo odio,' +
-                ' dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent' +
-                ' commodo cursus magna, vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Cras justo' +
-                ' odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent' +
-                ' commodo cursus magna, vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Cras justo' +
-                ' odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent ' +
-                'commodo cursus magna, vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Cras justo odio' +
-                ', dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo' +
-                ' cursus magna, vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus' +
-                ' ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna,' +
-                ' vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in,' +
-                ' egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna, vel scelerisque nisl' +
-                ' consectetur et. Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi' +
-                ' leo risus, porta ac consec'
-        });
+        const dialog = CreateLobbyDialog();
         dialog.show();
     });
     const {user, api} = await authenticate().then(({user, api}) => {

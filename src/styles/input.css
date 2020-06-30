@@ -1,0 +1,120 @@
+.input-root {
+    min-height: 24px;
+    border: 1px solid var(--dialog-border);
+    background: transparent;
+    outline: none;
+    color: white;
+    padding: 0 8px;
+    font-size: 14px;
+    vertical-align: middle;
+    line-height: 36px;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper.active:before {
+    opacity: 1;
+}
+
+.input-wrapper.active .input-root {
+    border-radius: 2px;
+}
+
+.input-wrapper:before {
+    content: '';
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border: 3px solid var(--dialog-border);
+    background: transparent;
+    pointer-events: none;
+    filter: blur(5px);
+    transition: 100ms ease-in;
+}
+
+.select-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 190px;
+    position: relative;
+}
+
+.select-header {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid var(--dialog-border);
+    cursor: pointer;
+}
+
+.select-wrapper.active .select-body {
+    display: block;
+    animation: selectOpen 100ms ease-in forwards;
+    animation-delay: 50ms;
+}
+
+@keyframes selectOpen {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.select-header:before {
+    content: '';
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border: 3px solid var(--dialog-border);
+    background: transparent;
+    pointer-events: none;
+    filter: blur(5px);
+    transition: 100ms ease-in;
+}
+
+.select-wrapper.active .select-header:before {
+    opacity: 1;
+}
+
+.select-value {
+    flex-grow: 1;
+    padding: 8px;
+}
+
+.select-arrow-icon {
+    padding: 8px 16px;
+    border-left: 1px solid var(--dialog-border);
+}
+
+.select-input {
+    display: none;
+}
+
+.select-body {
+    border: 1px solid var(--dialog-border);
+    border-top: none;
+    position: absolute;
+    top: 36px;
+    width: calc(100% - 2px);
+    display: none;
+    opacity: 0;
+}
+
+.select-option {
+    padding: 8px;
+    cursor: pointer;
+    transition: 150ms linear;
+}
+
+.select-option:hover {
+    background: var(--dialog-border);
+}
