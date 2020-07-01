@@ -24,7 +24,7 @@ const Server = async (rootPath: string) => {
 
     const socketIo = SocketIo();
     socketIo.on('connection', socket => {
-        console.log('ololo incoming connection', socket);
+        console.log('ololo incoming connection');
         socket.on('message', (data, reply) => {
             console.log('ololo incoming message', data);
             reply('hujtevuho');
