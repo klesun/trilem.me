@@ -9,13 +9,13 @@ const resourcesSvgs = {
         clear: '../assets/img/oil.svg',
         captured: '../assets/img/oil_captured.svg',
         normal: { x: 17, y: 6},
-        isEven: { x: 20, y: 20 },
+        isEven: { x: 21, y: 22 },
     },
     [RES_GOLD]: {
         clear: '../assets/img/gold.svg',
         captured: '../assets/img/gold.svg',
-        isEven: { x: 14, y: 17 },
-        normal: { x: 14, y: 1 },
+        isEven: { x: 0, y: 25 },
+        normal: { x: 6, y: 10 },
         className: 'gold-icon'
     },
     [RES_WHEAT]: {
