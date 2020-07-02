@@ -1,30 +1,8 @@
 import {Svg} from "./client/Dom.js";
-import {RES_GOLD, RES_OIL, RES_WHEAT, RESOURCES} from "./Constants.js";
+import {RESOURCES, RESOURCES_ICONS} from "./Constants.js";
 
 const TILE_WIDTH = 60;
 const TILE_HEIGHT = Math.sqrt(3) * TILE_WIDTH / 2;
-
-const resourcesSvgs = {
-    [RES_OIL]: {
-        clear: '../assets/img/oil.svg',
-        captured: '../assets/img/oil_captured.svg',
-        normal: { x: 17, y: 6},
-        isEven: { x: 21, y: 22 },
-    },
-    [RES_GOLD]: {
-        clear: '../assets/img/gold.svg',
-        captured: '../assets/img/gold.svg',
-        isEven: { x: 0, y: 25 },
-        normal: { x: 6, y: 10 },
-        className: 'gold-icon'
-    },
-    [RES_WHEAT]: {
-        clear: '../assets/img/wheat.svg',
-        captured: '../assets/img/wheat_captured.svg',
-        normal: { x: 20, y: 6 },
-        isEven: { x: 16, y: 22 },
-    }
-};
 
 const makeTile = (x, y, isEven) => {
     const makePoly = (attrs) => {
@@ -95,7 +73,7 @@ const updateTilesState = (boardState, getTile) => {
                 const resModifier = RESOURCES.find( res => modifiers.find( mod => res === mod ) );
 
                 if (resModifier) {
-                    svgEl.querySelector('.resource-icon').setAttribute('href', resourcesSvgs[resModifier].captured);
+                    svgEl.querySelector('.resource-icon').setAttribute('href', RESOURCES_ICONS[resModifier].captured);
                 }
             }
         } else {
@@ -141,7 +119,7 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
         const svgEl = makeTile(BOARD_WIDTH_PX / 2 + x, y, isEven);
         for (const modifier of modifiers) {
             if (RESOURCES.includes(modifier)) {
-                const modProps = resourcesSvgs[modifier];
+                const modProps = RESOURCES_ICONS[modifier];
                 const img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
                 img.setAttribute('href', owner ? modProps.captured : modProps.clear );
                 img.classList.add('resource-icon');

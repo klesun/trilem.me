@@ -44,6 +44,9 @@ function createDialog ({title = 'Title', body = null, actions = null}) {
 
     function _show() {
         document.body.appendChild(dialog);
+        setTimeout( () => {
+            bodyBlock.classList.add('visible');
+        }, 440);
         document.body.classList.add('show-dialog');
         document.addEventListener('mousedown', closeDialog);
     }
