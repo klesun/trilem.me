@@ -280,24 +280,22 @@ body.show-dialog {
     /*z-index: 1;*/
 }
 
-.sound-switch-block svg {
-    width: 36px;
-    height: 36px;
+.sound-icons-block {
     margin-left: 8px;
-    fill: #8d549c;
-    cursor: pointer;
+    min-width: 32px;
+    position: relative;
 }
 
-.sound-switch-block:after {
+.sound-icons-block:after {
     content: '';
     width: 36px;
     height: 36px;
     margin-left: -36px;
     background: #8d549c;
     filter: blur(5px);
-    /* I think here it works ok without absolute positioning, but please correct me if I'm wrong */
-    /*position: absolute;*/
-    /*right: 0;*/
+    position: absolute;
+    right: 0;
+    top: -4px;
     opacity: 0;
     border-radius: 50%;
     transition: 0.15s ease-in-out;
@@ -305,8 +303,14 @@ body.show-dialog {
     pointer-events: none;
 }
 
-.sound-switch-block:hover:after {
+.sound-icons-block:hover:after {
     opacity: 0.4;
+    cursor: pointer;
+}
+
+.sound-icon {
+    color: #724c7b;
+    font-size: 28px;
     cursor: pointer;
 }
 
@@ -529,6 +533,7 @@ polygon.modifiers-overlay {
 .modifier--WALL polygon.modifiers-overlay {
     stroke: rgba(255, 255, 255, 0.4);
     stroke-width: 8px;
+    cursor: pointer;
     /*background: ;*/
 }
 

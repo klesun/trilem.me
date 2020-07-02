@@ -1,0 +1,10 @@
+[data-stander="KEANU"] polygon.owner-overlay {
+    stroke-dasharray: 30;
+    animation: playerEffect 15s linear infinite;
+}
+
+@keyframes playerEffect {
+    to {
+        stroke-dashoffset: 1000;
+    }
+}
