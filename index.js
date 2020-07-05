@@ -107,6 +107,11 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
     Hideable().init();
     let whenGameSetup = Promise.reject('Game not initialized yet');
 
+    // init particles
+    window.particlesJS.load('particles', './particlesjs-config.json', function() {
+        console.log('callback - particles.js config loaded');
+    });
+
     document.querySelector('[for="show-create-lobby-form"]').addEventListener('click', () => {
         const dialog = CreateLobbyDialog();
         dialog.show();

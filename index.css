@@ -29,6 +29,10 @@ body {
             10px 0 80px #364e4e;
 }
 
+.main-game {
+    position: relative;
+}
+
 .resource-icon {
     width: 24px;
     height: 24px;
@@ -306,6 +310,18 @@ body.show-dialog {
 .sound-icons-block:hover:after {
     opacity: 0.4;
     cursor: pointer;
+}
+
+
+#particles {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    margin: 0 72px;
 }
 
 .sound-icon {
