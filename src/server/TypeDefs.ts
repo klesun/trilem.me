@@ -10,6 +10,7 @@ import {
     RES_WHEAT
 } from "../Constants";
 
+/** random hash string unique identifier of a board session */
 export type BoardUuid = string;
 export type PlayerId = number;
 export type PlayerCodeName = typeof PLAYER_KEANU | typeof PLAYER_TRINITY | typeof PLAYER_MORPHEUS;
@@ -58,7 +59,12 @@ export interface CreateLobbyParams {
 
 export type Lobby = CreateLobbyParams & {
     boardUuid: BoardUuid,
+    /** mapping of the human players present in the game */
     players: Record<PlayerCodeName, PlayerId>,
+    /**
+     * list of moves made by players through the game, supposedly should be enough
+     * to reconstruct whole game from start, currently only used for AI heuristics
+     */
     history: {codeName: PlayerCodeName, row: number, col: number}[],
 };
 

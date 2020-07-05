@@ -58,8 +58,6 @@ const GenerateBoard = ({
             const modifiers = [];
             let owner;
             if (stander) {
-                // maybe having an empty array would make more sense, but
-                // we assign points for this modifier currently, so dunno
                 owner = stander;
             } else {
                 const mods = generateTileModifiers(balance);

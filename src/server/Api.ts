@@ -5,6 +5,7 @@ import FightSession from "../FightSession";
 import {BoardState, BoardUuid, CreateLobbyParams, Lobby, PlayerCodeName, PlayerId, SerialData, User} from "./TypeDefs";
 import {PLAYER_CODE_NAMES, PLAYER_KEANU, PLAYER_MORPHEUS, PLAYER_TRINITY} from "../Constants";
 import CheckAiTurns from "../common/CheckAiTurns";
+import {Socket} from "socket.io";
 
 const Rej = require('klesun-node-tools/src/Rej.js');
 const {coverExc} = require('klesun-node-tools/src/Lang.js');
@@ -39,6 +40,19 @@ const readJson = async (rq: http.IncomingMessage) => {
         return Rej.BadRequest(msg);
     }
     return JSON.parse(postStr);
+};
+
+// most likely rather than store mapping with all players, it would be better if each
+// player subscribed to topic of his id to not mess with garbage collection manually...
+export const playerIdToSocket = new Map<PlayerId, Set<Socket>>();
+
+const sendStateToSocket = ({boardState, playerId}: {
+    boardState: BoardState, playerId: PlayerId,
+}) => {
+    const sockets = playerIdToSocket.get(playerId) || new Set<Socket>();
+    for (const socket of sockets) {
+        socket.send({messageType: 'updateBoardState', boardState});
+    }
 };
 
 const addUserWithToken = (authToken: string) => {
@@ -98,10 +112,13 @@ const leaveLobby = (user: User, lobby: Lobby) => {
         .map(k => <PlayerCodeName>k);
     for (const codeName of codeNames) {
         if (lobby.players[codeName] === user.id) {
-            const boardState = uuidToBoard[lobby.boardUuid];
+            let boardState = uuidToBoard[lobby.boardUuid];
             delete lobby.players[codeName];
             // finish all pending turns after leaving the lobby
-            CheckAiTurns({boardState, lobby, fight: FightSession({boardState})});
+            boardState = CheckAiTurns({boardState, lobby, fight: FightSession({boardState})});
+            Object.values(lobby.players)
+                .filter(id => id !== user.id)
+                .forEach(playerId => sendStateToSocket({boardState, playerId}));
         }
     }
     if (Object.keys(boardUuidToLobby[boardUuid].players).length === 0) {
@@ -203,7 +220,7 @@ const getFight = async (rq: http.IncomingMessage) => {
     if (!boardState) {
         return Rej.NotFound('Board ' + uuid + ' not found');
     }
-    const lobby = boardUuidToLobby[boardState.uuid] || null;
+    const lobby: Lobby | null = boardUuidToLobby[boardState.uuid] || null;
     if (!lobby) {
         return Rej.NotFound('Lobby ' + boardState.uuid + ' does not exist');
     }
@@ -215,19 +232,27 @@ const getFight = async (rq: http.IncomingMessage) => {
     }
     const fight = FightSession({boardState, history: lobby.history});
 
-    return {fight, lobby, codeName, actionParams};
+    return {fight, user, lobby, codeName, actionParams};
 };
 
 const makeTurn = async (rq: http.IncomingMessage) => {
-    const {fight, lobby, codeName, actionParams} = await getFight(rq);
-    const boardState = fight.makeTurn({...actionParams, codeName});
-    return CheckAiTurns({boardState, lobby, fight});
+    const {fight, lobby, codeName, actionParams, user} = await getFight(rq);
+    let boardState = fight.makeTurn({...actionParams, codeName});
+    boardState = CheckAiTurns({boardState, lobby, fight});
+    Object.values(lobby.players)
+        .filter(id => id !== user.id).map(id => <number>id)
+        .forEach(playerId => sendStateToSocket({boardState, playerId}));
+    return boardState;
 };
 
 const skipTurn = async (rq: http.IncomingMessage) => {
-    const {fight, lobby, codeName, actionParams} = await getFight(rq);
-    const boardState = fight.skipTurn({...actionParams, codeName});
-    return CheckAiTurns({boardState, lobby, fight});
+    const {fight, lobby, codeName, actionParams, user} = await getFight(rq);
+    let boardState = fight.skipTurn({...actionParams, codeName});
+    boardState = CheckAiTurns({boardState, lobby, fight});
+    Object.values(lobby.players)
+        .filter(id => id !== user.id).map(id => <number>id)
+        .forEach(playerId => sendStateToSocket({boardState, playerId}));
+    return boardState;
 };
 
 const getBoardState = (rq: http.IncomingMessage) => {

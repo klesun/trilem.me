@@ -3,6 +3,7 @@ import * as http from 'http';
 import HandleHttpRequest, {HandleHttpParams} from './HandleHttpRequest';
 import * as SocketIo from 'socket.io';
 import {HTTP_PORT} from "../Constants";
+import {playerIdToSocket} from "./Api";
 
 const handleRq = ({rq, rs, rootPath}: HandleHttpParams) => {
     HandleHttpRequest({rq, rs, rootPath}).catch(exc => {
@@ -26,11 +27,17 @@ const Server = async (rootPath: string) => {
     socketIo.on('connection', socket => {
         console.log('ololo incoming connection');
         socket.on('message', (data, reply) => {
-            console.log('ololo incoming message', data);
-            reply('hujtevuho');
-        });
-        socket.send({testMessage: 'hello, how are you?'}, (response: any) => {
-            console.log('delivered testMessage to client', response);
+            if (data.messageType === 'subscribePlayer') {
+                const {playerId} = data;
+                if (!playerIdToSocket.has(playerId)) {
+                    playerIdToSocket.set(playerId, new Set());
+                }
+                playerIdToSocket.get(playerId)?.add(socket);
+                reply({status: 'SUCCESS'});
+            } else {
+                console.log('Unexpected message from client', data);
+                reply({status: 'UNEXPECTED_MESSAGE_TYPE'});
+            }
         });
     });
     socketIo.listen(server);

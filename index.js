@@ -63,24 +63,49 @@ const setupGame = async ({user, api, lobby, board}) => {
 
     const game = await StartGame({fightSession, codeName, gui});
 
-    // TODO: websockets
-    const intervalId = setInterval(async () => {
-        if (fightSession.getState().hotSeat) {
-            return;
-        }
-        const newState = await Api()
-            .getBoardState({uuid: board.uuid});
-        fightSession.setState(newState);
-        game.updateStateFromServer(newState);
-    }, 1000);
     cleanupLastGame = () => {
-        clearInterval(intervalId);
         game.discard();
+    };
+    return {
+        setState: newState => {
+            fightSession.setState(newState);
+            game.updateStateFromServer(newState);
+        },
     };
 };
 
+const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
+    const socketIo = window.io('/', {secure: true, transport: ['websocket']});
+    socketIo.on('message', (data, reply) => {
+        if (data.messageType === 'updateBoardState') {
+            setState(data.boardState);
+            reply({status: 'SUCCESS'});
+        } else {
+            console.log('Unexpected message from server', data);
+            reply({status: 'UNEXPECTED_MESSAGE_TYPE'});
+        }
+    });
+    socketIo.on('connect', () => {
+        socketIo.send({
+            messageType: 'subscribePlayer',
+            playerId: user.id,
+        }, (response) => {
+            if (response.status === 'SUCCESS') {
+                console.log('server acknowledges your player id', response);
+                resolve(socketIo);
+            } else {
+                reject('Failed to subscribe player - ' + JSON.stringify(response));
+            }
+        });
+    });
+    socketIo.on('error', (exc) => {
+        reject(exc);
+    });
+});
+
 (async () => {
     Hideable().init();
+    let whenGameSetup = Promise.reject('Game not initialized yet');
 
     document.querySelector('[for="show-create-lobby-form"]').addEventListener('click', () => {
         const dialog = CreateLobbyDialog();
@@ -98,6 +123,14 @@ const setupGame = async ({user, api, lobby, board}) => {
         return {user, api};
     });
 
+    initSocket({
+        user, setState: newState => {
+            return whenGameSetup.then(
+                setup => setup.setState(newState)
+            );
+        },
+    }).catch(exc => alert('Failed to initialize web socket - ' + exc));
+
     const updateLobbies = () => updateLobbyOptions(user)
         .then(api.joinLobby)
         .then(reloadGame);
@@ -106,7 +139,7 @@ const setupGame = async ({user, api, lobby, board}) => {
 
     const reloadGame = ({lobby, board}) => {
         updateLobbies();
-        setupGame({user, api, lobby, board});
+        whenGameSetup = setupGame({user, api, lobby, board});
     };
 
     gui.createLobbyForm.addEventListener('submit', evt => {
@@ -131,16 +164,4 @@ const setupGame = async ({user, api, lobby, board}) => {
     });
 
     api.getLobby().then(reloadGame);
-
-    const socketIo = window.io('/', {secure: true, transport: ['websocket']});
-    socketIo.on('message', (data, reply) => {
-        console.log('ololo message from server', data);
-        reply('sam huj');
-    });
-    socketIo.on('connect', () => {
-        console.log('Connected to GRECT Web Socket');
-        socketIo.send('conected yopta', (response) => {
-            console.log('server acknowledges that we are connected yopta');
-        });
-    });
 })();
