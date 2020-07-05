@@ -56,6 +56,7 @@ const StartGame = async ({fightSession, codeName, gui}) => {
             if (!newTile) {
                 try {
                     await fightSession.skipTurn(codeName);
+                    updateComponents(fightSession.getState());
                     break;
                 } catch (exc) {
                     alert('Failed to skip this turn - ' + exc);
@@ -67,6 +68,7 @@ const StartGame = async ({fightSession, codeName, gui}) => {
             const lastScore = calcScore(lastReses);
             try {
                 await fightSession.makeTurn(codeName, newTile);
+                updateComponents(fightSession.getState());
 
                 const reses = collectPlayerResources(fightSession.getState())[codeName];
                 const scoreDiff = calcScore(reses) - lastScore;
@@ -102,7 +104,8 @@ const StartGame = async ({fightSession, codeName, gui}) => {
                 return;
             }
             if (!fightSession.getState().turnPlayersLeft.includes(codeName)) {
-                await new Promise((ok) => setTimeout(ok, 500));
+                // TODO: pass web socket event here instead of this
+                await new Promise((ok) => setTimeout(ok, 50));
                 continue; // waiting for other players turns
             }
             gui.turnsLeftHolder.textContent = fightSession.getState().turnsLeft;
