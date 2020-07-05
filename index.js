@@ -79,7 +79,7 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
     socketIo.on('message', (data, reply) => {
         if (data.messageType === 'updateBoardState') {
             setState(data.boardState);
-            reply({status: 'SUCCESS'});
+            // no reply, cuz server is not requesting it
         } else {
             console.log('Unexpected message from server', data);
             reply({status: 'UNEXPECTED_MESSAGE_TYPE'});

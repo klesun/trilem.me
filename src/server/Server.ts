@@ -25,7 +25,6 @@ const Server = async (rootPath: string) => {
 
     const socketIo = SocketIo();
     socketIo.on('connection', socket => {
-        console.log('ololo incoming connection');
         socket.on('message', (data, reply) => {
             if (data.messageType === 'subscribePlayer') {
                 const {playerId} = data;
