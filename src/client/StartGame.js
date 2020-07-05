@@ -1,6 +1,6 @@
 import SoundManager from "./SoundManager.js";
 import TileMapDisplay from "../TileMapDisplay.js";
-import StatsTable from "./StatsTable.js";
+import StatsTable, {calcScore, collectPlayerResources} from "./StatsTable.js";
 import GetTurnInput from "./GetTurnInput.js";
 import drawHint from "./ScoreHint.js";
 import {RESOURCES} from "../Constants.js";
@@ -63,12 +63,19 @@ const StartGame = async ({fightSession, codeName, gui}) => {
                 }
             }
             const lastOwner = newTile.svgEl.getAttribute('data-owner');
+            const lastReses = collectPlayerResources(fightSession.getState())[codeName];
+            const lastScore = calcScore(lastReses);
             try {
                 await fightSession.makeTurn(codeName, newTile);
-                const tile = fightSession.getState().tiles.find( t => t.row === newTile.row && t.col === newTile.col );
+
+                const reses = collectPlayerResources(fightSession.getState())[codeName];
+                const scoreDiff = calcScore(reses) - lastScore;
+
+                const tile = fightSession.getState().tiles
+                    .find( t => t.row === newTile.row && t.col === newTile.col );
 
                 if (tile.modifiers.some(mod => RESOURCES.includes(mod)) && lastOwner !== codeName) {
-                    drawHint(newTile.svgEl, codeName, `+1`);
+                    drawHint(newTile.svgEl, codeName, scoreDiff >= 0 ? '+' + scoreDiff : scoreDiff);
                 }
             } catch (exc) {
                 alert('Failed to make this turn - ' + exc);

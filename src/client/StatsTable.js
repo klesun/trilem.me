@@ -10,7 +10,7 @@ import {
 import {MOD_PREFIX} from "../TileMapDisplay.js";
 import {Dom} from "./Dom.js";
 
-const calcScore = (resourceToSum) => {
+export const calcScore = (resourceToSum) => {
     // maybe should have it as a formula, like array of recursive operands, so that
     // it could be automatically generated for Game Rules block on any change...
     let multiplication = 1;
@@ -25,7 +25,7 @@ const calcScore = (resourceToSum) => {
  *
  * TODO: move to FightSession.js since this is pure game logic, not frontend stuff
  */
-const collectPlayerResources = (boardState) => {
+export const collectPlayerResources = (boardState) => {
     const playerToResourceToSum = {};
     for (const codeName of PLAYER_CODE_NAMES) {
         // players start with 1, because otherwise they would need
