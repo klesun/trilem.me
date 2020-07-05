@@ -77,7 +77,7 @@ const StartGame = async ({fightSession, codeName, gui}) => {
                     .find( t => t.row === newTile.row && t.col === newTile.col );
 
                 if (tile.modifiers.some(mod => RESOURCES.includes(mod)) && lastOwner !== codeName) {
-                    drawHint(newTile.svgEl, codeName, scoreDiff >= 0 ? '+' + scoreDiff : scoreDiff);
+                    drawHint(newTile.svgEl, codeName, scoreDiff >= 0 ? '+' + scoreDiff.toFixed() : scoreDiff.toFixed());
                 }
             } catch (exc) {
                 alert('Failed to make this turn - ' + exc);
