@@ -108,13 +108,13 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
     let whenGameSetup = Promise.reject('Game not initialized yet');
 
     // init particles
-    // temporarily disabled because it causes 40% CPU usage on the chrome tab with a quadcore
+    // temporarily disabled because it causes 25% CPU usage on the chrome tab with a quadcore
     // if you want to stick with particles, please find a way to not eat up a considerable part of system's CPU, maybe slow
     // down the animation or decrease amount of particles and possibly compensate by increasing their size
     // (also, particles.js seems to do rendering on CPU rather than GPU, maybe it's not the best lib?)
-    window.particlesJS.load('particles', './particlesjs-config.json', function() {
-        console.log('callback - particles.js config loaded');
-    });
+    //window.particlesJS.load('particles', './particlesjs-config.json', function() {
+    //    console.log('callback - particles.js config loaded');
+    //});
 
     document.querySelector('[for="show-create-lobby-form"]').addEventListener('click', () => {
         const dialog = CreateLobbyDialog();
