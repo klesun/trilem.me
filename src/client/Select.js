@@ -1,21 +1,21 @@
 import {Dom} from "./Dom.js";
-import {PLAYER_CODE_NAMES} from "../Constants.js";
 
 const Select = props => {
-    const options = PLAYER_CODE_NAMES.map( name => ({label: name, value: name}) );
+    const options = [].concat(props.options);
     let currentValue = {...options[0]};
 
-    const wrapper = Dom('div', {class: 'select-wrapper'});
+    const wrapper = Dom('div', {class: `select-wrapper ${(props.wrapperClass || '')}`});
     const header = Dom('div', {class: 'select-header'});
     const value = Dom('div', {class: 'select-value'});
     const caret = Dom('div', {class: 'select-arrow-icon'}, [
         Dom('i', {class: 'fas fa-caret-down'})
     ]);
-    const input = Dom('input', {class: 'select-input', type: 'text'});
+    const input = Dom('input', {class: 'select-input', type: 'text', name: props.name});
     const body = Dom('div', {class: 'select-body'});
 
     const updateValue = (opt) => {
         value.innerHTML = opt.label;
+        input.value = opt.value;
         currentValue = {...opt};
     };
 
@@ -61,6 +61,7 @@ const Select = props => {
 
     header.appendChild(value);
     header.appendChild(caret);
+    header.appendChild(input);
     wrapper.appendChild(header);
     wrapper.appendChild(body);
 
