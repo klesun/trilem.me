@@ -116,10 +116,11 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
     //    console.log('callback - particles.js config loaded');
     //});
 
-    document.querySelector('[for="show-create-lobby-form"]').addEventListener('click', () => {
-        const dialog = CreateLobbyDialog();
-        dialog.show();
-    });
+    // commented till it's fully implemented
+    // document.querySelector('[for="show-create-lobby-form"]').addEventListener('click', () => {
+    //     const dialog = CreateLobbyDialog();
+    //     dialog.show();
+    // });
     const {user, api} = await authenticate().then(({user, api}) => {
         let name = user.name;
         gui.nickNameField.value = name;
