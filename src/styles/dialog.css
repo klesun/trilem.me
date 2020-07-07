@@ -197,23 +197,3 @@
     border-color: #eca4ff;
     color: #eca4ff;
 }
-
-.a-i-center {
-    align-items: center;
-}
-
-.a-i-right {
-    align-items: flex-end;
-}
-
-.j-c-right {
-    justify-content: flex-end;
-}
-
-.j-c-center {
-    justify-content: center;
-}
-
-.form-label {
-    padding-right: 16px;
-}

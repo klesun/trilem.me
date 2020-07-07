@@ -22,13 +22,13 @@ function createDialog ({title = 'Title', body = null, actions = null}) {
         text.innerHTML = title;
         titleBlock.appendChild(text);
 
-        blocks.forEach( val => {
+        blocks.forEach( (val, i) => {
             if (!val.data)
                 return;
 
             if (['string', 'number'].includes(typeof val.data)) {
                 val.block.innerHTML = val.data;
-            } else if (val.data.length) {
+            } else if (Array.isArray(val.data) && val.data.length) {
                 val.data.forEach( block => val.block.appendChild(block) );
             } else {
                 val.block.appendChild(val.data);

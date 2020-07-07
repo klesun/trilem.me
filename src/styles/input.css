@@ -1,4 +1,5 @@
 .input-root {
+    width: 100%;
     min-height: 24px;
     border: 1px solid var(--dialog-border);
     background: transparent;
@@ -40,8 +41,24 @@
 .select-wrapper {
     display: flex;
     flex-direction: column;
-    width: 190px;
+    width: 100%;
     position: relative;
+}
+
+.select-wrapper.trinity .select-header,
+.select-wrapper.trinity .select-body,
+.select-wrapper.trinity .select-arrow-icon {
+    border-color: cyan !important;
+}
+.select-wrapper.morpheus .select-header,
+.select-wrapper.morpheus .select-body,
+.select-wrapper.morpheus .select-arrow-icon {
+    border-color: yellow !important;
+}
+.select-wrapper.keanu .select-header,
+.select-wrapper.keanu .select-body,
+.select-wrapper.keanu .select-arrow-icon {
+    border-color: magenta !important;
 }
 
 .select-header {
@@ -88,6 +105,9 @@
 .select-value {
     flex-grow: 1;
     padding: 8px;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
 }
 
 .select-arrow-icon {
@@ -103,8 +123,8 @@
     border: 1px solid var(--dialog-border);
     border-top: none;
     position: absolute;
-    top: 36px;
-    width: calc(100% - 2px);
+    top: 38px;
+    width: 100%;
     display: none;
     opacity: 0;
     z-index: 1;

@@ -13,6 +13,7 @@
     margin: 0;
     padding: 0;
     border: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -334,6 +335,51 @@ body.show-dialog {
     color: #8d549c;
     font-weight: 400;
     font-size: 28px;
+}
+
+.player-col {
+    width: 200px;
+}
+
+.player-container {
+    height: 165px;
+    border: 1px solid white;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.player-title {
+    text-align: center;
+    padding: 8px 0;
+}
+
+.player-container.keanu {
+    border-color: magenta;
+}
+.player-container.morpheus {
+    border-color: yellow;
+}
+.player-container.trinity {
+    border-color: cyan;
+}
+
+.player-container.keanu .player-title {
+    color: magenta;
+}
+.player-container.morpheus .player-title {
+    color: yellow;
+}
+.player-container.trinity .player-title {
+    color: cyan;
+}
+.allow-player {
+    display: flex;
+    align-items: center;
+}
+.allow-player span {
+    flex-grow: 1;
 }
 
 .stats-block > span {
