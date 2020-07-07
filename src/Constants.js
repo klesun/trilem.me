@@ -17,6 +17,13 @@ export const BUFF_SKIP_TURN = 'SKIP_TURN';
 export const RESOURCES = [RES_WHEAT, RES_OIL, RES_GOLD];
 export const PLAYER_CODE_NAMES = [PLAYER_KEANU, PLAYER_TRINITY, PLAYER_MORPHEUS];
 
+export const AI_BEHAVIOUR = {
+    skipTurns: 'SKIP_TURNS',
+    pureRandom: 'PURE_RANDOM',
+    leasRecentTiles: 'LEAST_RECENT_TILES',
+    resourcePathfinding: 'RESOURCE_PATHFINDING',
+};
+
 export const RESOURCES_ICONS = {
     [RES_OIL]: {
         clear: '../assets/img/oil.svg',

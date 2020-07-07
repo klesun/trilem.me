@@ -1,0 +1,36 @@
+.a-i-center {
+    align-items: center;
+}
+
+.a-i-right {
+    align-items: flex-end;
+}
+
+.j-c-right {
+    justify-content: flex-end;
+}
+
+.j-c-center {
+    justify-content: center;
+}
+
+.form-label {
+    padding-right: 16px;
+}
+
+.m-r-md {
+    margin-right: 8px;
+}
+
+.m-l-md {
+    margin-left: 8px;
+}
+
+.j-c-sb {
+    justify-content: space-between;
+}
+
+.no-gutters-side-md {
+    margin-left: -8px;
+    margin-right: -8px;
+}
