@@ -155,7 +155,7 @@
 }
 
 .dialog-body.visible {
-    /* isn't important, like, a bad practice? is it even needed here, I think this rule would override the previous one anyway, as it's placed later */
+    /* I don't understand why, but this !important seems to be required for dropdown options to be rendered above the borders of the dialog... */
     opacity: 1 !important;
 }
 

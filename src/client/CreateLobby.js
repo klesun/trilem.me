@@ -2,9 +2,31 @@ import createDialog from "./Modal.js";
 import {Dom} from "./Dom.js";
 import Input from "./Input.js";
 import Select from "./Select.js";
-import {AI_BEHAVIOUR, PLAYER_CODE_NAMES} from "../Constants.js";
+import {
+    AI_LEAST_RECENT_TILES,
+    AI_PURE_RANDOM,
+    AI_RESOURCE_PATHFINDING,
+    AI_SKIP_TURNS,
+    PLAYER_CODE_NAMES
+} from "../Constants.js";
 
 let modal;
+
+const makeAiBaseSelect = (player) => {
+    const selectCmp = Select({
+        name: 'aiBase',
+        wrapperClass: player.toLocaleLowerCase(),
+        options: [
+            {value: AI_SKIP_TURNS, label: "No AI (Skip Turns)"},
+            {value: AI_PURE_RANDOM, label: "Pure Random"},
+            {value: AI_LEAST_RECENT_TILES, label: "Least Recent Tiles"},
+            {value: AI_RESOURCE_PATHFINDING, label: "Resource Pathfinding"},
+        ]
+    });
+    selectCmp.setValue(AI_LEAST_RECENT_TILES);
+
+    return selectCmp.context;
+};
 
 const getBody = () => {
     const columns = [
@@ -15,7 +37,7 @@ const getBody = () => {
         {
             label: 'Play as: ',
             input: Select({
-                name: "characterSelect",
+                name: "playAs",
                 options: PLAYER_CODE_NAMES.map( name => ({label: name, value: name}) ),
             }).context,
         }
@@ -44,21 +66,13 @@ const getBody = () => {
                     'data-owner': player,
                 }, [
                     Dom('div', {class: 'player-title'}, player),
-                    Select({
-                        name: 'aiBase',
-                        wrapperClass: player.toLocaleLowerCase(),
-                        options: [
-                            {value: AI_BEHAVIOUR.skipTurns, label: "No AI (Skip Turns)"},
-                            {value: AI_BEHAVIOUR.pureRandom, label: "Pure Random"},
-                            {value: AI_BEHAVIOUR.leasRecentTiles, label: "Least Recent Tiles"},
-                            {value: AI_BEHAVIOUR.resourcePathfinding, label: "Resource Pathfinding"},
-                        ]
-                    }).context,
+                    makeAiBaseSelect(player),
                     Dom('label', {class: 'allow-player'}, [
                         Dom('span'),
                         Dom('input', {
                             type: 'checkbox',
-                            name: 'allowHuman',
+                            name: 'allowPlaceHuman',
+                            checked: 'checked',
                         }, "Allow Players to Join")
                     ]),
                 ]),
@@ -74,11 +88,11 @@ const getActions = (api, reloadGame, form) => {
             onclick: () => {
                 const data = {
                     name: form.querySelector('[name="lobbyName"]').value,
-                    playAs: form.querySelector('[name="characterSelect"]').value,
+                    playAs: form.querySelector('[name="playAs"]').value,
                     playerSlots: [...form.querySelectorAll('.player-container')].map( block => ({
                         codeName: block.dataset.owner,
                         aiBase: block.querySelector('[name="aiBase"]').value,
-                        allowPlaceHuman: block.querySelector('[name="allowHuman"]').checked,
+                        allowPlaceHuman: block.querySelector('[name="allowPlaceHuman"]').checked,
                     }))
                 };
 

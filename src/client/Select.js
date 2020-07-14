@@ -67,6 +67,9 @@ const Select = props => {
 
     return {
         context: wrapper,
+        setValue: value => options
+            .filter(opt => opt.value === value)
+            .forEach(updateValue),
         getValue: _getValue,
     };
 };
