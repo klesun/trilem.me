@@ -89,9 +89,6 @@ body.show-dialog {
 .lobby-list-block * {
     color: var(--main-text-color);
 }
-.create-lobby-block * {
-    color: var(--main-text-color);
-}
 .flex-remainder-wrap {
     padding: 12px;
 }
@@ -445,18 +442,6 @@ body.show-dialog {
     background-color: #557ac9;
 }
 
-label[for="show-create-lobby-form"] {
-    cursor: pointer;
-}
-#show-create-lobby-form {
-    display: none;
-}
-#show-create-lobby-form:not(:checked) + .create-lobby-form-holder {
-    display: none;
-}
-.create-lobby-form-holder select, .create-lobby-form-holder option, .create-lobby-form-holder input {
-    color: black;
-}
 
 tr.turn-pending {
     background-color: #213b5d;

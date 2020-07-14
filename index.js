@@ -15,8 +15,6 @@ const gui = {
     lobbyList: document.querySelector('tbody.lobby-list'),
     nickNameField: document.querySelector('input.nick-name-field'),
     gameRules: document.querySelector('.game-rules'),
-    createLobbyFormFlag: document.querySelector('#show-create-lobby-form'),
-    createLobbyForm: document.querySelector('form.create-lobby'),
     soundSwitches: {
         enabled: document.getElementById('sound-svg-enabled'),
         disabled: document.getElementById('sound-svg-disabled'),
@@ -147,31 +145,10 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
         whenGameSetup = setupGame({user, api, lobby, board});
     };
 
-    document.querySelector('[for="show-create-lobby-form"]').addEventListener('click', () => {
+    document.querySelector('button.create-lobby').addEventListener('click', () => {
         const dialog = CreateLobbyDialog({user, api, reloadGame});
         dialog.show();
         dialog.form.elements['name'].focus();
-    });
-
-    gui.createLobbyForm.addEventListener('submit', evt => {
-        evt.preventDefault();
-        const form = evt.target;
-        /** @type {CreateLobbyParams} */
-        const lobbyData = {
-            name: form.elements['name'].value,
-            playerSlots: [...form.querySelectorAll('[data-owner]')]
-                .map(slotForm => ({
-                    codeName: slotForm.getAttribute('data-owner'),
-                    aiBase: slotForm.querySelector('[name="aiBase"]').value,
-                    allowPlaceHuman: slotForm.querySelector('[name="allowPlaceHuman"]').checked,
-                })),
-        };
-        api.createLobby(lobbyData)
-            .then(result => {
-                gui.createLobbyFormFlag.checked = false;
-                reloadGame(result);
-            })
-            .catch(exc => alert('Failed to create lobby - ' + exc));
     });
 
     api.getLobby().then(reloadGame);
