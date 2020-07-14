@@ -7,10 +7,13 @@ function createDialog ({title = 'Title', body = null, actions = null}) {
     const actionsBlock = Dom('div', {class: 'dialog-actions'});
 
     // dialog template
-    const backdrop = Dom('div', {class: 'dialog-backdrop'});
-    const contentBlock = Dom('div', {class: 'dialog-content'}, [titleBlock, bodyBlock, actionsBlock]);
-    const container = Dom('div', {class: 'dialog-container'}, [contentBlock]);
-    const dialog = Dom('div', {class: 'dialog-wrapper'}, [backdrop, container]);
+    const contentForm = Dom('form', {}, [titleBlock, bodyBlock, actionsBlock]);
+    const contentBlock = Dom('div', {class: 'dialog-content'}, [contentForm]);
+
+    const dialog = Dom('div', {class: 'dialog-wrapper'}, [
+        Dom('div', {class: 'dialog-backdrop'}),
+        Dom('div', {class: 'dialog-container'}, [contentBlock])],
+    );
 
     const fillData = () => {
         if (typeof title !== "string") {
@@ -61,6 +64,7 @@ function createDialog ({title = 'Title', body = null, actions = null}) {
 
     return {
         context: dialog,
+        form: contentForm,
         show: _show,
         destroy: _destroy,
     }

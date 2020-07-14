@@ -13,6 +13,7 @@ import {
 let modal;
 
 const makeAiBaseSelect = (player) => {
+    // грустно что это не нативный селект и на него клавиатурой фокусироваться нельзя ;c
     const selectCmp = Select({
         name: 'aiBase',
         wrapperClass: player.toLocaleLowerCase(),
@@ -44,7 +45,7 @@ const getBody = () => {
         // }
     ];
 
-    return Dom('form', {}, [
+    return Dom('div', {}, [
         Dom('div', {
             class: 'col-grid',
             style: 'min-width: 465px',
@@ -85,44 +86,42 @@ const getBody = () => {
     ]);
 };
 
-const getActions = (api, reloadGame, form) => {
-    return Dom('div', {class: 'row-grid j-c-right'}, [
-        Dom('button', {
-            class: 'form-btn',
-            onclick: () => {
-                const data = {
-                    name: form.querySelector('[name="name"]').value,
-                    //playAs: form.querySelector('[name="playAs"]').value,
-                    playerSlots: [...form.querySelectorAll('.player-container')].map( block => ({
-                        codeName: block.dataset.owner,
-                        aiBase: block.querySelector('[name="aiBase"]').value,
-                        allowPlaceHuman: block.querySelector('[name="allowPlaceHuman"]').checked,
-                    }))
-                };
-
-                api.createLobby(data)
-                    .then(result => {
-                        reloadGame(result);
-                        if (modal) {
-                            modal.destroy();
-                        }
-                    })
-                    .catch(exc => alert('Failed to create lobby - ' + exc));
-            },
-        }, "GO"),
-    ]);
+const collectData = form => {
+    return {
+        name: form.querySelector('[name="name"]').value,
+        //playAs: form.querySelector('[name="playAs"]').value,
+        playerSlots: [...form.querySelectorAll('.player-container')].map( block => ({
+            codeName: block.dataset.owner,
+            aiBase: block.querySelector('[name="aiBase"]').value,
+            allowPlaceHuman: block.querySelector('[name="allowPlaceHuman"]').checked,
+        }))
+    };
 };
 
 const CreateLobbyDialog = ({user, api, reloadGame}) => {
-    const form = getBody();
-    form.elements['name'].value = 'by ' + user.name;
+    const body = getBody();
     const config = {
         title: 'CREATE LOBBY',
-        body: form,
-        actions: getActions(api, reloadGame, form),
+        body: body,
+        actions: Dom('div', {class: 'row-grid j-c-right'}, [
+            Dom('button', {class: 'form-btn'}, "GO"),
+        ]),
     };
-
     modal = createDialog(config);
+    modal.form.elements['name'].value = 'by ' + user.name;
+    modal.form.addEventListener('submit', evt => {
+        evt.preventDefault();
+        const data = collectData(modal.form);
+        api.createLobby(data)
+            .then(result => {
+                reloadGame(result);
+                if (modal) {
+                    modal.destroy();
+                }
+            })
+            .catch(exc => alert('Failed to create lobby - ' + exc));
+    });
+
 
     return modal;
 };

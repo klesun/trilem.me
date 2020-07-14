@@ -5,7 +5,7 @@ import {Dom} from "./src/client/Dom.js";
 import StartGame from "./src/client/StartGame.js";
 import Hideable from "./src/client/Hideable.js";
 import FightSessionAdapter from "./src/client/FightSessionAdapter.js";
-import CreateLobbyDialog from "./src/client/CreateLobby.js";
+import CreateLobbyDialog from "./src/client/CreateLobbyDialog.js";
 
 const gui = {
     mainGame: document.querySelector('.main-game'),
@@ -150,6 +150,7 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
     document.querySelector('[for="show-create-lobby-form"]').addEventListener('click', () => {
         const dialog = CreateLobbyDialog({user, api, reloadGame});
         dialog.show();
+        dialog.form.elements['name'].focus();
     });
 
     gui.createLobbyForm.addEventListener('submit', evt => {
