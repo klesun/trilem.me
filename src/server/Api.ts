@@ -6,6 +6,7 @@ import {BoardState, BoardUuid, CreateLobbyParams, Lobby, PlayerCodeName, PlayerI
 import {PLAYER_CODE_NAMES, PLAYER_KEANU, PLAYER_MORPHEUS, PLAYER_TRINITY} from "../Constants";
 import CheckAiTurns from "../common/CheckAiTurns";
 import {Socket} from "socket.io";
+import bip39 from './../common/bip39.js';
 
 const Rej = require('klesun-node-tools/src/Rej.js');
 const {coverExc} = require('klesun-node-tools/src/Lang.js');
@@ -57,7 +58,7 @@ const sendStateToSocket = ({boardState, playerId}: {
 
 const addUserWithToken = (authToken: string) => {
     const id = users.length + 1;
-    const name = 'anon' + id;
+    const name = bip39.generateUserName(id);
     users.push({name, id});
     authTokenToUserId[authToken] = id;
     return {name, id};
