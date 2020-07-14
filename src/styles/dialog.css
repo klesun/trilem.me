@@ -129,9 +129,6 @@
 .dialog-title {
     flex: 0 0 auto;
     padding: 12px 24px;
-    opacity: 0;
-    animation: fadeContent 100ms ease-in forwards;
-    animation-delay: 340ms;
 }
 
 .dialog-title-text {
@@ -141,22 +138,30 @@
 .dialog-body {
     flex: 1 1 auto;
     padding: 8px 24px;
-    opacity: 0;
-    animation: fadeContent 100ms ease-in forwards;
-    animation-delay: 340ms;
     color: white;
+}
+.dialog-title, .dialog-body, .dialog-actions {
+    opacity: 0;
+    animation: fadeContent 340ms ease-in forwards;
+    /**
+     * I commented this because this delay does not add value to the UX IMHO,
+     * it feels as if it is just taking a bit of your time for no apparent reason
+     *
+     * if you want to animate content together with stroke, maybe it would look much better if
+     * you just started fade-in instantly, but just gave it more time? then user would not have
+     * the impression that rendering just stops at some point
+     */
+    /*animation-delay: 340ms;*/
 }
 
 .dialog-body.visible {
+    /* isn't important, like, a bad practice? is it even needed here, I think this rule would override the previous one anyway, as it's placed later */
     opacity: 1 !important;
 }
 
 .dialog-actions {
-    opacity: 0;
     flex: 0 0 auto;
     padding: 12px 24px;
-    animation: fadeContent 100ms ease-in forwards;
-    animation-delay: 340ms;
 }
 
 .col-grid {
