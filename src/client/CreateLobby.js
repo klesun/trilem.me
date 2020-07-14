@@ -80,35 +80,31 @@ const getBody = () => {
 };
 
 const getActions = (api, reloadGame) => {
-    const container = Dom('div', {class: 'row-grid j-c-right'});
-    const createBtn = Dom('button', {class: 'form-btn'});
+    return Dom('div', {class: 'row-grid j-c-right'}, [
+        Dom('button', {
+            class: 'form-btn',
+            onclick: () => {
+                const data = {
+                    name: form.querySelector('[name="lobbyName"]').value,
+                    playAs: form.querySelector('[name="characterSelect"]').value,
+                    playerSlots: [...form.querySelectorAll('.player-container')].map( block => ({
+                        codeName: block.dataset.owner,
+                        aiBase: block.querySelector('[name="aiBase"]').value,
+                        allowPlaceHuman: block.querySelector('[name="allowHuman"]').checked,
+                    }))
+                };
 
-    createBtn.innerHTML = "GO";
-
-    createBtn.onclick = () => {
-        const data = {
-            name: form.querySelector('[name="lobbyName"]').value,
-            playAs: form.querySelector('[name="characterSelect"]').value,
-            playerSlots: [...form.querySelectorAll('.player-container')].map( block => ({
-                codeName: block.dataset.owner,
-                aiBase: block.querySelector('[name="aiBase"]').value,
-                allowPlaceHuman: block.querySelector('[name="allowHuman"]').checked,
-            }))
-        };
-
-        api.createLobby(data)
-            .then(result => {
-                reloadGame(result);
-                if (modal) {
-                    modal.destroy();
-                }
-            })
-            .catch(exc => alert('Failed to create lobby - ' + exc));
-    };
-
-    container.appendChild(createBtn);
-
-    return container;
+                api.createLobby(data)
+                    .then(result => {
+                        reloadGame(result);
+                        if (modal) {
+                            modal.destroy();
+                        }
+                    })
+                    .catch(exc => alert('Failed to create lobby - ' + exc));
+            },
+        }, "GO"),
+    ]);
 };
 
 const CreateLobbyDialog = (api, reloadGame) => {
