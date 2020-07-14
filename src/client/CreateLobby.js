@@ -32,15 +32,16 @@ const getBody = () => {
     const columns = [
         {
             label: 'Lobby Name: ',
-            input: Input({autocorrect: "off", spellcheck: false, name: 'lobbyName'}),
+            input: Input({autocorrect: "off", spellcheck: false, name: 'name'}),
         },
-        {
-            label: 'Play as: ',
-            input: Select({
-                name: "playAs",
-                options: PLAYER_CODE_NAMES.map( name => ({label: name, value: name}) ),
-            }).context,
-        }
+        // not implemented yet
+        // {
+        //     label: 'Play as: ',
+        //     input: Select({
+        //         name: "playAs",
+        //         options: PLAYER_CODE_NAMES.map( name => ({label: name, value: name}) ),
+        //     }).context,
+        // }
     ];
 
     return Dom('form', {}, [
@@ -66,14 +67,17 @@ const getBody = () => {
                     'data-owner': player,
                 }, [
                     Dom('div', {class: 'player-title'}, player),
-                    makeAiBaseSelect(player),
+                    Dom('div', {}, [
+                        Dom('div', {}, 'AI Base'),
+                        makeAiBaseSelect(player),
+                    ]),
                     Dom('label', {class: 'allow-player'}, [
-                        Dom('span'),
+                        Dom('span', {}, "Allow Players to Join"),
                         Dom('input', {
                             type: 'checkbox',
                             name: 'allowPlaceHuman',
                             checked: 'checked',
-                        }, "Allow Players to Join")
+                        })
                     ]),
                 ]),
             ]))),
@@ -87,8 +91,8 @@ const getActions = (api, reloadGame, form) => {
             class: 'form-btn',
             onclick: () => {
                 const data = {
-                    name: form.querySelector('[name="lobbyName"]').value,
-                    playAs: form.querySelector('[name="playAs"]').value,
+                    name: form.querySelector('[name="name"]').value,
+                    //playAs: form.querySelector('[name="playAs"]').value,
                     playerSlots: [...form.querySelectorAll('.player-container')].map( block => ({
                         codeName: block.dataset.owner,
                         aiBase: block.querySelector('[name="aiBase"]').value,
@@ -109,8 +113,9 @@ const getActions = (api, reloadGame, form) => {
     ]);
 };
 
-const CreateLobbyDialog = (api, reloadGame) => {
+const CreateLobbyDialog = ({user, api, reloadGame}) => {
     const form = getBody();
+    form.elements['name'].value = 'by ' + user.name;
     const config = {
         title: 'CREATE LOBBY',
         body: form,

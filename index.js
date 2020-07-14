@@ -148,7 +148,7 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
     };
 
     document.querySelector('[for="show-create-lobby-form"]').addEventListener('click', () => {
-        const dialog = CreateLobbyDialog(api, reloadGame);
+        const dialog = CreateLobbyDialog({user, api, reloadGame});
         dialog.show();
     });
 
