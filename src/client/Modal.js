@@ -1,16 +1,16 @@
 import {Dom} from "./Dom.js";
 
 function createDialog ({title = 'Title', body = null, actions = null}) {
-    // dialog template
-    const backdrop = Dom('div', {class: 'dialog-backdrop'});
-    const contentBlock = Dom('div', {class: 'dialog-content'});
-    const container = Dom('div', {class: 'dialog-container'}, [contentBlock]);
-    const dialog = Dom('div', {class: 'dialog-wrapper'}, [backdrop, container]);
-
     // title, body, actions
     const titleBlock = Dom('div', {class: 'dialog-title'});
     const bodyBlock = Dom('div', {class: 'dialog-body'});
     const actionsBlock = Dom('div', {class: 'dialog-actions'});
+
+    // dialog template
+    const backdrop = Dom('div', {class: 'dialog-backdrop'});
+    const contentBlock = Dom('div', {class: 'dialog-content'}, [titleBlock, bodyBlock, actionsBlock]);
+    const container = Dom('div', {class: 'dialog-container'}, [contentBlock]);
+    const dialog = Dom('div', {class: 'dialog-wrapper'}, [backdrop, container]);
 
     const fillData = () => {
         if (typeof title !== "string") {
@@ -58,8 +58,6 @@ function createDialog ({title = 'Title', body = null, actions = null}) {
     }
 
     fillData();
-
-    [titleBlock, bodyBlock, actionsBlock].forEach( block => contentBlock.appendChild(block) );
 
     return {
         context: dialog,
