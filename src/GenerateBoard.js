@@ -31,24 +31,52 @@ const generateTileModifiers = (balance) => {
     return [];
 };
 
+const makeStartPositions = (totalRows) => {
+    if (totalRows % 3 === 1) {
+        // ▼ ▼
+        //  ▼
+        const maxCols = totalRows * 2 - 2;
+        const centerCol = maxCols / 3;
+        const centerRow = maxCols / 3;
+        return {
+            [PLAYER_KEANU]: {col: centerCol - 1, row: centerRow},
+            [PLAYER_TRINITY]: {col: centerCol + 1, row: centerRow},
+            [PLAYER_MORPHEUS]: {col: centerCol + 1, row: centerRow + 1},
+        }
+    } else if (totalRows % 3 === 2) {
+        //  ▲
+        // ▲ ▲
+        const maxCols = totalRows * 2 - 1;
+        const centerCol = maxCols / 3;
+        const centerRow = maxCols / 3;
+        return {
+            [PLAYER_KEANU]: {col: centerCol - 1, row: centerRow - 1},
+            [PLAYER_TRINITY]: {col: centerCol - 1, row: centerRow},
+            [PLAYER_MORPHEUS]: {col: centerCol + 1, row: centerRow},
+        }
+    } else {
+        // ▲ ▲
+        //  ▲
+        const topLeftCol = totalRows * 2 / 3 - 1;
+        const topLeftRow = totalRows * 2 / 3 - 1;
+        return {
+            [PLAYER_KEANU]: {col: topLeftCol - 1, row: topLeftRow},
+            [PLAYER_TRINITY]: {col: topLeftCol + 1, row: topLeftRow},
+            [PLAYER_MORPHEUS]: {col: topLeftCol + 1, row: topLeftRow + 1},
+        }
+    }
+};
+
 /** @return {BoardState} */
-const GenerateBoard = ({
-    totalRows = 16,
-    balance = DefaultBalance(),
-} = {}) => {
+const GenerateBoard = (balance = DefaultBalance()) => {
     const uuid = uuidv4();
-    const playerToPosition = {
-        // TODO: calc positions dynamically based on board size
-        [PLAYER_KEANU]: {col: 9, row: 10},
-        [PLAYER_TRINITY]: {col: 11, row: 10},
-        [PLAYER_MORPHEUS]: {col: 11, row: 11},
-    };
+    const playerToPosition = makeStartPositions(balance.TOTAL_ROWS);
     const playerToBuffs = {};
     for (const codeName of PLAYER_CODE_NAMES) {
         playerToBuffs[codeName] = [];
     }
     const tiles = [];
-    for (let row = 0; row < totalRows; ++row) {
+    for (let row = 0; row < balance.TOTAL_ROWS; ++row) {
         for (let col = 0; col < row * 2 + 1; ++col) {
             const stander = Object.keys(playerToPosition)
                 .find(k => {
@@ -71,7 +99,7 @@ const GenerateBoard = ({
     const totalTurns = totalCells;
     return {
         uuid: uuid,
-        totalRows: totalRows,
+        totalRows: balance.TOTAL_ROWS,
         totalTurns: totalTurns,
 
         turnsLeft: totalTurns,
