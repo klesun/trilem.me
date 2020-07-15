@@ -7,6 +7,7 @@ import {PLAYER_CODE_NAMES, PLAYER_KEANU, PLAYER_MORPHEUS, PLAYER_TRINITY} from "
 import CheckAiTurns from "../common/CheckAiTurns";
 import {Socket} from "socket.io";
 import bip39 from './../common/bip39.js';
+import DefaultBalance from "../DefaultBalance.js";
 
 const Rej = require('klesun-node-tools/src/Rej.js');
 const {coverExc} = require('klesun-node-tools/src/Lang.js');
@@ -17,8 +18,8 @@ const users: User[] = [];
 
 const boardUuidToLobby: Record<BoardUuid, Lobby> = {};
 
-const setupBoard = () => {
-    const board = GenerateBoard();
+const setupBoard = (balance = DefaultBalance()) => {
+    const board = GenerateBoard(balance);
     uuidToBoard[board.uuid] = board;
     return board;
 };
@@ -136,7 +137,7 @@ const leaveAllLobbies = (user: User) => {
 const createLobbyBy = async ({user, params}: {
     user: User, params: CreateLobbyParams,
 }) => {
-    const board = setupBoard();
+    const board = setupBoard(params.balance);
     const players = <Record<PlayerCodeName, PlayerId>>{
         [PLAYER_KEANU]: user.id,
     };
@@ -210,6 +211,7 @@ const getLobby = async (rq: http.IncomingMessage) => {
                     {aiBase: 'LEAST_RECENT_TILES', codeName: PLAYER_TRINITY},
                     {aiBase: 'LEAST_RECENT_TILES', codeName: PLAYER_MORPHEUS},
                 ],
+                balance: DefaultBalance(),
             }
         })
     }
@@ -315,7 +317,7 @@ const routes: Record<string, (rq: http.IncomingMessage) => Promise<SerialData> |
 
     // no auth API-s
     '/api/getBoardState': getBoardState,
-    '/api/setupBoard': setupBoard,
+    '/api/setupBoard': () => setupBoard(),
     '/api/getLobbyList': getLobbyList,
     '/api/getPossibleTurns': getPossibleTurns,
 };

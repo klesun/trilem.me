@@ -9,6 +9,7 @@ import {
     AI_SKIP_TURNS,
     PLAYER_CODE_NAMES
 } from "../Constants.js";
+import DefaultBalance from './../DefaultBalance.js';
 
 let modal;
 
@@ -34,6 +35,10 @@ const getBody = () => {
         {
             label: 'Lobby Name: ',
             input: Input({autocorrect: "off", spellcheck: false, name: 'name'}),
+        },
+        {
+            label: 'Board Size: ',
+            input: Input({type: 'number', min: 5, max: 50, value: DefaultBalance().TOTAL_ROWS, name: 'TOTAL_ROWS'}),
         },
         // not implemented yet
         // {
@@ -94,7 +99,10 @@ const collectData = form => {
             codeName: block.dataset.owner,
             aiBase: block.querySelector('[name="aiBase"]').value,
             allowPlaceHuman: block.querySelector('[name="allowPlaceHuman"]').checked,
-        }))
+        })),
+        balance: {...DefaultBalance(),
+            TOTAL_ROWS: form.elements['TOTAL_ROWS'].value,
+        },
     };
 };
 

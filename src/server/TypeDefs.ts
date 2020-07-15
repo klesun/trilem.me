@@ -9,6 +9,7 @@ import {
     RES_OIL,
     RES_WHEAT
 } from "../Constants";
+import DefaultBalance from "../DefaultBalance";
 
 /** random hash string unique identifier of a board session */
 export type BoardUuid = string;
@@ -55,6 +56,7 @@ export interface AiPlayerSlot {
 export interface CreateLobbyParams {
     name: string,
     playerSlots: AiPlayerSlot[],
+    balance: ReturnType<typeof DefaultBalance>,
 }
 
 export type Lobby = CreateLobbyParams & {
