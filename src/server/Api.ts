@@ -62,7 +62,7 @@ const addUserWithToken = (authToken: string) => {
     const name = bip39.generateUserName(id);
     users.push({name, id});
     authTokenToUserId[authToken] = id;
-    return {name, id};
+    return {name, id, isNew: true};
 };
 
 const generateAuthToken = () => {
