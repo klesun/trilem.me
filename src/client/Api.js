@@ -23,8 +23,6 @@ const Api = () => {
     return {
         /** @return {Promise<GetLobbyListResult>} */
         getLobbyList: () => get('/api/getLobbyList'),
-        /** @return {Promise<BoardState>} */
-        getBoardState: ({uuid = ''}) => get('/api/getBoardState', {uuid}),
         getPossibleTurns: (params) => get('/api/getPossibleTurns', params),
     };
 };

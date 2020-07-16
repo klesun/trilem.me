@@ -1,7 +1,7 @@
 import {NO_RES_DEAD_SPACE, NO_RES_EMPTY, RES_GOLD, RES_OIL, RES_WHEAT} from "./Constants.js";
 
 const DefaultBalance = () => ({
-    TOTAL_ROWS: 16,
+    TOTAL_ROWS: 14,
     MODIFIER_WEIGHTS: {
         [RES_GOLD]: 2,
         [RES_OIL]: 6,

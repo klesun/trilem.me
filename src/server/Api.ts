@@ -115,15 +115,15 @@ const changeUserName = async (rq: http.IncomingMessage) => {
     return Promise.resolve(user);
 };
 
-const leaveLobby = (user: User, lobby: Lobby) => {
-    let lobbiesLeft = 0;
+const abandonLobby = (user: User, lobby: Lobby) => {
+    let lobbiesAbandoned = 0;
     const boardUuid = lobby.boardUuid;
     const codeNames: PlayerCodeName[] = Object
         .keys(boardUuidToLobby[boardUuid].players)
         .map(k => <PlayerCodeName>k);
     for (const codeName of codeNames) {
         if (lobby.players[codeName] === user.id) {
-            ++lobbiesLeft;
+            ++lobbiesAbandoned;
             let boardState = uuidToBoard[lobby.boardUuid];
             delete lobby.players[codeName];
             // finish all pending turns after leaving the lobby
@@ -136,15 +136,15 @@ const leaveLobby = (user: User, lobby: Lobby) => {
     if (Object.keys(boardUuidToLobby[boardUuid].players).length === 0) {
         delete boardUuidToLobby[boardUuid];
     }
-    return lobbiesLeft;
+    return lobbiesAbandoned;
 };
 
-const leaveAllLobbies = (user: User) => {
-    let lobbiesLeft = 0;
+const abandonAllLobbies = (user: User) => {
+    let lobbiesAbandoned = 0;
     for (const [boardUuid, lobby] of Object.entries(boardUuidToLobby)) {
-        lobbiesLeft += leaveLobby(user, lobby);
+        lobbiesAbandoned += abandonLobby(user, lobby);
     }
-    return lobbiesLeft;
+    return lobbiesAbandoned;
 };
 
 const createLobbyBy = async ({user, params}: {
@@ -167,7 +167,7 @@ const createLobbyBy = async ({user, params}: {
 const createLobby = async (rq: http.IncomingMessage) => {
     const {authToken, ...params} = await readJson(rq);
     const user = await getUserByToken(authToken);
-    leaveAllLobbies(user);
+    abandonAllLobbies(user);
     return createLobbyBy({user, params});
 };
 
@@ -181,7 +181,7 @@ const joinLobbyBy = async ({user, codeName, lobby}: {
     if (takenUserId) {
         return Rej.Locked('Slot ' + codeName + ' is already taken by player #' + takenUserId);
     }
-    leaveAllLobbies(user);
+    abandonAllLobbies(user);
     lobby.players[<PlayerCodeName>codeName] = user.id;
     return {lobby, board: uuidToBoard[lobby.boardUuid]};
 };
@@ -204,7 +204,7 @@ const getLobby = async (rq: http.IncomingMessage) => {
         if (participantIds.includes(user.id)) {
             const board = uuidToBoard[boardUuid];
             if (board.turnsLeft <= 0) {
-                leaveLobby(user, lobby);
+                abandonLobby(user, lobby);
             } else {
                 return {lobby, board};
             }
@@ -271,49 +271,11 @@ const skipTurn = async (rq: http.IncomingMessage) => {
     return boardState;
 };
 
-const getBoardState = (rq: http.IncomingMessage) => {
-    const urlObj = new URL('https://zhopa.com' + rq.url).searchParams;
-    const uuid = urlObj.get('uuid');
-    if (uuid) {
-        if (uuidToBoard[uuid]) {
-            return uuidToBoard[uuid];
-        } else {
-            return Rej.NotFound('Board ' + uuid + ' not found');
-        }
-    }
-    const firstBoard = Object.values(uuidToBoard)[0];
-    if (firstBoard) {
-        if (firstBoard.turnsLeft <= 0) {
-            delete uuidToBoard[firstBoard.uuid];
-        } else {
-            return firstBoard;
-        }
-    }
-    return setupBoard();
-};
-
 const getLobbyList = (rq: http.IncomingMessage) => ({
     boardUuidToLobby: boardUuidToLobby,
     uuidToBoard: uuidToBoard,
     users: users,
 });
-
-const getPossibleTurns = (rq: http.IncomingMessage) => {
-    const {searchParams} = new URL('https://zhopa.com' + rq.url);
-    const uuid = searchParams.get('uuid');
-    const codeName = searchParams.get('codeName');
-    if (!uuid) {
-        return Rej.BadRequest('uuid GET parameter is required');
-    } else if (!codeName || !PLAYER_CODE_NAMES.includes(codeName)) {
-        return Rej.BadRequest('codeName GET parameter must be one of ' + PLAYER_CODE_NAMES.join(', '));
-    }
-    const boardState = uuidToBoard[uuid];
-    if (!boardState) {
-        return Rej.NotFound('Board ' + uuid + ' not found');
-    }
-    const fight = FightSession({boardState});
-    return fight.getPossibleTurns(codeName);
-};
 
 export type GetLobbyListResult = ReturnType<typeof getLobbyList>;
 
@@ -329,10 +291,8 @@ const routes: Record<string, (rq: http.IncomingMessage) => Promise<SerialData> |
     '/api/skipTurn': skipTurn,
 
     // no auth API-s
-    '/api/getBoardState': getBoardState,
     '/api/setupBoard': () => setupBoard(),
     '/api/getLobbyList': getLobbyList,
-    '/api/getPossibleTurns': getPossibleTurns,
 };
 
 const Api = {
@@ -350,8 +310,8 @@ setInterval(() => {
         const afkMs = Date.now() - activityMs;
         if (afkMs > MAX_AFK_MS) {
             const user = users[userId - 1];
-            const lobbiesLeft = leaveAllLobbies(user);
-            if (lobbiesLeft > 0) {
+            const lobbiesAbandoned = abandonAllLobbies(user);
+            if (lobbiesAbandoned > 0) {
                 sendToSocket(userId, {
                     messageType: 'kickedFromLobbyForAfk',
                     afkMs, maxAfkMs: MAX_AFK_MS,

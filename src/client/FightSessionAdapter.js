@@ -38,23 +38,12 @@ const FightSessionAdapter = ({initialBoardState, api}) => {
         }
     };
 
-    const getPossibleTurns = async (codeName) => {
-        const params = {
-            uuid: initialBoardState.uuid,
-            codeName: codeName,
-        };
-        if (!boardState.hotSeat) {
-            return Api().getPossibleTurns(params);
-        } else {
-            return FightSession({boardState})
-                .getPossibleTurns(codeName);
-        }
-    };
-
     return {
         makeTurn: makeTurn,
         skipTurn: skipTurn,
-        getPossibleTurns: getPossibleTurns,
+        getPossibleTurns: (codeName) =>
+            FightSession({boardState})
+                .getPossibleTurns(codeName),
         getState: () => boardState,
         setState: (newState) => boardState = newState,
     };
