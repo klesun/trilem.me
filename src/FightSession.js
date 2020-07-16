@@ -20,12 +20,8 @@ const FightSession = ({
         return boardState.tiles.find(t => t.col == col && t.row == row);
     };
 
-    /** @return {Tile[]} */
-    const getPossibleTurns = (codeName) => {
-        const oldPos = boardState.playerToPosition[codeName];
-        if (!oldPos) {
-            return [];
-        }
+    /** @param {Tile} oldPos */
+    const getNeighborTiles = (oldPos) => {
         const isEven = oldPos.col % 2 === 0;
         return [
             {col: oldPos.col + 1, row: oldPos.row},
@@ -33,18 +29,27 @@ const FightSession = ({
             isEven
                 ? {col: oldPos.col + 1, row: oldPos.row + 1}
                 : {col: oldPos.col - 1, row: oldPos.row - 1},
-        ].filter(
-            turnPos => !Object.values(boardState.playerToPosition)
-                .some(playerPos => {
-                    return playerPos.col == turnPos.col
-                        && playerPos.row == turnPos.row;
-                })
-        ).flatMap(pos => {
+        ].flatMap(pos => {
             const tile = getTile(pos);
             return tile ? [tile] : [];
         }).filter(tile => {
             return !tile.modifiers.includes(NO_RES_DEAD_SPACE);
         })
+    };
+
+    /** @return {Tile[]} */
+    const getPossibleTurns = (codeName) => {
+        const oldPos = boardState.playerToPosition[codeName];
+        if (!oldPos) {
+            return [];
+        }
+        return getNeighborTiles(oldPos).filter(
+            turnPos => !Object.values(boardState.playerToPosition)
+                .some(playerPos => {
+                    return playerPos.col == turnPos.col
+                        && playerPos.row == turnPos.row;
+                })
+        );
     };
 
     const checkTurnPlayersLeft = () => {
@@ -161,6 +166,7 @@ const FightSession = ({
 
     return {
         getPossibleTurns: getPossibleTurns,
+        getNeighborTiles: getNeighborTiles,
         skipTurn: skipTurn,
         makeTurn: makeTurn,
     };

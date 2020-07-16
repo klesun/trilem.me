@@ -3,9 +3,9 @@ import {NO_RES_DEAD_SPACE, NO_RES_EMPTY, RES_GOLD, RES_OIL, RES_WHEAT} from "./C
 const DefaultBalance = () => ({
     TOTAL_ROWS: 14,
     MODIFIER_WEIGHTS: {
-        [RES_GOLD]: 2,
-        [RES_OIL]: 6,
-        [RES_WHEAT]: 18,
+        [RES_GOLD]: 1.5,
+        [RES_OIL]: 5,
+        [RES_WHEAT]: 15,
         [NO_RES_DEAD_SPACE]: 15,
         [NO_RES_EMPTY]: 100,
     },
