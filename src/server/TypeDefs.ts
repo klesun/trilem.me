@@ -13,7 +13,8 @@ import DefaultBalance from "../DefaultBalance";
 
 /** random hash string unique identifier of a board session */
 export type BoardUuid = string;
-export type PlayerId = number;
+/** 1-based incremental index of player */
+export type UserId = number;
 export type PlayerCodeName = typeof PLAYER_KEANU | typeof PLAYER_TRINITY | typeof PLAYER_MORPHEUS;
 export type Resource = typeof RES_WHEAT | typeof RES_OIL | typeof RES_GOLD;
 export type TileModifier = Resource | typeof NO_RES_DEAD_SPACE | typeof MOD_WALL;
@@ -62,7 +63,7 @@ export interface CreateLobbyParams {
 export type Lobby = CreateLobbyParams & {
     boardUuid: BoardUuid,
     /** mapping of the human players present in the game */
-    players: Record<PlayerCodeName, PlayerId>,
+    players: Record<PlayerCodeName, UserId>,
     /**
      * list of moves made by players through the game, supposedly should be enough
      * to reconstruct whole game from start, currently only used for AI heuristics
@@ -72,7 +73,7 @@ export type Lobby = CreateLobbyParams & {
 
 export interface User {
     name: string,
-    id: PlayerId,
+    id: UserId,
 }
 
 export type Primitive = number | string | boolean;

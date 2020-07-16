@@ -2,7 +2,7 @@ import GenerateBoard from "../GenerateBoard";
 import * as http from "http";
 import {randomBytes} from "crypto";
 import FightSession from "../FightSession";
-import {BoardState, BoardUuid, CreateLobbyParams, Lobby, PlayerCodeName, PlayerId, SerialData, User} from "./TypeDefs";
+import {BoardState, BoardUuid, CreateLobbyParams, Lobby, PlayerCodeName, UserId, SerialData, User} from "./TypeDefs";
 import {PLAYER_CODE_NAMES, PLAYER_KEANU, PLAYER_MORPHEUS, PLAYER_TRINITY} from "../Constants";
 import CheckAiTurns from "../common/CheckAiTurns";
 import {Socket} from "socket.io";
@@ -12,11 +12,31 @@ import DefaultBalance from "../DefaultBalance.js";
 const Rej = require('klesun-node-tools/src/Rej.js');
 const {coverExc} = require('klesun-node-tools/src/Lang.js');
 
+type TimestampMs = number;
+
 const uuidToBoard: Record<BoardUuid, BoardState> = {};
 const authTokenToUserId: Record<string, number> = {};
 const users: User[] = [];
 
 const boardUuidToLobby: Record<BoardUuid, Lobby> = {};
+const userToActivityMs = new Map<UserId, TimestampMs>();
+
+// most likely rather than store mapping with all players, it would be better if each
+// player subscribed to topic of his id to not mess with garbage collection manually...
+export const playerIdToSocket = new Map<UserId, Set<Socket>>();
+
+const sendToSocket = (userId: number, message: {messageType: string, [k: string]: SerialData}) => {
+    const sockets = playerIdToSocket.get(userId) || new Set<Socket>();
+    for (const socket of sockets) {
+        socket.send(message);
+    }
+};
+
+const sendStateToSocket = ({boardState, playerId}: {
+    boardState: BoardState, playerId: UserId,
+}) => {
+    sendToSocket(playerId, {messageType: 'updateBoardState', boardState});
+};
 
 const setupBoard = (balance = DefaultBalance()) => {
     const board = GenerateBoard(balance);
@@ -44,19 +64,6 @@ const readJson = async (rq: http.IncomingMessage) => {
     return JSON.parse(postStr);
 };
 
-// most likely rather than store mapping with all players, it would be better if each
-// player subscribed to topic of his id to not mess with garbage collection manually...
-export const playerIdToSocket = new Map<PlayerId, Set<Socket>>();
-
-const sendStateToSocket = ({boardState, playerId}: {
-    boardState: BoardState, playerId: PlayerId,
-}) => {
-    const sockets = playerIdToSocket.get(playerId) || new Set<Socket>();
-    for (const socket of sockets) {
-        socket.send({messageType: 'updateBoardState', boardState});
-    }
-};
-
 const addUserWithToken = (authToken: string) => {
     const id = users.length + 1;
     const name = bip39.generateUserName(id);
@@ -81,6 +88,7 @@ const getUserByToken = (authToken: string) => {
     } else if (!users[id - 1]) {
         return Rej.InternalServerError('No data found for user #' + id);
     } else {
+        userToActivityMs.set(id, Date.now());
         return Promise.resolve(users[id - 1]);
     }
 };
@@ -108,12 +116,14 @@ const changeUserName = async (rq: http.IncomingMessage) => {
 };
 
 const leaveLobby = (user: User, lobby: Lobby) => {
+    let lobbiesLeft = 0;
     const boardUuid = lobby.boardUuid;
     const codeNames: PlayerCodeName[] = Object
         .keys(boardUuidToLobby[boardUuid].players)
         .map(k => <PlayerCodeName>k);
     for (const codeName of codeNames) {
         if (lobby.players[codeName] === user.id) {
+            ++lobbiesLeft;
             let boardState = uuidToBoard[lobby.boardUuid];
             delete lobby.players[codeName];
             // finish all pending turns after leaving the lobby
@@ -126,19 +136,22 @@ const leaveLobby = (user: User, lobby: Lobby) => {
     if (Object.keys(boardUuidToLobby[boardUuid].players).length === 0) {
         delete boardUuidToLobby[boardUuid];
     }
+    return lobbiesLeft;
 };
 
 const leaveAllLobbies = (user: User) => {
+    let lobbiesLeft = 0;
     for (const [boardUuid, lobby] of Object.entries(boardUuidToLobby)) {
-        leaveLobby(user, lobby);
+        lobbiesLeft += leaveLobby(user, lobby);
     }
+    return lobbiesLeft;
 };
 
 const createLobbyBy = async ({user, params}: {
     user: User, params: CreateLobbyParams,
 }) => {
     const board = setupBoard(params.balance);
-    const players = <Record<PlayerCodeName, PlayerId>>{
+    const players = <Record<PlayerCodeName, UserId>>{
         [PLAYER_KEANU]: user.id,
     };
     const lobby: Lobby = {
@@ -327,3 +340,24 @@ const Api = {
 };
 
 export default Api;
+
+const MAX_AFK_MS = 10 * 60 * 1000;
+
+setInterval(() => {
+    // would be nice to have some sorted structure, maybe even
+    // in redis, but for now, nah, linear search for the win
+    for (const [userId, activityMs] of userToActivityMs) {
+        const afkMs = Date.now() - activityMs;
+        if (afkMs > MAX_AFK_MS) {
+            const user = users[userId - 1];
+            const lobbiesLeft = leaveAllLobbies(user);
+            if (lobbiesLeft > 0) {
+                sendToSocket(userId, {
+                    messageType: 'kickedFromLobbyForAfk',
+                    afkMs, maxAfkMs: MAX_AFK_MS,
+                });
+            }
+            userToActivityMs.delete(userId);
+        }
+    }
+}, MAX_AFK_MS);
