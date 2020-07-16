@@ -79,7 +79,7 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
             setState(data.boardState);
             // no reply, cuz server is not requesting it
         } else if (data.messageType === 'kickedFromLobbyForAfk') {
-            alert(`You were kicked from lobby for being AFK for ${Math.floor(data.afkMs / 1000)} seconds which is >= ${Math.floor(data.maxAfkMs / 60 / 1000)} seconds`);
+            alert(`You were kicked from lobby for being AFK for ${Math.floor(data.afkMs / 1000)} seconds which is >= ${Math.floor(data.maxAfkMs / 1000)} seconds`);
         } else {
             console.log('Unexpected message from server', data);
             reply({status: 'UNEXPECTED_MESSAGE_TYPE'});
