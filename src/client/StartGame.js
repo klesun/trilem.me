@@ -1,5 +1,5 @@
 import SoundManager from "./SoundManager.js";
-import TileMapDisplay from "../TileMapDisplay.js";
+import TileMapDisplay from "./TileMapDisplay.js";
 import StatsTable, {calcScore, collectPlayerResources} from "./StatsTable.js";
 import GetTurnInput from "./GetTurnInput.js";
 import drawHint from "./ScoreHint.js";

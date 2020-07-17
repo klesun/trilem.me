@@ -1,7 +1,7 @@
-import {Svg} from "./client/Dom.js";
-import {RESOURCES, RESOURCES_ICONS} from "./Constants.js";
+import {Svg} from "./Dom.js";
+import {RESOURCES, RESOURCES_ICONS} from "../Constants.js";
 
-const TILE_WIDTH = 90;
+const TILE_WIDTH = 60;
 const TILE_HEIGHT = Math.sqrt(3) * TILE_WIDTH / 2;
 
 const makeTile = (x, y, isEven) => {

@@ -7,7 +7,7 @@ import {
     NO_RES_EMPTY,
     BUFF_SKIP_TURN
 } from "../Constants.js";
-import {MOD_PREFIX} from "../TileMapDisplay.js";
+import {MOD_PREFIX} from "./TileMapDisplay.js";
 import {Dom} from "./Dom.js";
 
 export const calcScore = (resourceToSum) => {
