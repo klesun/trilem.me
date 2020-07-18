@@ -199,7 +199,6 @@ const addDragScroll = () => {
 
     const reloadGame = ({lobby, board}) => {
         updateLobbies();
-        addDragScroll();
         whenGameSetup = setupGame({user, api, lobby, board});
     };
 
@@ -208,6 +207,7 @@ const addDragScroll = () => {
         dialog.show();
         dialog.form.elements['name'].focus();
     });
+    addDragScroll();
 
     api.getLobby().then(reloadGame);
 })();
