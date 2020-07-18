@@ -4,12 +4,12 @@ import {RESOURCES, RESOURCES_ICONS} from "../Constants.js";
 const TILE_WIDTH = 60;
 const TILE_HEIGHT = Math.sqrt(3) * TILE_WIDTH / 2;
 
-const makeTile = (x, y, isEven) => {
+const makeTile = (x, y, pointsDown) => {
     const makePoly = (attrs) => {
         let relX = TILE_WIDTH / 2;
         let relY = 0;
 
-        if (!isEven) {
+        if (pointsDown) {
             relY += TILE_HEIGHT / 3;
         } else {
             relY += TILE_HEIGHT * 2 / 3;
@@ -23,7 +23,7 @@ const makeTile = (x, y, isEven) => {
             ].map(
                 ({dx, dy}) => [
                     relX + dx,
-                    relY + dy * (isEven ? 1 : -1),
+                    relY + dy * (pointsDown ? -1 : 1),
                 ].map(n => n.toFixed(3)).join(',')
             ).join(' '),
             ...attrs,
@@ -115,8 +115,8 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
     for (const {row, col, modifiers, owner} of boardConfig.tiles) {
         const xPx = col * TILE_WIDTH / 2;
         const yPx = row * TILE_HEIGHT;
-        const pointsUp = (col % 2 === 0) === (row % 2 === 0);
-        const svgEl = makeTile(xPx, yPx, pointsUp);
+        const pointsDown = (col % 2 === 0) === (row % 2 === 0);
+        const svgEl = makeTile(xPx, yPx, pointsDown);
         for (const modifier of modifiers) {
             if (RESOURCES.includes(modifier)) {
                 const modProps = RESOURCES_ICONS[modifier];
@@ -128,7 +128,7 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
                     img.classList.add(modProps.className);
                 }
 
-                const imgCoords = pointsUp ? 'isEven' : 'normal';
+                const imgCoords = !pointsDown ? 'isEven' : 'normal';
                 Object.keys(modProps[imgCoords]).forEach( k => img.style[k] = modProps[imgCoords][k] );
 
                 svgEl.appendChild(img)
