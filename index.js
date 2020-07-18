@@ -9,6 +9,7 @@ import CreateLobbyDialog from "./src/client/CreateLobbyDialog.js";
 
 const gui = {
     mainGame: document.querySelector('.main-game'),
+    tileMapWrap: document.querySelector('.tile-map-wrap'),
     tileMapHolder: document.querySelector('.tile-map-holder'),
     turnsLeftHolder: document.querySelector('.turns-left-holder'),
     playerList: document.querySelector('.player-list'),
@@ -103,6 +104,34 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
     });
 });
 
+const addDragScroll = () => {
+    // const draggableCam = new window.ScrollBooster({
+    //     viewport: document.querySelector('.tile-map-wrap'),
+    //     content: document.querySelector('.center-svg-root'),
+    //     scrollMode: 'native',
+    //     direction: 'all',
+    //     bounce: false,
+    //     friction: 0.999,
+    // });
+
+    // no option to disable animation in ScrollBooster it seems...
+
+    let mouseDown = false;
+    const setMouseDown = (flag) => {
+        mouseDown = flag;
+        gui.tileMapWrap.classList.toggle('mouse-drag-active', flag);
+    };
+    gui.tileMapWrap.addEventListener('mousedown', () => setMouseDown(true));
+    gui.tileMapWrap.addEventListener('mouseup', () => setMouseDown(false));
+    gui.tileMapWrap.addEventListener('mouseleave', () => setMouseDown(false));
+    gui.tileMapWrap.addEventListener('mousemove', (evt) => {
+        if (mouseDown) {
+            gui.tileMapWrap.scrollLeft -= evt.movementX;
+            gui.tileMapWrap.scrollTop -= evt.movementY;
+        }
+    });
+};
+
 (async () => {
     Hideable().init();
     let whenGameSetup = Promise.reject('Game not initialized yet');
@@ -144,16 +173,7 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
 
     const reloadGame = ({lobby, board}) => {
         updateLobbies();
-        if (board.totalRows > 14) {
-            const draggableCam = new window.ScrollBooster({
-                viewport: document.querySelector('.tile-map-wrap'),
-                content: document.querySelector('.center-svg-root'),
-                scrollMode: 'native',
-                direction: 'all',
-                bounce: false,
-            });
-        }
-
+        addDragScroll();
         whenGameSetup = setupGame({user, api, lobby, board});
     };
 

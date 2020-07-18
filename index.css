@@ -156,6 +156,9 @@ body.show-dialog {
     cursor: grab;
     width: calc(100% - 108px);
 }
+.mouse-drag-active {
+    cursor: grabbing;
+}
 
 .pop {
     position: absolute;
