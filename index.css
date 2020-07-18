@@ -154,6 +154,7 @@ body.show-dialog {
     overflow: hidden;
     height: 100vh;
     cursor: grab;
+    width: calc(100% - 108px);
 }
 
 .pop {
