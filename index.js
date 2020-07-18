@@ -132,13 +132,22 @@ const addDragScroll = () => {
     const setMouseDown = (flag) => {
         mouseDown = flag;
     };
+    const scrollDown = dy => {
+        const was = gui.tileMapWrap.scrollTop;
+        gui.tileMapWrap.scrollTop -= dy;
+        const now = gui.tileMapWrap.scrollTop;
+        if (was === now) {
+            // if we reached the edge of the map, scroll parent like you would normally on a webpage when hitting
+            document.body.scrollTop -= dy;
+        }
+    };
     gui.tileMapWrap.addEventListener('mousedown', () => setMouseDown(true));
     gui.tileMapWrap.addEventListener('mouseup', () => setMouseDown(false));
     gui.tileMapWrap.addEventListener('mouseleave', () => setMouseDown(false));
     gui.tileMapWrap.addEventListener('mousemove', (evt) => {
         if (mouseDown) {
             gui.tileMapWrap.scrollLeft -= evt.movementX;
-            gui.tileMapWrap.scrollTop -= evt.movementY;
+            scrollDown(evt.movementY);
         }
     });
 
@@ -151,7 +160,7 @@ const addDragScroll = () => {
         if (lastTouches.length === 1 && evt.touches.length == 1) {
             const {dx, dy} = getSwipePoint(lastTouches[0], evt.touches[0]);
             gui.tileMapWrap.scrollLeft -= dx;
-            gui.tileMapWrap.scrollTop -= dy;
+            scrollDown(dy);
         }
         lastTouches = evt.touches;
     }, false);
