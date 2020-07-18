@@ -151,9 +151,8 @@ body.show-dialog {
 .tile-map-wrap {
     position: relative;
     text-align: center;
-    /* this cutting looks awful on a 4k display */
-    /*max-height: 800px;*/
     overflow: hidden;
+    height: 100vh;
 }
 
 .pop {
