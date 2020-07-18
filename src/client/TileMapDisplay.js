@@ -97,7 +97,7 @@ const updateTilesState = (boardState, getTile) => {
     }
 };
 
-/** TODO: move to /client/ (not doing now, because conflicts) */
+/** @param {BoardState} boardConfig */
 const TileMapDisplay = (boardConfig, tileMapHolder) => {
     const matrix = {};
 
@@ -115,7 +115,8 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
     for (const {row, col, modifiers, owner} of boardConfig.tiles) {
         const xPx = col * TILE_WIDTH / 2;
         const yPx = row * TILE_HEIGHT;
-        const pointsDown = (col % 2 === 0) === (row % 2 === 0);
+        const isEven = (col % 2 === 0) === (row % 2 === 0);
+        const pointsDown = isEven === boardConfig.firstPointsDown;
         const svgEl = makeTile(xPx, yPx, pointsDown);
         for (const modifier of modifiers) {
             if (RESOURCES.includes(modifier)) {

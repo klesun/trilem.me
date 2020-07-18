@@ -38,6 +38,8 @@ export type BoardState = SerialData & {
     playerToPosition: Record<PlayerCodeName, {col: number, row: number}>,
     playerToBuffs: Record<PlayerCodeName, PlayerBuff[]>,
     tiles: Tile[],
+    /** whether top-left tile points down or not. May vary depending on board shape */
+    firstPointsDown: boolean,
 
     balance: Record<string, any>,
 }

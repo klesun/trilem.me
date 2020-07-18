@@ -3,7 +3,7 @@ import {
     NO_RES_EMPTY, PLAYER_CODE_NAMES,
     PLAYER_KEANU,
     PLAYER_TRINITY,
-    PLAYER_MORPHEUS, BOARD_SHAPES, BOARD_SHAPE_RECTANGLE, BOARD_SHAPE_TRIANGLE, BOARD_SHAPE_HEX,
+    PLAYER_MORPHEUS, BOARD_SHAPES, BOARD_SHAPE_RECTANGLE, BOARD_SHAPE_TRIANGLE, BOARD_SHAPE_HEXAGON,
 } from "./Constants.js";
 import DefaultBalance from "./DefaultBalance.js";
 
@@ -29,6 +29,36 @@ const generateTileModifiers = (balance) => {
     // I guess it's possible to exit this loop due to
     // float division error if roll hits 0.99999999999999
     return [];
+};
+
+/** exported for tests */
+export const generateBoardShape = ({totalRows, boardShape}) => {
+    const tiles = [];
+    if (boardShape === BOARD_SHAPE_RECTANGLE) {
+        for (let row = 0; row < totalRows; ++row) {
+            for (let col = 0; col < totalRows * 2 - 1; ++col) {
+                tiles.push({row, col});
+            }
+        }
+    } else if (boardShape === BOARD_SHAPE_TRIANGLE) {
+        // at some point could randomly use flipped-vs-normal triangle...
+        for (let row = 0; row < totalRows; ++row) {
+            for (let col = row; col < totalRows * 2 - row - 1; ++col) {
+                tiles.push({row, col});
+            }
+        }
+    } else if (boardShape === BOARD_SHAPE_HEXAGON) {
+        const half = totalRows / 2;
+        for (let row = 0; row < totalRows; ++row) {
+            const cutout = half > row ? half - row - 1 : row - half;
+            for (let col = cutout; col < totalRows * 2 - cutout - 1; ++col) {
+                tiles.push({row, col});
+            }
+        }
+    } else {
+        throw new Error('Unknown board shape type - ' + boardShape);
+    }
+    return tiles;
 };
 
 const makeStartPositions = (totalRows, boardShape, shapeTiles) => {
@@ -78,40 +108,18 @@ const makeStartPositions = (totalRows, boardShape, shapeTiles) => {
     // }
 };
 
-/** exported for tests */
-export const generateBoardShape = ({totalRows, boardShape}) => {
-    const tiles = [];
-    if (boardShape === BOARD_SHAPE_RECTANGLE) {
-        for (let row = 0; row < totalRows; ++row) {
-            for (let col = 0; col < totalRows * 2 - 1; ++col) {
-                tiles.push({row, col});
-            }
-        }
-    } else if (boardShape === BOARD_SHAPE_TRIANGLE) {
-        // at some point could randomly use flipped-vs-normal triangle...
-        for (let row = 0; row < totalRows; ++row) {
-            for (let col = row; col < totalRows * 2 - row - 1; ++col) {
-                tiles.push({row, col});
-            }
-        }
-    } else if (boardShape === BOARD_SHAPE_HEX) {
-        // TODO: hex instead of square
-        for (let row = 0; row < totalRows; ++row) {
-            for (let col = 0; col < totalRows * 2 - 1; ++col) {
-                tiles.push({row, col});
-            }
-        }
-    } else {
-        throw new Error('Unknown board shape type - ' + boardShape);
-    }
-    return tiles;
-};
-
 /** @return {BoardState} */
 const GenerateBoard = (balance = DefaultBalance()) => {
     const uuid = uuidv4();
     const totalRows = balance.TOTAL_ROWS;
-    const boardShape = BOARD_SHAPES[Math.floor(Math.random() * BOARD_SHAPES.length)];
+    const shapeOptions = BOARD_SHAPES.filter(shape => {
+        // hex board can only be build for even number of rows
+        const skip = shape === BOARD_SHAPE_HEXAGON && totalRows % 2 !== 0;
+        return !skip;
+    });
+    const boardShape = shapeOptions[Math.floor(Math.random() * shapeOptions.length)];
+    const firstPointUp = boardShape === BOARD_SHAPE_HEXAGON && totalRows % 4 !== 0;
+    const firstPointsDown = !firstPointUp;
     const boardShapeTiles = generateBoardShape({totalRows, boardShape});
     const playerToPosition = makeStartPositions(balance.TOTAL_ROWS, boardShape, boardShapeTiles);
     const playerToBuffs = {};
@@ -138,7 +146,7 @@ const GenerateBoard = (balance = DefaultBalance()) => {
         return {row, col, modifiers, owner, improvementsBuilt: 0};
     });
     const totalCells = tiles.filter(t => t !== NO_RES_DEAD_SPACE).length;
-    const totalTurns = totalCells * 2 / 3;
+    const totalTurns = Math.floor(totalCells * 2 / 3);
     return {
         uuid: uuid,
         totalRows: totalRows,
@@ -149,6 +157,7 @@ const GenerateBoard = (balance = DefaultBalance()) => {
         playerToBuffs: playerToBuffs,
         playerToPosition: playerToPosition,
         tiles: tiles,
+        firstPointsDown: firstPointsDown,
 
         balance: balance,
     };
