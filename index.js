@@ -131,7 +131,6 @@ const addDragScroll = () => {
     let mouseDown = false;
     const setMouseDown = (flag) => {
         mouseDown = flag;
-        gui.tileMapWrap.classList.toggle('mouse-drag-active', flag);
     };
     gui.tileMapWrap.addEventListener('mousedown', () => setMouseDown(true));
     gui.tileMapWrap.addEventListener('mouseup', () => setMouseDown(false));
