@@ -19,6 +19,7 @@
 body {
     font-family: 'Quicksand', sans-serif;
     background: var(--main-game-bg);
+    overflow-x: hidden;
     box-shadow:
             inset 0 0 35px #000,
             inset -8px 0 275px #5a3d92,
@@ -95,6 +96,12 @@ body.show-dialog {
 .hideable {
     opacity: 1;
     transition: 0.2s ease-in;
+    padding: 12px;
+    width: 600px;
+    position: absolute;
+    z-index: 100;
+    background: var(--main-game-bg);
+    border: 1px solid var(--dialog-border);
 }
 .no-anim {
     transition: unset !important;
@@ -144,6 +151,8 @@ body.show-dialog {
 .tile-map-wrap {
     position: relative;
     text-align: center;
+    max-height: 800px;
+    overflow: hidden;
 }
 
 .pop {
@@ -194,11 +203,17 @@ body.show-dialog {
 .hidden {
     opacity: 0;
 }
+.hide-right {
+    right: 0;
+}
+.hide-left {
+    left: 0;
+}
 .hide-left.hidden {
-    transform: translateX(-200%);
+    width: 0;
 }
 .hide-right.hidden {
-    transform: translateX(200%);
+    width: 0;
 }
 .show-hideable {
     user-select: none;
@@ -206,11 +221,12 @@ body.show-dialog {
     height: 50px;
     border: 1px solid #8d549c;
     display: flex;
-    position: absolute;
     top: 60px;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    position: absolute;
+    z-index: 1000;
     transition: 0.1s ease-in;
 }
 .show-hideable:hover {
@@ -235,9 +251,12 @@ body.show-dialog {
 }
 .game-rules {
     color: var(--main-text-color);
+    overflow-y: auto;
+    max-height: 600px;
 }
 .game-rules ul {
     padding: 24px;
+    margin-left: 12px;
 }
 .game-rules li {
     margin: 6px;
@@ -248,9 +267,20 @@ body.show-dialog {
 }
 .flex-remainder {
     flex: 1;
-    position: relative;
+    position: absolute;
 }
 
+.flex-remainder.left {
+    left: 0;
+}
+
+.flex-remainder.right {
+    right: 0;
+}
+
+.flex-remainder.left .hideable {
+    border-left: none;
+}
 .resource-svg {
     pointer-events: none;
     transform: scale(0.05);

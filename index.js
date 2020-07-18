@@ -144,6 +144,14 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
 
     const reloadGame = ({lobby, board}) => {
         updateLobbies();
+        if (board.totalRows > 14) {
+            const draggableCam = new window.ScrollBooster({
+                viewport: document.querySelector('.tile-map-wrap'),
+                content: document.querySelector('.center-svg-root'),
+                scrollMode: 'transform',
+            });
+        }
+
         whenGameSetup = setupGame({user, api, lobby, board});
     };
 

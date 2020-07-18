@@ -1,5 +1,5 @@
 const drawHint = (tileSvg, owner, text) => {
-    const tileMapWrap = document.querySelector('.tile-map-wrap');
+    const tileMapWrap = document.querySelector('.center-svg-root');
     const pop = document.createElement('div');
 
     pop.classList.add('pop');

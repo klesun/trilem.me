@@ -30,6 +30,11 @@
     justify-content: space-between;
 }
 
+.f-1 {
+    display: flex;
+    flex: 1;
+}
+
 .no-gutters-side-md {
     margin-left: -8px;
     margin-right: -8px;
