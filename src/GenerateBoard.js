@@ -149,9 +149,8 @@ const GenerateBoard = (balance = DefaultBalance()) => {
             owner = null;
         }
         return {row, col, modifiers, owner, improvementsBuilt: 0};
-    });
-    const totalCells = tiles.filter(t => t !== NO_RES_DEAD_SPACE).length;
-    const totalTurns = Math.floor(totalCells * 2 / 3);
+    }).filter(tile => !tile.modifiers.includes(NO_RES_DEAD_SPACE));
+    const totalTurns = Math.floor(tiles.length * 2 / 3);
     return {
         uuid: uuid,
         totalRows: totalRows,

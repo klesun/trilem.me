@@ -153,6 +153,7 @@ body.show-dialog {
     text-align: center;
     overflow: hidden;
     height: 100vh;
+    cursor: grab;
 }
 
 .pop {
@@ -536,8 +537,10 @@ polygon.owner-overlay {
     stroke: #a6e2e2;
     animation: blink-possible-turn 1.5s ease-in-out infinite;
 }
-[data-possible-turn] polygon.owner-overlay {
+[data-possible-turn] {
     cursor: pointer;
+}
+[data-possible-turn] polygon.owner-overlay {
     animation: blink-possible-turn 1.5s ease-in-out infinite;
 
 }
@@ -610,13 +613,11 @@ polygon.modifiers-overlay {
 .modifier--WALL polygon.modifiers-overlay {
     stroke: rgba(255, 255, 255, 0.4);
     stroke-width: 8px;
-    cursor: pointer;
     /*background: ;*/
 }
 
 polygon.base-tile:hover {
-    fill: #b7b7b7;
-    cursor: pointer;
+    fill: #5f5f5f;
 }
 
 .modifier--DEAD_SPACE polygon.base-tile {
