@@ -1,7 +1,8 @@
-import {NO_RES_DEAD_SPACE, NO_RES_EMPTY, RES_GOLD, RES_OIL, RES_WHEAT} from "./Constants.js";
+import {BOARD_SHAPE_RANDOM, NO_RES_DEAD_SPACE, NO_RES_EMPTY, RES_GOLD, RES_OIL, RES_WHEAT} from "./Constants.js";
 
 const DefaultBalance = () => ({
     TOTAL_ROWS: 14,
+    BOARD_SHAPE: BOARD_SHAPE_RANDOM,
     MODIFIER_WEIGHTS: {
         [RES_GOLD]: 1.5,
         [RES_OIL]: 5,

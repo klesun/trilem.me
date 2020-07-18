@@ -6,7 +6,7 @@ import {
     AI_LEAST_RECENT_TILES,
     AI_PURE_RANDOM,
     AI_RESOURCE_PATHFINDING,
-    AI_SKIP_TURNS,
+    AI_SKIP_TURNS, BOARD_SHAPE_HEXAGON, BOARD_SHAPE_RANDOM, BOARD_SHAPE_RECTANGLE, BOARD_SHAPE_TRIANGLE, BOARD_SHAPES,
     PLAYER_CODE_NAMES
 } from "../Constants.js";
 import DefaultBalance from './../DefaultBalance.js';
@@ -39,6 +39,18 @@ const getBody = () => {
         {
             label: 'Board Size: ',
             input: Input({type: 'number', min: 4, max: 50, value: DefaultBalance().TOTAL_ROWS, name: 'TOTAL_ROWS'}),
+        },
+        {
+            label: 'Board Shape: ',
+            input: Select({
+                name: "BOARD_SHAPE",
+                options: [
+                    {value: BOARD_SHAPE_RANDOM, label: 'Random'},
+                    {value: BOARD_SHAPE_HEXAGON, label: '⬡ Hexagon'},
+                    {value: BOARD_SHAPE_TRIANGLE, label: '▽ Triangle'},
+                    {value: BOARD_SHAPE_RECTANGLE, label: '□ Rectangle'},
+                ],
+            }).context,
         },
         // not implemented yet
         // {
@@ -102,6 +114,7 @@ const collectData = form => {
         })),
         balance: {...DefaultBalance(),
             TOTAL_ROWS: form.elements['TOTAL_ROWS'].value,
+            BOARD_SHAPE: form.elements['BOARD_SHAPE'].value,
         },
     };
 };

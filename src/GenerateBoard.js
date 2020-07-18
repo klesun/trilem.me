@@ -3,7 +3,7 @@ import {
     NO_RES_EMPTY, PLAYER_CODE_NAMES,
     PLAYER_KEANU,
     PLAYER_TRINITY,
-    PLAYER_MORPHEUS, BOARD_SHAPES, BOARD_SHAPE_RECTANGLE, BOARD_SHAPE_TRIANGLE, BOARD_SHAPE_HEXAGON,
+    PLAYER_MORPHEUS, BOARD_SHAPES, BOARD_SHAPE_RECTANGLE, BOARD_SHAPE_TRIANGLE, BOARD_SHAPE_HEXAGON, BOARD_SHAPE_RANDOM,
 } from "./Constants.js";
 import DefaultBalance from "./DefaultBalance.js";
 
@@ -117,7 +117,12 @@ const GenerateBoard = (balance = DefaultBalance()) => {
         const skip = shape === BOARD_SHAPE_HEXAGON && totalRows % 2 !== 0;
         return !skip;
     });
-    const boardShape = shapeOptions[Math.floor(Math.random() * shapeOptions.length)];
+    let boardShape = balance.BOARD_SHAPE;
+    if (boardShape === BOARD_SHAPE_RANDOM) {
+        boardShape = shapeOptions[Math.floor(Math.random() * shapeOptions.length)];
+    } else if (!shapeOptions.includes(boardShape)) {
+        throw new Error('Board shape ' + boardShape + ' not allowed with board size of ' + totalRows);
+    }
     const firstPointUp = boardShape === BOARD_SHAPE_HEXAGON && totalRows % 4 !== 0;
     const firstPointsDown = !firstPointUp;
     const boardShapeTiles = generateBoardShape({totalRows, boardShape});
