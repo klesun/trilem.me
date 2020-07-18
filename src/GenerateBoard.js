@@ -31,12 +31,17 @@ const generateTileModifiers = (balance) => {
     return [];
 };
 
-const makeStartPositions = (totalRows, boardShape) => {
-    return {
-        [PLAYER_KEANU]: {col: 1, row: 0},
-        [PLAYER_TRINITY]: {col: 0, row: 1},
-        [PLAYER_MORPHEUS]: {col: 1, row: 1},
-    };
+const makeStartPositions = (totalRows, boardShape, shapeTiles) => {
+    const tilesLeft = [...shapeTiles];
+    // place randomly
+    const playerToPosition = {};
+    for (const codeName of PLAYER_CODE_NAMES) {
+        const index = Math.floor(Math.random() * tilesLeft.length);
+        playerToPosition[codeName] = tilesLeft[index];
+        tilesLeft.splice(index, 1)
+    }
+    return playerToPosition;
+
     // TODO: new x/y format
     // if (totalRows % 3 === 1) {
     //     // ▼ ▼
@@ -83,9 +88,9 @@ export const generateBoardShape = ({totalRows, boardShape}) => {
             }
         }
     } else if (boardShape === BOARD_SHAPE_TRIANGLE) {
-        // TODO: triangle instead of square
+        // at some point could randomly use flipped-vs-normal triangle...
         for (let row = 0; row < totalRows; ++row) {
-            for (let col = 0; col < totalRows * 2 - 1; ++col) {
+            for (let col = row; col < totalRows * 2 - row - 1; ++col) {
                 tiles.push({row, col});
             }
         }
@@ -107,12 +112,13 @@ const GenerateBoard = (balance = DefaultBalance()) => {
     const uuid = uuidv4();
     const totalRows = balance.TOTAL_ROWS;
     const boardShape = BOARD_SHAPES[Math.floor(Math.random() * BOARD_SHAPES.length)];
-    const playerToPosition = makeStartPositions(balance.TOTAL_ROWS, boardShape);
+    const boardShapeTiles = generateBoardShape({totalRows, boardShape});
+    const playerToPosition = makeStartPositions(balance.TOTAL_ROWS, boardShape, boardShapeTiles);
     const playerToBuffs = {};
     for (const codeName of PLAYER_CODE_NAMES) {
         playerToBuffs[codeName] = [];
     }
-    const tiles = generateBoardShape({totalRows, boardShape}).map(({row, col}) => {
+    const tiles = boardShapeTiles.map(({row, col}) => {
         const stander = Object.keys(playerToPosition)
             .find(k => {
                 return playerToPosition[k].row === row
