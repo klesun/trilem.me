@@ -104,6 +104,18 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
     });
 });
 
+/**
+ * @param {Touch} lastTouch
+ * @param {Touch} newTouch
+ */
+const getSwipePoint = (lastTouch, newTouch) => {
+    const x = lastTouch.clientX;
+    const y = lastTouch.clientY;
+    const dx = newTouch.clientX - x;
+    const dy = newTouch.clientY - y;
+    return {x, y, dx, dy};
+};
+
 const addDragScroll = () => {
     // const draggableCam = new window.ScrollBooster({
     //     viewport: document.querySelector('.tile-map-wrap'),
@@ -130,6 +142,20 @@ const addDragScroll = () => {
             gui.tileMapWrap.scrollTop -= evt.movementY;
         }
     });
+
+    // mobile
+    /** @type {TouchList[] | Touch[]} */
+    let lastTouches = [];
+    gui.tileMapWrap.addEventListener('touchstart', (evt) => lastTouches = evt.touches);
+    gui.tileMapWrap.addEventListener('touchend', (evt) => lastTouches = []);
+    gui.tileMapWrap.addEventListener('touchmove', (evt) => {
+        if (lastTouches.length === 1 && evt.touches.length == 1) {
+            const {dx, dy} = getSwipePoint(lastTouches[0], evt.touches[0]);
+            gui.tileMapWrap.scrollLeft -= dx;
+            gui.tileMapWrap.scrollTop -= dy;
+        }
+        lastTouches = evt.touches;
+    }, false);
 };
 
 (async () => {
