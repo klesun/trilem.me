@@ -113,10 +113,10 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
     //fadeInRows(ROWS);
 
     for (const {row, col, modifiers, owner} of boardConfig.tiles) {
-        const x = (col  - row - 1) * TILE_WIDTH / 2;
-        const y = row * TILE_HEIGHT;
-        const isEven = col % 2 === 0;
-        const svgEl = makeTile(BOARD_WIDTH_PX / 2 + x, y, isEven);
+        const xPx = col * TILE_WIDTH / 2;
+        const yPx = row * TILE_HEIGHT;
+        const pointsUp = (col % 2 === 0) === (row % 2 === 0);
+        const svgEl = makeTile(xPx, yPx, pointsUp);
         for (const modifier of modifiers) {
             if (RESOURCES.includes(modifier)) {
                 const modProps = RESOURCES_ICONS[modifier];
@@ -128,7 +128,7 @@ const TileMapDisplay = (boardConfig, tileMapHolder) => {
                     img.classList.add(modProps.className);
                 }
 
-                const imgCoords = isEven ? 'isEven' : 'normal';
+                const imgCoords = pointsUp ? 'isEven' : 'normal';
                 Object.keys(modProps[imgCoords]).forEach( k => img.style[k] = modProps[imgCoords][k] );
 
                 svgEl.appendChild(img)

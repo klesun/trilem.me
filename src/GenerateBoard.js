@@ -32,6 +32,7 @@ const generateTileModifiers = (balance) => {
 };
 
 const makeStartPositions = (totalRows) => {
+    // TODO: new x/y format
     if (totalRows % 3 === 1) {
         // ▼ ▼
         //  ▼
@@ -67,17 +68,11 @@ const makeStartPositions = (totalRows) => {
     }
 };
 
-/** @return {BoardState} */
-const GenerateBoard = (balance = DefaultBalance()) => {
-    const uuid = uuidv4();
-    const playerToPosition = makeStartPositions(balance.TOTAL_ROWS);
-    const playerToBuffs = {};
-    for (const codeName of PLAYER_CODE_NAMES) {
-        playerToBuffs[codeName] = [];
-    }
+const generateTileMap = (balance, playerToPosition) => {
+    // TODO: different shapes board
     const tiles = [];
     for (let row = 0; row < balance.TOTAL_ROWS; ++row) {
-        for (let col = 0; col < row * 2 + 1; ++col) {
+        for (let col = 0; col < balance.TOTAL_ROWS * 2 - 1; ++col) {
             const stander = Object.keys(playerToPosition)
                 .find(k => {
                     return playerToPosition[k].row === row
@@ -95,6 +90,18 @@ const GenerateBoard = (balance = DefaultBalance()) => {
             tiles.push({row, col, modifiers, owner, improvementsBuilt: 0});
         }
     }
+    return tiles;
+};
+
+/** @return {BoardState} */
+const GenerateBoard = (balance = DefaultBalance()) => {
+    const uuid = uuidv4();
+    const playerToPosition = makeStartPositions(balance.TOTAL_ROWS);
+    const playerToBuffs = {};
+    for (const codeName of PLAYER_CODE_NAMES) {
+        playerToBuffs[codeName] = [];
+    }
+    const tiles = generateTileMap(balance, playerToPosition);
     const totalCells = tiles.filter(t => t !== NO_RES_DEAD_SPACE).length;
     const totalTurns = totalCells;
     return {

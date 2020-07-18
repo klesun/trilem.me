@@ -22,13 +22,13 @@ const FightSession = ({
 
     /** @param {Tile} oldPos */
     const getNeighborTiles = (oldPos) => {
-        const isEven = oldPos.col % 2 === 0;
+        const pointsUp = (oldPos.col % 2 === 0) === (oldPos.row % 2 === 0);
         return [
             {col: oldPos.col + 1, row: oldPos.row},
             {col: oldPos.col - 1, row: oldPos.row},
-            isEven
-                ? {col: oldPos.col + 1, row: oldPos.row + 1}
-                : {col: oldPos.col - 1, row: oldPos.row - 1},
+            pointsUp
+                ? {col: oldPos.col, row: oldPos.row + 1}
+                : {col: oldPos.col, row: oldPos.row - 1},
         ].flatMap(pos => {
             const tile = getTile(pos);
             return tile ? [tile] : [];

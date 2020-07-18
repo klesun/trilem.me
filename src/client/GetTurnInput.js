@@ -32,12 +32,12 @@ const GetTurnInput = ({currentSvgEl, possibleTurns}) => {
 
         const tryDelta = ({dx, dy}) => {
             const newPos = {
-                x: col + dx + dy,
-                y: row + dy,
+                col: col + dx,
+                row: row + dy,
             };
             const newTile = possibleTurns.find(tile => {
-                return tile.col === newPos.x
-                    && tile.row === newPos.y;
+                return tile.col === newPos.col
+                    && tile.row === newPos.row;
             });
             if (newTile) {
                 resolve(newTile);
