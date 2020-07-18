@@ -100,7 +100,7 @@ body.show-dialog {
     width: 600px;
     position: absolute;
     z-index: 100;
-    background: var(--main-game-bg);
+    background: #1515159c;
     border: 1px solid var(--dialog-border);
 }
 .no-anim {
@@ -155,6 +155,7 @@ body.show-dialog {
     height: 100vh;
     cursor: grab;
     width: calc(100% - 108px);
+    padding: 50px;
 }
 
 .pop {
