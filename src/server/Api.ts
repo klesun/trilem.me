@@ -301,7 +301,7 @@ const Api = {
 
 export default Api;
 
-const MAX_AFK_MS = 10 * 60 * 1000;
+const MAX_AFK_MS = 5 * 60 * 1000;
 
 setInterval(() => {
     // would be nice to have some sorted structure, maybe even
