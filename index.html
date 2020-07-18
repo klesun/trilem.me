@@ -17,7 +17,7 @@
 </head>
 <body style="display: flex; flex-direction: column">
 <header class="header">
-    <div class="flex-remainder flex-parent">
+    <div class="f-1 flex-parent">
         <!-- I think these svg images should better be included as separate files with <img/> -->
         <div class="sound-switch-block">
             <span class="sound-title">Sound: </span>
@@ -31,74 +31,72 @@
     <div class="title-neon-wrap">
         <h1 class="game-title">Trilemma Online</h1>
     </div>
-    <div class="flex-remainder"></div>
+    <div class="f-1"></div>
 </header>
 <main class="main-game">
     <div class="game-wrapper">
-        <div class="flex-remainder">
-            <div class="flex-remainder-wrap">
-                <div class="hideable hide-left no-anim" data-hide="rules">
-                    <div class="hide-title">
-                        <i class="fas fa-chevron-left"></i>
-                        <span>Hide</span>
+        <div class="flex-remainder left">
+            <div class="hideable hide-left no-anim" data-hide="rules">
+                <div class="hide-title">
+                    <i class="fas fa-chevron-left"></i>
+                    <span>Hide</span>
+                </div>
+                <div class="game-rules">
+                    <div class="title-block">
+                        <span class="title game-rules-title">Game Rules</span>
                     </div>
-                    <div class="game-rules">
-                        <div class="title-block">
-                            <span class="title game-rules-title">Game Rules</span>
-                        </div>
-                        <ul>
-                            <!-- may be updated/rephrased -->
-                            <li>There are three players, codenamed
-                                <span data-owner="KEANU"><span class="player-name-holder">KEANU</span></span>,
-                                <span data-owner="TRINITY"><span class="player-name-holder">TRINITY</span></span> and
-                                <span data-owner="MORPHEUS"><span class="player-name-holder">MORPHEUS</span></span>,
-                                each starts at one of the three tiles usually in the center of the board
-                            </li>
-                            <li>Every turn each player chooses one of up to three directions to move his triangular
-                                representation or skips his turn by pressing <i>Esc</i>. If there is nowhere to go, turn is skipped automatically
-                            </li>
-                            <li>Stepping on any tile makes you it's owner: coloring it with your color,
-                                and increasing your respective resource quantity if it yields one
-                            </li>
-                            <li>There are three kinds of resources randomly placed on some tiles:
-                                <span data-resource="WHEAT">Wheat</span>,
-                                <span data-resource="OIL">Oil</span> and
-                                <span data-resource="GOLD">Gold</span>.
-                                Owned resources form your total score by formula:
-                                <span data-resource="WHEAT">Wheat</span> x
-                                <span data-resource="OIL">Oil</span> x
-                                <span data-resource="GOLD">Gold</span> +
-                                <span data-resource="EMPTY">Empty</span>.
-                                Each player starts with 1 permanent unit of each resource.
-                                <!--
-                                Here is an example: if you captured
-                                2 tiles of <span data-resource="WHEAT">Wheat</span>,
-                                2 tiles of <span data-resource="OIL">Oil</span>,
-                                2 tiles of <span data-resource="GOLD">Gold</span> and
-                                2 tiles of <span data-resource="EMPTY">Empty</span>, your total score is
-                                <code>(1 + 2) x (1 + 2) x (1 + 2) + 2 = 29</code>
-                                -->
-                            </li>
-                            <li>When there are no more turns left, the player with the greatest total score becomes <i>the winner</i></li>
-                            <li>Stepping on a tile that does not belong to anyone costs you <span data-balance-value="TURNS_SKIPPED_ON_STEP_NEUTRAL_EMPTY">?</span> extra turn(s).
-                                Stepping on your own tile also costs you <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_EMPTY">?</span> extra turn(s).
-                                Stepping on enemy tiles give you <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_EMPTY">?</span> turn(s) penalty,
-                                meaning that stealing enemy's tiles is faster than making new ones yourself
-                            </li>
-                            <li>When you skip turn by pressing <i>Esc</i> on an <span data-resource="EMPTY">Empty</span> tile,
-                                a <i>Wall</i> appears on this tile.
-                                If enemy tries to capture a <i>Wall</i>-ed tile, he gets penalized by
-                                <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_WALL">?</span> turns skipped. Additionally wall reduces
-                                your penalty for stepping your own tile from <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_EMPTY">?</span>
-                                to <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_WALL">?</span>.
-                            </li>
-                            <li>When you skip turn on a <i>Resourceful</i> tile, an improvement is built on top of it. Improvements can be stacked indefinitely on same tile. Each improvement increases resource yield by <span data-balance-value="IMPROVEMENT_BONUS">?</span>
-                            </li>
-                            <li>You can not step on a tile on which another player is currently standing. You can neither
-                                step on <i>Dead Space</i> randomly placed in place of some tiles on the board
-                            </li>
-                        </ul>
-                    </div>
+                    <ul>
+                        <!-- may be updated/rephrased -->
+                        <li>There are three players, codenamed
+                            <span data-owner="KEANU"><span class="player-name-holder">KEANU</span></span>,
+                            <span data-owner="TRINITY"><span class="player-name-holder">TRINITY</span></span> and
+                            <span data-owner="MORPHEUS"><span class="player-name-holder">MORPHEUS</span></span>,
+                            each starts at one of the three tiles in the center of the board
+                        </li>
+                        <li>Every turn each player chooses one of up to three directions to move his triangular
+                            representation or skips his turn by pressing <i>Esc</i>. If there is nowhere to go, turn is skipped automatically
+                        </li>
+                        <li>Stepping on any tile makes you it's owner: coloring it with your color,
+                            and increasing your respective resource quantity if it yields one
+                        </li>
+                        <li>There are three kinds of resources randomly placed on some tiles:
+                            <span data-resource="WHEAT">Wheat</span>,
+                            <span data-resource="OIL">Oil</span> and
+                            <span data-resource="GOLD">Gold</span>.
+                            Owned resources form your total score by formula:
+                            <span data-resource="WHEAT">Wheat</span> x
+                            <span data-resource="OIL">Oil</span> x
+                            <span data-resource="GOLD">Gold</span> +
+                            <span data-resource="EMPTY">Empty</span>.
+                            Each player starts with 1 permanent unit of each resource.
+                            <!--
+                            Here is an example: if you captured
+                            2 tiles of <span data-resource="WHEAT">Wheat</span>,
+                            2 tiles of <span data-resource="OIL">Oil</span>,
+                            2 tiles of <span data-resource="GOLD">Gold</span> and
+                            2 tiles of <span data-resource="EMPTY">Empty</span>, your total score is
+                            <code>(1 + 2) x (1 + 2) x (1 + 2) + 2 = 29</code>
+                            -->
+                        </li>
+                        <li>When there are no more turns left, the player with the greatest total score becomes <i>the winner</i></li>
+                        <li>Stepping on a tile that does not belong to anyone costs you <span data-balance-value="TURNS_SKIPPED_ON_STEP_NEUTRAL_EMPTY">?</span> extra turn(s).
+                            Stepping on your own tile also costs you <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_EMPTY">?</span> extra turn(s).
+                            Stepping on enemy tiles give you <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_EMPTY">?</span> turn(s) penalty,
+                            meaning that stealing enemy's tiles is faster than making new ones yourself
+                        </li>
+                        <li>When you skip turn by pressing <i>Esc</i> on an <span data-resource="EMPTY">Empty</span> tile,
+                            a <i>Wall</i> appears on this tile.
+                            If enemy tries to capture a <i>Wall</i>-ed tile, he gets penalized by
+                            <span data-balance-value="TURNS_SKIPPED_ON_STEP_ENEMY_WALL">?</span> turns skipped. Additionally wall reduces
+                            your penalty for stepping your own tile from <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_EMPTY">?</span>
+                            to <span data-balance-value="TURNS_SKIPPED_ON_STEP_OWN_WALL">?</span>.
+                        </li>
+                        <li>When you skip turn on a <i>Resourceful</i> tile, an improvement is built on top of it. Improvements can be stacked indefinitely on same tile. Each improvement increases resource yield by <span data-balance-value="IMPROVEMENT_BONUS">?</span>
+                        </li>
+                        <li>You can not step on a tile on which another player is currently standing. You can neither
+                            step on <i>Dead Space</i> randomly placed in place of some tiles on the board
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -107,67 +105,65 @@
                 <svg class="tile-map-holder"></svg>
             </div>
         </div>
-        <div class="flex-remainder">
-            <div class="flex-remainder-wrap">
-                <div class="hideable hide-right hidden" data-hide="stats">
-                    <div class="hide-title">
-                        <span>Hide</span>
-                        <i class="fas fa-chevron-right"></i>
+        <div class="flex-remainder right">
+            <div class="hideable hide-right hidden" data-hide="stats">
+                <div class="hide-title">
+                    <span>Hide</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="stats-block">
+                    <div class="title-block">
+                        <span class="title stats-title">Stats</span>
                     </div>
-                    <div class="stats-block">
-                        <div class="title-block">
-                            <span class="title stats-title">Stats</span>
-                        </div>
-                        <span class="turns-left-span">Turns Left: <span class="turns-left-holder">9999</span></span>
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>Player</th>
-                                <th>Ready In</th>
-                                <th data-resource="WHEAT">Wheat</th>
-                                <th>x</th>
-                                <th data-resource="OIL">Oil</th>
-                                <th>x</th>
-                                <th data-resource="GOLD">Gold</th>
-                                <th>+</th>
-                                <th data-resource="EMPTY">Empty</th>
-                                <th>=</th>
-                                <th>Score</th>
-                            </tr>
-                            </thead>
-                            <tbody class="player-list"></tbody>
-                        </table>
-                    </div>
-                    <div class="user-panel">
-                        <label>
-                            <span>Your Nick Name: </span>
-                            <input class="nick-name-field" type="text" value="anon1337"/>
-                        </label>
-                    </div>
-                    <div class="lobby-list-block">
-                        <h3>Lobby List</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>name</th>
-                                    <th data-owner="KEANU"><span class="player-name-holder">KEANU</span></th>
-                                    <th data-owner="TRINITY"><span class="player-name-holder">TRINITY</span></th>
-                                    <th data-owner="MORPHEUS"><span class="player-name-holder">MORPHEUS</span></th>
-                                </tr>
-                            </thead>
-                            <tbody class="lobby-list">
-                                <tr>
-                                    <td>Petya and noobs</td>
-                                    <td>Vasya</td>
-                                    <td>Petya</td>
-                                    <td><button class="beautiful-btn" onclick="alert('TODO: implement!')">Join</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="create-lobby-block">
-                        <button class="beautiful-btn create-lobby">Create Lobby</button>
-                    </div>
+                    <span class="turns-left-span">Turns Left: <span class="turns-left-holder">9999</span></span>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Ready In</th>
+                            <th data-resource="WHEAT">Wheat</th>
+                            <th>x</th>
+                            <th data-resource="OIL">Oil</th>
+                            <th>x</th>
+                            <th data-resource="GOLD">Gold</th>
+                            <th>+</th>
+                            <th data-resource="EMPTY">Empty</th>
+                            <th>=</th>
+                            <th>Score</th>
+                        </tr>
+                        </thead>
+                        <tbody class="player-list"></tbody>
+                    </table>
+                </div>
+                <div class="user-panel">
+                    <label>
+                        <span>Your Nick Name: </span>
+                        <input class="nick-name-field" type="text" value="anon1337"/>
+                    </label>
+                </div>
+                <div class="lobby-list-block">
+                    <h3>Lobby List</h3>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>name</th>
+                            <th data-owner="KEANU"><span class="player-name-holder">KEANU</span></th>
+                            <th data-owner="TRINITY"><span class="player-name-holder">TRINITY</span></th>
+                            <th data-owner="MORPHEUS"><span class="player-name-holder">MORPHEUS</span></th>
+                        </tr>
+                        </thead>
+                        <tbody class="lobby-list">
+                        <tr>
+                            <td>Petya and noobs</td>
+                            <td>Vasya</td>
+                            <td>Petya</td>
+                            <td><button class="beautiful-btn" onclick="alert('TODO: implement!')">Join</button></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="create-lobby-block">
+                    <button class="beautiful-btn create-lobby">Create Lobby</button>
                 </div>
             </div>
         </div>
@@ -186,6 +182,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js" async></script>
+<script src="https://unpkg.com/scrollbooster@2/dist/scrollbooster.min.js"></script>
 <script type="module" src="./index.js"></script>
 
 </body>
