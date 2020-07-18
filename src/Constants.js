@@ -14,6 +14,21 @@ export const MOD_WALL = 'WALL';
 
 export const BUFF_SKIP_TURN = 'SKIP_TURN';
 
+// ▼▲▼▲▼
+//  ▼▲▼
+//   ▼
+export const BOARD_SHAPE_TRIANGLE = 'TRIANGLE';
+//  ▼▲▼▲▼▲▼
+//  ▲▼▲▼▲▼▲
+//  ▼▲▼▲▼▲▼
+export const BOARD_SHAPE_SQUARE = 'SQUARE';
+//  ▲▼▲▼▲
+// ▲▼▲▼▲▼▲
+// ▼▲▼▲▼▲▼
+//  ▼▲▼▲▼
+export const BOARD_SHAPE_HEX = 'HEX';
+
+export const BOARD_SHAPES = [BOARD_SHAPE_TRIANGLE, BOARD_SHAPE_SQUARE, BOARD_SHAPE_HEX];
 export const RESOURCES = [RES_WHEAT, RES_OIL, RES_GOLD];
 export const PLAYER_CODE_NAMES = [PLAYER_KEANU, PLAYER_TRINITY, PLAYER_MORPHEUS];
 

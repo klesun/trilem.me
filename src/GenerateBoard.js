@@ -3,7 +3,7 @@ import {
     NO_RES_EMPTY, PLAYER_CODE_NAMES,
     PLAYER_KEANU,
     PLAYER_TRINITY,
-    PLAYER_MORPHEUS,
+    PLAYER_MORPHEUS, BOARD_SHAPES, BOARD_SHAPE_SQUARE, BOARD_SHAPE_TRIANGLE, BOARD_SHAPE_HEX,
 } from "./Constants.js";
 import DefaultBalance from "./DefaultBalance.js";
 
@@ -31,64 +31,72 @@ const generateTileModifiers = (balance) => {
     return [];
 };
 
-const makeStartPositions = (totalRows) => {
+const makeStartPositions = (totalRows, boardShape) => {
+    return {
+        [PLAYER_KEANU]: {col: 1, row: 0},
+        [PLAYER_TRINITY]: {col: 0, row: 1},
+        [PLAYER_MORPHEUS]: {col: 1, row: 1},
+    };
     // TODO: new x/y format
-    if (totalRows % 3 === 1) {
-        // ▼ ▼
-        //  ▼
-        const maxCols = totalRows * 2 - 2;
-        const centerCol = maxCols / 3;
-        const centerRow = maxCols / 3;
-        return {
-            [PLAYER_KEANU]: {col: centerCol - 1, row: centerRow},
-            [PLAYER_TRINITY]: {col: centerCol + 1, row: centerRow},
-            [PLAYER_MORPHEUS]: {col: centerCol + 1, row: centerRow + 1},
-        }
-    } else if (totalRows % 3 === 2) {
-        //  ▲
-        // ▲ ▲
-        const maxCols = totalRows * 2 - 1;
-        const centerCol = maxCols / 3;
-        const centerRow = maxCols / 3;
-        return {
-            [PLAYER_KEANU]: {col: centerCol - 1, row: centerRow - 1},
-            [PLAYER_TRINITY]: {col: centerCol - 1, row: centerRow},
-            [PLAYER_MORPHEUS]: {col: centerCol + 1, row: centerRow},
-        }
-    } else {
-        // ▲ ▲
-        //  ▲
-        const topLeftCol = totalRows * 2 / 3 - 1;
-        const topLeftRow = totalRows * 2 / 3 - 1;
-        return {
-            [PLAYER_KEANU]: {col: topLeftCol - 1, row: topLeftRow},
-            [PLAYER_TRINITY]: {col: topLeftCol + 1, row: topLeftRow},
-            [PLAYER_MORPHEUS]: {col: topLeftCol + 1, row: topLeftRow + 1},
-        }
-    }
+    // if (totalRows % 3 === 1) {
+    //     // ▼ ▼
+    //     //  ▼
+    //     const maxCols = totalRows * 2 - 2;
+    //     const centerCol = maxCols / 3;
+    //     const centerRow = maxCols / 3;
+    //     return {
+    //         [PLAYER_KEANU]: {col: centerCol - 1, row: centerRow},
+    //         [PLAYER_TRINITY]: {col: centerCol + 1, row: centerRow},
+    //         [PLAYER_MORPHEUS]: {col: centerCol + 1, row: centerRow + 1},
+    //     };
+    // } else if (totalRows % 3 === 2) {
+    //     //  ▲
+    //     // ▲ ▲
+    //     const maxCols = totalRows * 2 - 1;
+    //     const centerCol = maxCols / 3;
+    //     const centerRow = maxCols / 3;
+    //     return {
+    //         [PLAYER_KEANU]: {col: centerCol - 1, row: centerRow - 1},
+    //         [PLAYER_TRINITY]: {col: centerCol - 1, row: centerRow},
+    //         [PLAYER_MORPHEUS]: {col: centerCol + 1, row: centerRow},
+    //     };
+    // } else {
+    //     // ▲ ▲
+    //     //  ▲
+    //     const topLeftCol = totalRows * 2 / 3 - 1;
+    //     const topLeftRow = totalRows * 2 / 3 - 1;
+    //     return {
+    //         [PLAYER_KEANU]: {col: topLeftCol - 1, row: topLeftRow},
+    //         [PLAYER_TRINITY]: {col: topLeftCol + 1, row: topLeftRow},
+    //         [PLAYER_MORPHEUS]: {col: topLeftCol + 1, row: topLeftRow + 1},
+    //     };
+    // }
 };
 
-const generateTileMap = (balance, playerToPosition) => {
-    // TODO: different shapes board
+const generateBoardShape = (totalRows, boardShape) => {
     const tiles = [];
-    for (let row = 0; row < balance.TOTAL_ROWS; ++row) {
-        for (let col = 0; col < balance.TOTAL_ROWS * 2 - 1; ++col) {
-            const stander = Object.keys(playerToPosition)
-                .find(k => {
-                    return playerToPosition[k].row === row
-                        && playerToPosition[k].col === col;
-                });
-            const modifiers = [];
-            let owner;
-            if (stander) {
-                owner = stander;
-            } else {
-                const mods = generateTileModifiers(balance);
-                modifiers.push(...mods);
-                owner = null;
+    if (boardShape === BOARD_SHAPE_SQUARE) {
+        for (let row = 0; row < totalRows; ++row) {
+            for (let col = 0; col < totalRows * 2 - 1; ++col) {
+                tiles.push({row, col});
             }
-            tiles.push({row, col, modifiers, owner, improvementsBuilt: 0});
         }
+    } else if (boardShape === BOARD_SHAPE_TRIANGLE) {
+        // TODO: triangle instead of square
+        for (let row = 0; row < totalRows; ++row) {
+            for (let col = 0; col < totalRows * 2 - 1; ++col) {
+                tiles.push({row, col});
+            }
+        }
+    } else if (boardShape === BOARD_SHAPE_HEX) {
+        // TODO: hex instead of square
+        for (let row = 0; row < totalRows; ++row) {
+            for (let col = 0; col < totalRows * 2 - 1; ++col) {
+                tiles.push({row, col});
+            }
+        }
+    } else {
+        throw new Error('Unknown board shape type - ' + boardShape);
     }
     return tiles;
 };
@@ -96,14 +104,31 @@ const generateTileMap = (balance, playerToPosition) => {
 /** @return {BoardState} */
 const GenerateBoard = (balance = DefaultBalance()) => {
     const uuid = uuidv4();
-    const playerToPosition = makeStartPositions(balance.TOTAL_ROWS);
+    const boardShape = BOARD_SHAPES[Math.floor(Math.random() * BOARD_SHAPES.length)];
+    const playerToPosition = makeStartPositions(balance.TOTAL_ROWS, boardShape);
     const playerToBuffs = {};
     for (const codeName of PLAYER_CODE_NAMES) {
         playerToBuffs[codeName] = [];
     }
-    const tiles = generateTileMap(balance, playerToPosition);
+    const tiles = generateBoardShape(balance.TOTAL_ROWS, boardShape).map(({row, col}) => {
+        const stander = Object.keys(playerToPosition)
+            .find(k => {
+                return playerToPosition[k].row === row
+                    && playerToPosition[k].col === col;
+            });
+        const modifiers = [];
+        let owner;
+        if (stander) {
+            owner = stander;
+        } else {
+            const mods = generateTileModifiers(balance);
+            modifiers.push(...mods);
+            owner = null;
+        }
+        return {row, col, modifiers, owner, improvementsBuilt: 0};
+    });
     const totalCells = tiles.filter(t => t !== NO_RES_DEAD_SPACE).length;
-    const totalTurns = totalCells;
+    const totalTurns = totalCells * 2 / 3;
     return {
         uuid: uuid,
         totalRows: balance.TOTAL_ROWS,
