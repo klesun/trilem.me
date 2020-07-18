@@ -148,7 +148,9 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
             const draggableCam = new window.ScrollBooster({
                 viewport: document.querySelector('.tile-map-wrap'),
                 content: document.querySelector('.center-svg-root'),
-                scrollMode: 'transform',
+                scrollMode: 'native',
+                direction: 'all',
+                bounce: false,
             });
         }
 
