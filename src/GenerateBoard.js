@@ -3,7 +3,7 @@ import {
     NO_RES_EMPTY, PLAYER_CODE_NAMES,
     PLAYER_KEANU,
     PLAYER_TRINITY,
-    PLAYER_MORPHEUS, BOARD_SHAPES, BOARD_SHAPE_SQUARE, BOARD_SHAPE_TRIANGLE, BOARD_SHAPE_HEX,
+    PLAYER_MORPHEUS, BOARD_SHAPES, BOARD_SHAPE_RECTANGLE, BOARD_SHAPE_TRIANGLE, BOARD_SHAPE_HEX,
 } from "./Constants.js";
 import DefaultBalance from "./DefaultBalance.js";
 
@@ -81,7 +81,7 @@ const makeStartPositions = (totalRows, boardShape, shapeTiles) => {
 /** exported for tests */
 export const generateBoardShape = ({totalRows, boardShape}) => {
     const tiles = [];
-    if (boardShape === BOARD_SHAPE_SQUARE) {
+    if (boardShape === BOARD_SHAPE_RECTANGLE) {
         for (let row = 0; row < totalRows; ++row) {
             for (let col = 0; col < totalRows * 2 - 1; ++col) {
                 tiles.push({row, col});
