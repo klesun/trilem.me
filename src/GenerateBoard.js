@@ -73,7 +73,8 @@ const makeStartPositions = (totalRows, boardShape) => {
     // }
 };
 
-const generateBoardShape = (totalRows, boardShape) => {
+/** exported for tests */
+export const generateBoardShape = ({totalRows, boardShape}) => {
     const tiles = [];
     if (boardShape === BOARD_SHAPE_SQUARE) {
         for (let row = 0; row < totalRows; ++row) {
@@ -104,13 +105,14 @@ const generateBoardShape = (totalRows, boardShape) => {
 /** @return {BoardState} */
 const GenerateBoard = (balance = DefaultBalance()) => {
     const uuid = uuidv4();
+    const totalRows = balance.TOTAL_ROWS;
     const boardShape = BOARD_SHAPES[Math.floor(Math.random() * BOARD_SHAPES.length)];
     const playerToPosition = makeStartPositions(balance.TOTAL_ROWS, boardShape);
     const playerToBuffs = {};
     for (const codeName of PLAYER_CODE_NAMES) {
         playerToBuffs[codeName] = [];
     }
-    const tiles = generateBoardShape(balance.TOTAL_ROWS, boardShape).map(({row, col}) => {
+    const tiles = generateBoardShape({totalRows, boardShape}).map(({row, col}) => {
         const stander = Object.keys(playerToPosition)
             .find(k => {
                 return playerToPosition[k].row === row
@@ -121,6 +123,8 @@ const GenerateBoard = (balance = DefaultBalance()) => {
         if (stander) {
             owner = stander;
         } else {
+            // TODO: check that DEAD_SPACE does not completely cut
+            //  some board part out (and cover with unit tests >:D)
             const mods = generateTileModifiers(balance);
             modifiers.push(...mods);
             owner = null;
@@ -131,7 +135,7 @@ const GenerateBoard = (balance = DefaultBalance()) => {
     const totalTurns = totalCells * 2 / 3;
     return {
         uuid: uuid,
-        totalRows: balance.TOTAL_ROWS,
+        totalRows: totalRows,
         totalTurns: totalTurns,
 
         turnsLeft: totalTurns,
