@@ -25,8 +25,15 @@ const SoundManager = (soundSwitches) => {
         setSoundEnabled(true);
     };
 
-    const playMoveSound = () => {
-        const audioIndex = Math.floor(Math.random() * 3);
+    const playMoveSound = (interactionKind) => {
+        const audioIndex = {
+            'RETAKE_TILE': 0,
+            'VISIT_WALL': 0,
+            'VISIT_TILE': 1,
+            'BREAK_WALL': 2,
+        }[interactionKind];
+        //const audioIndex = Math.floor(Math.random() * 3);
+
         // I would suggest adding here small pitch
         // randomization to make it sound more interesting ;)
         const tileMoveSound = audios[audioIndex];

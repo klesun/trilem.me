@@ -67,7 +67,7 @@ export const RESOURCES_ICONS = {
 export const HTTP_PORT = 23183;
 
 /* not putting it in DefaultBalance.js to avoid confusion of whether or not it is included in the TOTAL_ROWS */
-export const TOTAL_ROWS_RANDOM_EXTRA_DEFAULT = 8;
+export const TOTAL_ROWS_RANDOM_EXTRA_DEFAULT = 6;
 
 export const generateSizeRandomExtra = (BOARD_SHAPE, TOTAL_ROWS_RANDOM_EXTRA) => {
     const evenOnly = BOARD_SHAPE === BOARD_SHAPE_HEXAGON;

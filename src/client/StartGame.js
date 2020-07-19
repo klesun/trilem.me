@@ -64,6 +64,13 @@ const StartGame = async ({fightSession, codeName, gui}) => {
                 }
             }
             const lastOwner = newTile.svgEl.getAttribute('data-owner');
+            const interactionKind = lastOwner && lastOwner !== codeName
+                ? newTile.svgEl.classList.contains('modifier--WALL')
+                    ? 'BREAK_WALL'
+                    : 'RETAKE_TILE'
+                : newTile.svgEl.classList.contains('modifier--WALL')
+                    ? 'VISIT_WALL'
+                    : 'VISIT_TILE';
             const lastReses = collectPlayerResources(fightSession.getState())[codeName];
             const lastScore = calcScore(lastReses);
             try {
@@ -87,7 +94,7 @@ const StartGame = async ({fightSession, codeName, gui}) => {
                 firstBloodSpilled = true;
                 soundManager.playFirstBloodSound();
             }
-            soundManager.playMoveSound();
+            soundManager.playMoveSound(interactionKind);
 
             break;
         }
