@@ -45,7 +45,7 @@ const getBody = () => {
             input: Select({
                 name: "BOARD_SHAPE",
                 options: [
-                    {value: BOARD_SHAPE_RANDOM, label: 'Random'},
+                    {value: BOARD_SHAPE_RANDOM, label: '? Random'},
                     {value: BOARD_SHAPE_HEXAGON, label: '⬡ Hexagon'},
                     {value: BOARD_SHAPE_TRIANGLE, label: '▽ Triangle'},
                     {value: BOARD_SHAPE_RECTANGLE, label: '□ Rectangle'},
