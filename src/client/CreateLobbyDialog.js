@@ -7,7 +7,7 @@ import {
     AI_PURE_RANDOM,
     AI_RESOURCE_PATHFINDING,
     AI_SKIP_TURNS, BOARD_SHAPE_HEXAGON, BOARD_SHAPE_RANDOM, BOARD_SHAPE_RECTANGLE, BOARD_SHAPE_TRIANGLE, BOARD_SHAPES,
-    PLAYER_CODE_NAMES
+    PLAYER_CODE_NAMES, PLAYER_PLACEMENT_CENTERED, PLAYER_PLACEMENT_RANDOM, PLAYER_PLACEMENT_WHICHEVER
 } from "../Constants.js";
 import DefaultBalance from './../DefaultBalance.js';
 
@@ -45,10 +45,21 @@ const getBody = () => {
             input: Select({
                 name: "BOARD_SHAPE",
                 options: [
-                    {value: BOARD_SHAPE_RANDOM, label: '? Random'},
+                    {value: BOARD_SHAPE_RANDOM, label: '? Whichever'},
                     {value: BOARD_SHAPE_HEXAGON, label: '⬡ Hexagon'},
                     {value: BOARD_SHAPE_TRIANGLE, label: '▽ Triangle'},
                     {value: BOARD_SHAPE_RECTANGLE, label: '□ Rectangle'},
+                ],
+            }).context,
+        },
+        {
+            label: 'Player Placement Method: ',
+            input: Select({
+                name: "PLAYER_PLACEMENT_METHOD",
+                options: [
+                    {value: PLAYER_PLACEMENT_WHICHEVER, label: 'Whichever'},
+                    {value: PLAYER_PLACEMENT_CENTERED, label: 'Centered'},
+                    {value: PLAYER_PLACEMENT_RANDOM, label: 'Random Tiles'},
                 ],
             }).context,
         },
