@@ -20,7 +20,6 @@ export const countTurnsSkipped = ({newTile, codeName, balance}) => {
             }
         } else {
             if (newTile.modifiers.includes(MOD_WALL)) {
-                newTile.modifiers.splice(newTile.modifiers.indexOf(MOD_WALL), 1);
                 turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_WALL;
             } else if (isResource) {
                 turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_RESOURCE;
@@ -116,6 +115,11 @@ const FightSession = ({
         const turnsSkipped = countTurnsSkipped({
             newTile, codeName, balance,
         });
+        if (newTile.owner !== codeName &&
+            newTile.modifiers.includes(MOD_WALL)
+        ) {
+            newTile.modifiers.splice(newTile.modifiers.indexOf(MOD_WALL), 1);
+        }
         for (let i = 0; i < turnsSkipped; ++i) {
             buffs.push(BUFF_SKIP_TURN);
         }
