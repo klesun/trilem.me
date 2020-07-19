@@ -38,7 +38,7 @@ const getBody = () => {
         },
         {
             label: 'Board Size: ',
-            input: Input({type: 'number', min: 4, max: 50, value: DefaultBalance().TOTAL_ROWS, name: 'TOTAL_ROWS'}),
+            input: Input({type: 'number', min: 4, max: 100, value: DefaultBalance().TOTAL_ROWS, name: 'TOTAL_ROWS'}),
         },
         {
             label: 'Board Shape: ',
