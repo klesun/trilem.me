@@ -1,5 +1,6 @@
 import {BoardState, Tile} from "../server/TypeDefs";
 import {countTurnsSkipped, getNeighborTiles} from "../FightSession";
+const util = require('util')
 
 type PathNodeStarted = {
     resolved: false;
@@ -13,19 +14,29 @@ type PathNodeResolved = {
     /**
      * null means we reached the destination
      */
-    bestRoute: PathNode | null;
+    bestRoute: PathNodeResolved | null;
 }
 
 type PathNode = PathNodeStarted | PathNodeResolved;
 
 const MAX_DEPTH = 15;
 
+const flattenPath = (node: PathNodeResolved | null) => {
+    const nodes: PathNodeResolved[] = [];
+    while (node) {
+        const {bestRoute, ...baseData} = node;
+        nodes.push({...baseData, bestRoute: null});
+        node = bestRoute;
+    };
+    return nodes;
+};
+
 export const getPathToClosestCapturableTile = ({startTile, possibleTurns, boardState}: {
     boardState: BoardState, startTile: Tile, possibleTurns: Tile[],
 }): PathNodeResolved | null => {
-    const colToRowToNode: Record<number, Record<number, PathNode>> = {
+    const colToRowToNode: Record<number, Record<number, {depth: number, node: PathNode}>> = {
         [startTile.col]: {
-            [startTile.row]: {resolved: false},
+            [startTile.row]: {depth: 0, node: {resolved: false}},
         },
     };
 
@@ -33,9 +44,9 @@ export const getPathToClosestCapturableTile = ({startTile, possibleTurns, boardS
         colToRowToNode[tile.col] = colToRowToNode[tile.col] || {};
 
         const cached = colToRowToNode[tile.col][tile.row] || null;
-        if (cached) {
-            if (cached.resolved) {
-                return cached;
+        if (cached && cached.depth <= depth) {
+            if (cached.node.resolved) {
+                return cached.node;
             } else {
                 // circular path or dead end
                 return null;
@@ -43,7 +54,7 @@ export const getPathToClosestCapturableTile = ({startTile, possibleTurns, boardS
         } else if (depth > MAX_DEPTH) {
             return null;
         }
-        colToRowToNode[tile.col][tile.row] = {resolved: false};
+        colToRowToNode[tile.col][tile.row] = {depth, node: {resolved: false}};
 
         const turnsSkipped = 1 + countTurnsSkipped({
             newTile: tile,
@@ -60,27 +71,29 @@ export const getPathToClosestCapturableTile = ({startTile, possibleTurns, boardS
                 bestRoute: null,
             };
         } else {
-            result = getNeighborTiles(tile, boardState)
+            const options = getNeighborTiles(tile, boardState)
                 .map(tile => makePathNode(tile, depth + 1))
                 .flatMap(node => node ? [node] : [])
                 .sort((a, b) => a.bestRouteTurns - b.bestRouteTurns)
-                .slice(0, 1)
                 .map(bestRoute => <PathNodeResolved>({
                     resolved: true,
                     col: tile.col,
                     row: tile.row,
                     bestRouteTurns: turnsSkipped + bestRoute.bestRouteTurns,
                     bestRoute: bestRoute,
-                }))[0] || null;
+                }));
+
+            result = options[0] || null;
         }
-        colToRowToNode[tile.col][tile.row] = result || {resolved: false};
+        colToRowToNode[tile.col][tile.row] = {depth, node: result || {resolved: false}};
         return result;
     };
 
-    return possibleTurns
+    const options = possibleTurns
         .map(tile => makePathNode(tile, 0))
-        .flatMap(node => node ? [node] : [])
-        .sort((a, b) => {
-            return a.bestRouteTurns - b.bestRouteTurns;
-        })[0] || null;
+        .flatMap(node => node ? [node] : []);
+
+    return options.sort((a, b) => {
+        return a.bestRouteTurns - b.bestRouteTurns;
+    })[0] || null;
 };
