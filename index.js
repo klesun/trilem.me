@@ -137,7 +137,8 @@ const addDragScroll = () => {
         gui.tileMapWrap.scrollTop -= dy;
         const now = gui.tileMapWrap.scrollTop;
         if (was === now) {
-            // if we reached the edge of the map, scroll parent like you would normally on a webpage when hitting
+            // if we reached the edge of the map, scroll parent like
+            // you would normally on a webpage when hitting the end
             document.body.scrollTop -= dy;
         }
     };
