@@ -128,6 +128,32 @@ const addDragScroll = () => {
 
     // no option to disable animation in ScrollBooster it seems...
 
+    // zoom
+    const svgBoard = document.querySelector('.center-svg-root');
+    const zoomRanges = {min: 0.35, max: 1};
+
+    let zoom = 1;
+
+    const zoomAction = e => {
+        e.preventDefault();
+        e.stopPropagation();
+        zoom += e.deltaY * -0.0005;
+        zoom = Math.min(Math.max(zoom, zoomRanges.min), zoomRanges.max);
+        svgBoard.style.transform = `scale(${zoom})`;
+    };
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === "AltLeft") {
+            document.addEventListener('wheel', zoomAction );
+        }
+    } );
+
+    document.addEventListener('keyup', e => {
+        if (e.code === "AltLeft") {
+            document.removeEventListener('wheel', zoomAction);
+        }
+    } );
+
     let mouseDown = false;
     const setMouseDown = (flag) => {
         mouseDown = flag;

@@ -275,10 +275,12 @@ body.show-dialog {
 
 .flex-remainder.left {
     left: 0;
+    top: 0;
 }
 
 .flex-remainder.right {
     right: 0;
+    top: 0;
 }
 
 .flex-remainder.left .hideable {
@@ -721,6 +723,10 @@ footer .authorship-text {
     display: inline-block;
 }
 
+.game-wrapper {
+    position: relative;
+}
+
 /** show flex with staircase rules only if screen is big enough */
 @media (min-width: 1680px) {
     .game-wrapper {
@@ -741,6 +747,13 @@ footer .authorship-text {
         white-space: nowrap;
         overflow: hidden !important;
         text-overflow: ellipsis;
+    }
+}
+
+@media (min-width: 576px) {
+    .game-wrapper {
+        display: flex;
+        justify-content: center;
     }
 }
 
