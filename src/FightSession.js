@@ -2,6 +2,62 @@ import {BUFF_SKIP_TURN, MOD_WALL, NO_RES_DEAD_SPACE, PLAYER_CODE_NAMES, RESOURCE
 
 import DefaultBalance from './DefaultBalance.js';
 
+export const countTurnsSkipped = ({newTile, codeName, balance}) => {
+    const isResource = newTile.modifiers.some(mod => RESOURCES.includes(mod));
+    let turnsSkipped = 0;
+    if (!newTile.owner) {
+        turnsSkipped = isResource
+            ? balance.TURNS_SKIPPED_ON_STEP_NEUTRAL_EMPTY
+            : balance.TURNS_SKIPPED_ON_STEP_NEUTRAL_RESOURCE;
+    } else {
+        if (newTile.owner === codeName) {
+            if (newTile.modifiers.includes(MOD_WALL)) {
+                turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_OWN_WALL;
+            } else if (isResource) {
+                turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_OWN_RESOURCE;
+            } else {
+                turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_OWN_EMPTY;
+            }
+        } else {
+            if (newTile.modifiers.includes(MOD_WALL)) {
+                newTile.modifiers.splice(newTile.modifiers.indexOf(MOD_WALL), 1);
+                turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_WALL;
+            } else if (isResource) {
+                turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_RESOURCE;
+            } else {
+                turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_EMPTY;
+            }
+        }
+    }
+    return turnsSkipped;
+};
+/** @return {Tile} */
+const getTileOn = ({col, row, boardState}) => {
+    // TODO: optimize - store as matrix!
+    return boardState.tiles.find(t => t.col == col && t.row == row);
+};
+
+/**
+ * @param {Tile} oldPos
+ * @param {BoardState} boardState
+ */
+export const getNeighborTiles = (oldPos, boardState) => {
+    const isEven = (oldPos.col % 2 === 0) === (oldPos.row % 2 === 0);
+    const pointsDown = isEven === boardState.firstPointsDown;
+    return [
+        {col: oldPos.col + 1, row: oldPos.row},
+        {col: oldPos.col - 1, row: oldPos.row},
+        !pointsDown
+            ? {col: oldPos.col, row: oldPos.row + 1}
+            : {col: oldPos.col, row: oldPos.row - 1},
+    ].flatMap(pos => {
+        const tile = getTileOn({...pos, boardState});
+        return tile ? [tile] : [];
+    }).filter(tile => {
+        return !tile.modifiers.includes(NO_RES_DEAD_SPACE);
+    });
+};
+
 /**
  * actual game logic is located here
  *
@@ -16,26 +72,7 @@ const FightSession = ({
 
     /** @return {Tile} */
     const getTile = ({col, row}) => {
-        // TODO: optimize - store as matrix!
-        return boardState.tiles.find(t => t.col == col && t.row == row);
-    };
-
-    /** @param {Tile} oldPos */
-    const getNeighborTiles = (oldPos) => {
-        const isEven = (oldPos.col % 2 === 0) === (oldPos.row % 2 === 0);
-        const pointsDown = isEven === boardState.firstPointsDown;
-        return [
-            {col: oldPos.col + 1, row: oldPos.row},
-            {col: oldPos.col - 1, row: oldPos.row},
-            !pointsDown
-                ? {col: oldPos.col, row: oldPos.row + 1}
-                : {col: oldPos.col, row: oldPos.row - 1},
-        ].flatMap(pos => {
-            const tile = getTile(pos);
-            return tile ? [tile] : [];
-        }).filter(tile => {
-            return !tile.modifiers.includes(NO_RES_DEAD_SPACE);
-        })
+        return getTileOn({col, row, boardState});
     };
 
     /** @return {Tile[]} */
@@ -44,7 +81,7 @@ const FightSession = ({
         if (!oldPos) {
             return [];
         }
-        return getNeighborTiles(oldPos).filter(
+        return getNeighborTiles(oldPos, boardState).filter(
             turnPos => !Object.values(boardState.playerToPosition)
                 .some(playerPos => {
                     return playerPos.col == turnPos.col
@@ -76,33 +113,9 @@ const FightSession = ({
     /** @param {Tile} newTile */
     const applyBuffs = (newTile, codeName) => {
         const buffs = [];
-
-        const isResource = newTile.modifiers.some(mod => RESOURCES.includes(mod));
-        let turnsSkipped = 0;
-        if (!newTile.owner) {
-            turnsSkipped = isResource
-                ? balance.TURNS_SKIPPED_ON_STEP_NEUTRAL_EMPTY
-                : balance.TURNS_SKIPPED_ON_STEP_NEUTRAL_RESOURCE;
-        } else {
-            if (newTile.owner === codeName) {
-                if (newTile.modifiers.includes(MOD_WALL)) {
-                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_OWN_WALL;
-                } else if (isResource) {
-                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_OWN_RESOURCE;
-                } else {
-                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_OWN_EMPTY;
-                }
-            } else {
-                if (newTile.modifiers.includes(MOD_WALL)) {
-                    newTile.modifiers.splice(newTile.modifiers.indexOf(MOD_WALL), 1);
-                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_WALL;
-                } else if (isResource) {
-                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_RESOURCE;
-                } else {
-                    turnsSkipped = balance.TURNS_SKIPPED_ON_STEP_ENEMY_EMPTY;
-                }
-            }
-        }
+        const turnsSkipped = countTurnsSkipped({
+            newTile, codeName, balance,
+        });
         for (let i = 0; i < turnsSkipped; ++i) {
             buffs.push(BUFF_SKIP_TURN);
         }
@@ -167,7 +180,7 @@ const FightSession = ({
 
     return {
         getPossibleTurns: getPossibleTurns,
-        getNeighborTiles: getNeighborTiles,
+        getNeighborTiles: (oldPos) => getNeighborTiles(oldPos, boardState),
         skipTurn: skipTurn,
         makeTurn: makeTurn,
     };

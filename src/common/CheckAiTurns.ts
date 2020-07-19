@@ -1,6 +1,7 @@
 import {BoardState, Lobby, PlayerCodeName, Tile, TileModifier} from "../server/TypeDefs";
 import FightSession from "../FightSession";
 import {MOD_WALL, RES_GOLD, RES_OIL, RES_WHEAT, RESOURCES} from "../Constants";
+import {getPathToClosestCapturableTile} from "./Pathfinding";
 
 const shouldImproveResource = (tile: Tile) => {
     if (tile.modifiers.includes(RES_GOLD)) {
@@ -118,8 +119,8 @@ const CheckAiTurns = ({boardState, lobby, fight}: {
             if (boardState.turnPlayersLeft.includes(codeName)) {
                 hadTurns = true;
                 const pos = boardState.playerToPosition[codeName];
-                const tile = !pos ? null : boardState.tiles
-                    .find(t => t.col === pos.col && t.row === pos.row);
+                const tile = boardState.tiles
+                    .find(t => t.col === pos.col && t.row === pos.row)!;
                 const possibleTurns = fight.getPossibleTurns(codeName);
                 if (aiBase === 'SKIP_TURNS' || possibleTurns.length === 0) {
                     boardState = fight.skipTurn({codeName});
@@ -127,19 +128,28 @@ const CheckAiTurns = ({boardState, lobby, fight}: {
                     const {col, row} = possibleTurns[Math.floor(Math.random() * possibleTurns.length)];
                     boardState = fight.makeTurn({codeName, col, row});
                 } else if (aiBase === 'LEAST_RECENT_TILES') {
-                    if (tile && shouldSkipTurn(tile, fight.getNeighborTiles(tile))) {
+                    const neighborTiles = fight.getNeighborTiles(tile);
+                    if (shouldSkipTurn(tile, neighborTiles)) {
                         boardState = fight.skipTurn({codeName});
                     } else {
-                        const sorted = [...possibleTurns].sort((a, b) => {
-                            return compareTurns(a, b, codeName);
-                        });
-                        const best = sorted.splice(0, 1)[0];
-                        const sameWorth = sorted
-                            .filter(t => compareTurns(best, t, codeName) === 0)
-                            .concat([best]);
+                        let bestTurn: {col: number, row: number} | null = null;
+                        if (possibleTurns.every(t => t.owner === codeName)) {
+                            bestTurn = getPathToClosestCapturableTile({
+                                startTile: tile, possibleTurns, boardState,
+                            });
+                        }
+                        if (!bestTurn) {
+                            const sorted = [...possibleTurns].sort((a, b) => {
+                                return compareTurns(a, b, codeName);
+                            });
+                            const best = sorted.splice(0, 1)[0];
+                            const sameWorth = sorted
+                                .filter(t => compareTurns(best, t, codeName) === 0)
+                                .concat([best]);
 
-                        const {col, row} = sameWorth[Math.floor(Math.random() * sameWorth.length)];
-                        boardState = fight.makeTurn({codeName, col, row});
+                            bestTurn = sameWorth[Math.floor(Math.random() * sameWorth.length)];
+                        }
+                        boardState = fight.makeTurn({...bestTurn, codeName});
                     }
                 } else {
                     hadTurns = false;
