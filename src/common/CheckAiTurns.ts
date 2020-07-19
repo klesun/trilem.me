@@ -1,7 +1,7 @@
 import {BoardState, Lobby, PlayerCodeName, Tile, TileModifier} from "../server/TypeDefs";
 import FightSession from "../FightSession";
 import {MOD_WALL, RES_GOLD, RES_OIL, RES_WHEAT, RESOURCES} from "../Constants";
-import {getPathToClosestCapturableTile} from "./Pathfinding";
+import GetClosestTileByPredicate from "./Pathfinding";
 
 const shouldImproveResource = (tile: Tile) => {
     if (tile.modifiers.includes(RES_GOLD)) {
@@ -134,8 +134,10 @@ const CheckAiTurns = ({boardState, lobby, fight}: {
                     } else {
                         let bestTurn: {col: number, row: number} | null = null;
                         if (possibleTurns.every(t => t.owner === codeName)) {
-                            bestTurn = getPathToClosestCapturableTile({
+                            bestTurn = GetClosestTileByPredicate({
                                 startTile: tile, possibleTurns, boardState,
+                                predicate: tile => tile.owner !== codeName && tile
+                                    .modifiers.some(mod => RESOURCES.includes(mod)),
                             });
                         }
                         if (!bestTurn) {

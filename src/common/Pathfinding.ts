@@ -19,7 +19,7 @@ type PathNodeResolved = {
 
 type PathNode = PathNodeStarted | PathNodeResolved;
 
-const MAX_DEPTH = 15;
+const MAX_DEPTH = 25;
 
 const flattenPath = (node: PathNodeResolved | null) => {
     const nodes: PathNodeResolved[] = [];
@@ -31,8 +31,9 @@ const flattenPath = (node: PathNodeResolved | null) => {
     return nodes;
 };
 
-export const getPathToClosestCapturableTile = ({startTile, possibleTurns, boardState}: {
+const GetClosestTileByPredicate = ({startTile, possibleTurns, boardState, predicate}: {
     boardState: BoardState, startTile: Tile, possibleTurns: Tile[],
+    predicate: (tile: Tile) => boolean,
 }): PathNodeResolved | null => {
     const colToRowToNode: Record<number, Record<number, {depth: number, node: PathNode}>> = {
         [startTile.col]: {
@@ -62,7 +63,7 @@ export const getPathToClosestCapturableTile = ({startTile, possibleTurns, boardS
             balance: boardState.balance,
         });
         let result: PathNodeResolved | null;
-        if (tile.owner !== startTile.owner) {
+        if (predicate(tile)) {
             result = {
                 resolved: true,
                 col: tile.col,
@@ -97,3 +98,5 @@ export const getPathToClosestCapturableTile = ({startTile, possibleTurns, boardS
         return a.bestRouteTurns - b.bestRouteTurns;
     })[0] || null;
 };
+
+export default GetClosestTileByPredicate;
