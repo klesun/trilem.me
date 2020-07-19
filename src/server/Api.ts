@@ -3,7 +3,14 @@ import * as http from "http";
 import {randomBytes} from "crypto";
 import FightSession from "../FightSession";
 import {BoardState, BoardUuid, CreateLobbyParams, Lobby, PlayerCodeName, UserId, SerialData, User} from "./TypeDefs";
-import {PLAYER_CODE_NAMES, PLAYER_KEANU, PLAYER_MORPHEUS, PLAYER_TRINITY} from "../Constants";
+import {
+    generateSizeRandomExtra,
+    PLAYER_CODE_NAMES,
+    PLAYER_KEANU,
+    PLAYER_MORPHEUS,
+    PLAYER_TRINITY,
+    TOTAL_ROWS_RANDOM_EXTRA_DEFAULT
+} from "../Constants";
 import CheckAiTurns from "../common/CheckAiTurns";
 import {Socket} from "socket.io";
 import bip39 from './../common/bip39.js';
@@ -216,6 +223,10 @@ const getLobby = async (rq: http.IncomingMessage) => {
         const {lobby, availableSlots} = availableLobbies[0];
         return joinLobbyBy({user, codeName: availableSlots[0], lobby});
     } else {
+        const balance = DefaultBalance();
+        balance.TOTAL_ROWS += generateSizeRandomExtra(
+            balance.BOARD_SHAPE, TOTAL_ROWS_RANDOM_EXTRA_DEFAULT
+        );
         return createLobbyBy({
             user, params: {
                 name: 'by ' + user.name,
@@ -224,7 +235,7 @@ const getLobby = async (rq: http.IncomingMessage) => {
                     {aiBase: 'LEAST_RECENT_TILES', codeName: PLAYER_TRINITY},
                     {aiBase: 'LEAST_RECENT_TILES', codeName: PLAYER_MORPHEUS},
                 ],
-                balance: DefaultBalance(),
+                balance: balance,
             }
         })
     }

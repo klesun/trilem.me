@@ -6,8 +6,17 @@ import {
     AI_LEAST_RECENT_TILES,
     AI_PURE_RANDOM,
     AI_RESOURCE_PATHFINDING,
-    AI_SKIP_TURNS, BOARD_SHAPE_HEXAGON, BOARD_SHAPE_RANDOM, BOARD_SHAPE_RECTANGLE, BOARD_SHAPE_TRIANGLE, BOARD_SHAPES,
-    PLAYER_CODE_NAMES, PLAYER_PLACEMENT_CENTERED, PLAYER_PLACEMENT_RANDOM, PLAYER_PLACEMENT_WHICHEVER
+    AI_SKIP_TURNS,
+    BOARD_SHAPE_HEXAGON,
+    BOARD_SHAPE_RANDOM,
+    BOARD_SHAPE_RECTANGLE,
+    BOARD_SHAPE_TRIANGLE,
+    BOARD_SHAPES, generateSizeRandomExtra,
+    PLAYER_CODE_NAMES,
+    PLAYER_PLACEMENT_CENTERED,
+    PLAYER_PLACEMENT_RANDOM,
+    PLAYER_PLACEMENT_WHICHEVER,
+    TOTAL_ROWS_RANDOM_EXTRA_DEFAULT
 } from "../Constants.js";
 import DefaultBalance from './../DefaultBalance.js';
 
@@ -41,6 +50,10 @@ const getBody = () => {
             input: Input({type: 'number', min: 4, max: 100, value: DefaultBalance().TOTAL_ROWS, name: 'TOTAL_ROWS'}),
         },
         {
+            label: 'Board Size Random Extra: ',
+            input: Input({type: 'number', min: 0, max: 100, value: TOTAL_ROWS_RANDOM_EXTRA_DEFAULT, name: 'TOTAL_ROWS_RANDOM_EXTRA'}),
+        },
+        {
             label: 'Board Shape: ',
             input: Select({
                 name: "BOARD_SHAPE",
@@ -57,7 +70,7 @@ const getBody = () => {
             input: Select({
                 name: "PLAYER_PLACEMENT_METHOD",
                 options: [
-                    {value: PLAYER_PLACEMENT_WHICHEVER, label: 'Whichever'},
+                    {value: PLAYER_PLACEMENT_WHICHEVER, label: '? Whichever'},
                     {value: PLAYER_PLACEMENT_CENTERED, label: 'Centered'},
                     {value: PLAYER_PLACEMENT_RANDOM, label: 'Random Tiles'},
                 ],
@@ -124,7 +137,10 @@ const collectData = form => {
             allowPlaceHuman: block.querySelector('[name="allowPlaceHuman"]').checked,
         })),
         balance: {...DefaultBalance(),
-            TOTAL_ROWS: form.elements['TOTAL_ROWS'].value,
+            TOTAL_ROWS: +form.elements['TOTAL_ROWS'].value + generateSizeRandomExtra(
+                form.elements['BOARD_SHAPE'].value,
+                form.elements['TOTAL_ROWS_RANDOM_EXTRA'].value
+            ),
             BOARD_SHAPE: form.elements['BOARD_SHAPE'].value,
         },
     };

@@ -76,9 +76,14 @@ const makeStartPositions = ({totalRows, boardShape, shapeTiles, method}) => {
  * @return {BoardState}
  */
 const GenerateBoard = (balance = DefaultBalance()) => {
+    if (balance.TOTAL_ROWS > 200) {
+        throw new Error('Board Size may not exceed 200 (for now)');
+    }
     const uuid = uuidv4();
     const totalRows = balance.TOTAL_ROWS;
-    const shapeOptions = BOARD_SHAPES.filter(shape => {
+    // putting hexagon twice to increase it chances to
+    // compensate for it being possible only on even num of rows
+    const shapeOptions = [...BOARD_SHAPES, BOARD_SHAPE_HEXAGON].filter(shape => {
         // hex board can only be build for even number of rows
         const skip = shape === BOARD_SHAPE_HEXAGON && totalRows % 2 !== 0;
         return !skip;
