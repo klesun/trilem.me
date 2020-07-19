@@ -721,6 +721,11 @@ footer .authorship-text {
 .center-svg-root {
     margin: 0 auto;
     display: inline-block;
+    /*
+     * with this zoom-in does not cause part of content be unscrollable, but
+     * it needs manual scroll position correction to keep current part of screen
+     */
+    /*transform-origin: 0 0;*/
 }
 
 .game-wrapper {
