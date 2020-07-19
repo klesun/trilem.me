@@ -10,6 +10,7 @@ import CreateLobbyDialog from "./src/client/CreateLobbyDialog.js";
 const gui = {
     mainGame: document.querySelector('.main-game'),
     tileMapWrap: document.querySelector('.tile-map-wrap'),
+    centerSvgRoot: document.querySelector('.center-svg-root'),
     tileMapHolder: document.querySelector('.tile-map-holder'),
     turnsLeftHolder: document.querySelector('.turns-left-holder'),
     playerList: document.querySelector('.player-list'),
@@ -134,25 +135,14 @@ const addDragScroll = () => {
 
     let zoom = 1;
 
-    const zoomAction = e => {
-        e.preventDefault();
-        e.stopPropagation();
-        zoom += e.deltaY * -0.0005;
-        zoom = Math.min(Math.max(zoom, zoomRanges.min), zoomRanges.max);
-        svgBoard.style.transform = `scale(${zoom})`;
-    };
-
-    document.addEventListener('keydown', (e) => {
-        if (e.code === "AltLeft") {
-            document.addEventListener('wheel', zoomAction );
+    document.addEventListener('wheel', e => {
+        if (e.altKey) {
+            e.preventDefault();
+            zoom += e.deltaY * -0.0005;
+            zoom = Math.min(Math.max(zoom, zoomRanges.min), zoomRanges.max);
+            svgBoard.style.transform = `scale(${zoom})`;
         }
-    } );
-
-    document.addEventListener('keyup', e => {
-        if (e.code === "AltLeft") {
-            document.removeEventListener('wheel', zoomAction);
-        }
-    } );
+    }, {passive: false});
 
     let mouseDown = false;
     const setMouseDown = (flag) => {
