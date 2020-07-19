@@ -125,23 +125,24 @@ const changeUserName = async (rq: http.IncomingMessage) => {
 const abandonLobby = (user: User, lobby: Lobby) => {
     let lobbiesAbandoned = 0;
     const boardUuid = lobby.boardUuid;
-    const codeNames: PlayerCodeName[] = Object
+    const codeName: PlayerCodeName | undefined = Object
         .keys(boardUuidToLobby[boardUuid].players)
-        .map(k => <PlayerCodeName>k);
-    for (const codeName of codeNames) {
-        if (lobby.players[codeName] === user.id) {
-            ++lobbiesAbandoned;
-            let boardState = uuidToBoard[lobby.boardUuid];
-            delete lobby.players[codeName];
+        .map(k => <PlayerCodeName>k)
+        .find(codeName => lobby.players[codeName] === user.id);
+    if (codeName) {
+        ++lobbiesAbandoned;
+        let boardState = uuidToBoard[lobby.boardUuid];
+        delete lobby.players[codeName];
+        const playersLeft = Object.values(lobby.players);
+        if (playersLeft.length === 0) {
+            delete boardUuidToLobby[boardUuid];
+        } else {
             // finish all pending turns after leaving the lobby
             boardState = CheckAiTurns({boardState, lobby, fight: FightSession({boardState})});
-            Object.values(lobby.players)
-                .filter(id => id !== user.id)
-                .forEach(playerId => sendStateToSocket({boardState, playerId}));
+            for (const playerId of playersLeft) {
+                sendStateToSocket({boardState, playerId});
+            }
         }
-    }
-    if (Object.keys(boardUuidToLobby[boardUuid].players).length === 0) {
-        delete boardUuidToLobby[boardUuid];
     }
     return lobbiesAbandoned;
 };
