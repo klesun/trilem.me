@@ -81,9 +81,14 @@ const GenerateBoard = (balance = DefaultBalance()) => {
     }
     const uuid = uuidv4();
     const totalRows = balance.TOTAL_ROWS;
-    // putting hexagon twice to increase it chances to
-    // compensate for it being possible only on even num of rows
-    const shapeOptions = [...BOARD_SHAPES, BOARD_SHAPE_HEXAGON].filter(shape => {
+    const shapeOptions = [
+        BOARD_SHAPE_RECTANGLE,
+        // putting rectangle twice as little because it's boring
+        BOARD_SHAPE_TRIANGLE, BOARD_SHAPE_TRIANGLE,
+        // putting hexagon twice as much to increase it chances to
+        // compensate for it being possible only on even num of rows
+        BOARD_SHAPE_HEXAGON, BOARD_SHAPE_HEXAGON, BOARD_SHAPE_HEXAGON, BOARD_SHAPE_HEXAGON,
+    ].filter(shape => {
         // hex board can only be build for even number of rows
         const skip = shape === BOARD_SHAPE_HEXAGON && totalRows % 2 !== 0;
         return !skip;
