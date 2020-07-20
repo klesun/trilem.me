@@ -164,28 +164,6 @@
     padding: 12px 24px;
 }
 
-.col-grid {
-    display: flex;
-    flex-direction: column;
-}
-
-.col-space-sm {
-    margin: 8px 0;
-}
-
-.row-grid {
-    display: flex;
-    flex-direction: row;
-}
-
-.flex-sm {
-    flex: 1;
-}
-
-.flex-md {
-    flex: 2;
-}
-
 .form-btn {
     padding: 8px 16px;
     background: transparent;

@@ -34,6 +34,7 @@
 
     <script src="https://kit.fontawesome.com/82c3effcb4.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/styles/responsive.css"/>
     <link rel="stylesheet" href="./index.css"/>
     <link rel="stylesheet" href="./src/styles/dialog.css"/>
     <link rel="stylesheet" href="./src/styles/input.css"/>
@@ -142,24 +143,26 @@
                         <span class="title stats-title">Stats</span>
                     </div>
                     <span class="turns-left-span">Turns Left: <span class="turns-left-holder">9999</span></span>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Player</th>
-                            <th>Ready In</th>
-                            <th data-resource="WHEAT">Wheat</th>
-                            <th>x</th>
-                            <th data-resource="OIL">Oil</th>
-                            <th>x</th>
-                            <th data-resource="GOLD">Gold</th>
-                            <th>+</th>
-                            <th data-resource="EMPTY">Empty</th>
-                            <th>=</th>
-                            <th>Score</th>
-                        </tr>
-                        </thead>
-                        <tbody class="player-list"></tbody>
-                    </table>
+                    <div class="responsive-table">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Player</th>
+                                <th>Ready In</th>
+                                <th data-resource="WHEAT">Wheat</th>
+                                <th>x</th>
+                                <th data-resource="OIL">Oil</th>
+                                <th>x</th>
+                                <th data-resource="GOLD">Gold</th>
+                                <th>+</th>
+                                <th data-resource="EMPTY">Empty</th>
+                                <th>=</th>
+                                <th>Score</th>
+                            </tr>
+                            </thead>
+                            <tbody class="player-list"></tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="user-panel">
                     <label>
@@ -169,24 +172,26 @@
                 </div>
                 <div class="lobby-list-block">
                     <h3>Lobby List</h3>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>name</th>
-                            <th data-owner="KEANU"><span class="player-name-holder">KEANU</span></th>
-                            <th data-owner="TRINITY"><span class="player-name-holder">TRINITY</span></th>
-                            <th data-owner="MORPHEUS"><span class="player-name-holder">MORPHEUS</span></th>
-                        </tr>
-                        </thead>
-                        <tbody class="lobby-list">
-                        <tr>
-                            <td>Petya and noobs</td>
-                            <td>Vasya</td>
-                            <td>Petya</td>
-                            <td><button class="beautiful-btn" onclick="alert('TODO: implement!')">Join</button></td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <div class="responsive-table">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>name</th>
+                                <th data-owner="KEANU"><span class="player-name-holder">KEANU</span></th>
+                                <th data-owner="TRINITY"><span class="player-name-holder">TRINITY</span></th>
+                                <th data-owner="MORPHEUS"><span class="player-name-holder">MORPHEUS</span></th>
+                            </tr>
+                            </thead>
+                            <tbody class="lobby-list">
+                            <tr>
+                                <td>Petya and noobs</td>
+                                <td>Vasya</td>
+                                <td>Petya</td>
+                                <td><button class="beautiful-btn" onclick="alert('TODO: implement!')">Join</button></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="create-lobby-block">
                     <button class="beautiful-btn create-lobby">Create Lobby</button>

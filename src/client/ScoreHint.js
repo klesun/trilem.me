@@ -3,8 +3,8 @@ const drawHint = (tileSvg, owner, text) => {
     const pop = document.createElement('div');
 
     pop.classList.add('pop');
-    pop.style.left = +tileSvg.getAttribute('x') + 10 + "px";
-    pop.style.top = tileSvg.getAttribute('y') + "px";
+    pop.style.left = +tileSvg.getBoundingClientRect().left + tileMapWrap.parentNode.scrollLeft - 50 + "px";
+    pop.style.top = tileSvg.getAttribute('y') + 50 + "px";
     pop.setAttribute('data-owner', owner);
     pop.innerText = text;
 
