@@ -106,7 +106,7 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
     });
 });
 
-const ZOOM_STEP_FACTOR = Math.sqrt(Math.sqrt(2));
+const ZOOM_STEP_FACTOR = Math.sqrt(2);
 
 const distance = (aPoint, bPoint) => {
     const aSide = bPoint.x - aPoint.x;
