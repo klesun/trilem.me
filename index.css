@@ -152,6 +152,7 @@ body.show-dialog {
     overflow: hidden;
     height: 100vh;
     cursor: grab;
+    user-select: none;
 }
 
 .pop {
@@ -714,11 +715,16 @@ footer .authorship-text {
 .center-svg-root {
     margin: 0 auto;
     display: inline-block;
+    user-select: none;
     /*
      * with this zoom-in does not cause part of content be unscrollable, but
      * it needs manual scroll position correction to keep current part of screen
      */
     /*transform-origin: 0 0;*/
+}
+
+.center-svg-root svg, polygon {
+    user-select: none;
 }
 
 .game-wrapper {
@@ -758,6 +764,7 @@ footer .authorship-text {
     margin-bottom: 82px;
     position: relative;
     overflow: visible;
+    user-select: none;
 }
 
 /*
