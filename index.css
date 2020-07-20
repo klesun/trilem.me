@@ -156,6 +156,8 @@ body.show-dialog {
     cursor: grab;
     width: calc(100% - 108px);
     padding: 50px;
+    padding-left: 600px;
+    padding-right: 600px;
 }
 
 .pop {
