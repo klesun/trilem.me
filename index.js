@@ -62,6 +62,7 @@ const setupGame = async ({user, api, lobby, board}) => {
         .flatMap(([k,v]) => v === user.id ? [k] : [])[0];
 
     const game = await StartGame({fightSession, codeName, gui});
+    gui.tileMapWrap.scrollLeft = (gui.tileMapWrap.scrollWidth - gui.tileMapWrap.clientWidth) / 2;
 
     cleanupLastGame = () => {
         game.discard();
@@ -158,7 +159,11 @@ const addDragScroll = () => {
             document.body.scrollTop -= dy;
         }
     };
-    gui.tileMapWrap.addEventListener('mousedown', () => setMouseDown(true));
+    gui.tileMapWrap.addEventListener('mousedown', (evt) => {
+        if (evt.button !== 2) { // 2 = right mouse button
+            setMouseDown(true);
+        }
+    });
     window.addEventListener('mouseup', () => setMouseDown(false));
     //gui.tileMapWrap.addEventListener('mouseleave', () => setMouseDown(false));
     window.addEventListener('mousemove', (evt) => {
