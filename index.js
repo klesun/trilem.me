@@ -159,9 +159,9 @@ const addDragScroll = () => {
         }
     };
     gui.tileMapWrap.addEventListener('mousedown', () => setMouseDown(true));
-    gui.tileMapWrap.addEventListener('mouseup', () => setMouseDown(false));
-    gui.tileMapWrap.addEventListener('mouseleave', () => setMouseDown(false));
-    gui.tileMapWrap.addEventListener('mousemove', (evt) => {
+    window.addEventListener('mouseup', () => setMouseDown(false));
+    //gui.tileMapWrap.addEventListener('mouseleave', () => setMouseDown(false));
+    window.addEventListener('mousemove', (evt) => {
         if (mouseDown) {
             gui.tileMapWrap.scrollLeft -= evt.movementX;
             scrollDown(evt.movementY);
