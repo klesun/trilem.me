@@ -106,6 +106,27 @@ const initSocket = ({user, setState}) => new Promise((resolve, reject) => {
     });
 });
 
+const ZOOM_STEP_FACTOR = Math.sqrt(Math.sqrt(2));
+
+const distance = (aPoint, bPoint) => {
+    const aSide = bPoint.x - aPoint.x;
+    const bSide = bPoint.y - aPoint.y;
+    return Math.sqrt(aSide * aSide + bSide * bSide);
+};
+
+/**
+ * @return number - positive if vectors are facing each other,
+ *  or negative if they are facing opposite directions
+ */
+const getApproachDistance = (aPoint, bPoint) => {
+    const startDistance = distance(aPoint, bPoint);
+    const endDistance = distance(
+        {x: aPoint.x + aPoint.dx, y: aPoint.y + aPoint.dy},
+        {x: bPoint.x + bPoint.dx, y: bPoint.y + bPoint.dy},
+    );
+    return startDistance - endDistance;
+};
+
 /**
  * @param {Touch} lastTouch
  * @param {Touch} newTouch
@@ -183,6 +204,19 @@ const addDragScroll = () => {
             const {dx, dy} = getSwipePoint(lastTouches[0], evt.touches[0]);
             gui.tileMapWrap.scrollLeft -= dx;
             scrollDown(dy);
+        } else if (lastTouches.length === 2 && evt.touches.length == 2) {
+            const [aVec, bVec] = Array(2).fill(null).map((_, i) => {
+                return getSwipePoint(lastTouches[i], evt.touches[i]);
+            });
+            const approachDistance = getApproachDistance(aVec, bVec);
+            const factor = Math.sqrt(Math.sqrt(Math.sqrt(ZOOM_STEP_FACTOR)));
+            if (approachDistance > 0) {
+                zoom /= factor;
+            } else if (approachDistance < 0) {
+                zoom *= factor;
+            }
+            zoom = Math.min(Math.max(zoom, zoomRanges.min), zoomRanges.max);
+            svgBoard.style.transform = `scale(${zoom})`;
         }
         lastTouches = evt.touches;
     }, false);
