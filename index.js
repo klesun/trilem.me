@@ -188,6 +188,10 @@ const addDragScroll = () => {
     window.addEventListener('mouseup', () => setMouseDown(false));
     //gui.tileMapWrap.addEventListener('mouseleave', () => setMouseDown(false));
     window.addEventListener('mousemove', (evt) => {
+        if (!gui.tileMapWrap.contains(evt.target)) {
+            setMouseDown(false);
+        }
+
         if (mouseDown) {
             gui.tileMapWrap.scrollLeft -= evt.movementX;
             scrollDown(evt.movementY);
