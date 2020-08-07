@@ -42,6 +42,7 @@ const StartGame = async ({fightSession, codeName, gui}) => {
             const input = GetTurnInput({
                 currentSvgEl: gui.tileMapHolder.querySelector(`[data-stander=${codeName}]`),
                 possibleTurns: (await fightSession.getPossibleTurns(codeName)).map(getTile),
+                skipButton: gui.skip,
             });
             releaseInput = input.cancel;
             let newTile = null;

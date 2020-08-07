@@ -21,6 +21,7 @@ const gui = {
         enabled: document.getElementById('sound-svg-enabled'),
         disabled: document.getElementById('sound-svg-disabled'),
     },
+    skip: document.getElementById('skip-svg'),
 };
 
 const updateLobbyOptions = (user) => new Promise((resolve, reject) => {

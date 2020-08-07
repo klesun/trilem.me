@@ -2,7 +2,7 @@
 /**
  * @param {SVGElement} currentSvgEl
  */
-const GetTurnInput = ({currentSvgEl, possibleTurns}) => {
+const GetTurnInput = ({currentSvgEl, possibleTurns, skipButton}) => {
     let cancel;
     const col = +currentSvgEl.getAttribute('data-col');
     const row = +currentSvgEl.getAttribute('data-row');
@@ -18,8 +18,14 @@ const GetTurnInput = ({currentSvgEl, possibleTurns}) => {
             return reject(new Error('Player has nowhere to go'));
         }
 
+        const skip = () => {
+            reject(new Error('Player cancelled his turn'));
+            cleanup();
+        }
+
         const cleanup = () => {
             window.removeEventListener('keydown', listener);
+            skipButton.removeEventListener("click", skip);
             tileCleanups.forEach(cleanup => cleanup());
             // remove possible turns from last player
             possibleTurns.forEach( (tile) => tile.svgEl.removeAttribute('data-possible-turn') );
@@ -80,6 +86,7 @@ const GetTurnInput = ({currentSvgEl, possibleTurns}) => {
             return () => tile.svgEl.addEventListener('click', mouseListener);
         });
         window.addEventListener('keydown', listener);
+        skipButton.addEventListener("click", skip);
     });
 
     return {

@@ -264,6 +264,9 @@ body.show-dialog {
 .flex-parent {
     display: flex;
 }
+.flex-end {
+    justify-content: flex-end;
+}
 .flex-remainder {
     flex: 1;
     position: absolute;
