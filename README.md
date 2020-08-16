@@ -1,3 +1,5 @@
+Public server: https://trilemma.online/
+
 To launch this game on your `http://localhost:23183` follow these steps:
 - `git clone https://github.com/klesun/trilemma.online.git` - clone this repo
 - `cd trilemma.online` change current directory to project root
