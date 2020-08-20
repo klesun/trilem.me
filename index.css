@@ -44,7 +44,6 @@ body {
 .gold-icon {
     width: 32px;
     height: 32px;
-    transform: rotateZ(-20deg);
 }
 
 .improvement-counter {
