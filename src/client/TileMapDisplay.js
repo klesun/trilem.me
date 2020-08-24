@@ -1,8 +1,42 @@
 import {Svg} from "./Dom.js";
-import {RESOURCES, RESOURCES_ICONS} from "../Constants.js";
+import {RESOURCES, RES_OIL, RES_GOLD, RES_WHEAT} from "../Constants.js";
 
 const TILE_WIDTH = 60;
 const TILE_HEIGHT = Math.sqrt(3) * TILE_WIDTH / 2;
+
+const getNormalY = (imgWidth) => {
+    return (TILE_HEIGHT/3)-imgWidth;
+}
+
+const getIsEvenY = (imgWidth) => {
+    return (TILE_HEIGHT/3)*2-imgWidth;
+}
+
+const getX = (imgHeight) => {
+    return (TILE_HEIGHT/3)*2-imgHeight-(TILE_HEIGHT*2/3-TILE_WIDTH/2);
+}
+
+const RESOURCES_ICONS = {
+    [RES_OIL]: {
+        clear: '../assets/img/oil.svg',
+        captured: '../assets/img/oil_captured.svg',
+        normal: { x: getX(12), y: getNormalY(12) },
+        isEven: { x: getX(12), y: getIsEvenY(12) },
+    },
+    [RES_GOLD]: {
+        clear: '../assets/img/gold.svg',
+        captured: '../assets/img/gold.svg',
+        normal: { x: getX(16), y: getNormalY(16) },
+        isEven: { x: getX(16), y: getIsEvenY(16) },
+        className: 'gold-icon'
+    },
+    [RES_WHEAT]: {
+        clear: '../assets/img/wheat.svg',
+        captured: '../assets/img/wheat_captured.svg',
+        normal: { x: getX(12), y: getNormalY(12) },
+        isEven: { x: getX(12), y: getIsEvenY(12) },
+    }
+};
 
 const makeTile = (x, y, pointsDown) => {
     const makePoly = (attrs) => {
