@@ -25,7 +25,7 @@ const GetTurnInput = ({currentSvgEl, possibleTurns, skipButton}) => {
 
         const cleanup = () => {
             window.removeEventListener('keydown', listener);
-            skipButton.removeEventListener("click", skip);
+            skipButton.removeEventListener("mousedown", skip);
             tileCleanups.forEach(cleanup => cleanup());
             // remove possible turns from last player
             possibleTurns.forEach( (tile) => tile.svgEl.removeAttribute('data-possible-turn') );
@@ -82,11 +82,11 @@ const GetTurnInput = ({currentSvgEl, possibleTurns, skipButton}) => {
                 cleanup();
             };
 
-            tile.svgEl.addEventListener('click', mouseListener);
-            return () => tile.svgEl.addEventListener('click', mouseListener);
+            tile.svgEl.addEventListener('mousedown', mouseListener);
+            return () => tile.svgEl.addEventListener('mousedown', mouseListener);
         });
         window.addEventListener('keydown', listener);
-        skipButton.addEventListener("click", skip);
+        skipButton.addEventListener("mousedown", skip);
     });
 
     return {
