@@ -1,7 +1,7 @@
 import {Svg} from "./Dom.js";
 import {RESOURCES, RES_OIL, RES_GOLD, RES_WHEAT} from "../Constants.js";
 
-const TILE_WIDTH = 60;
+const TILE_WIDTH = 72;
 const TILE_HEIGHT = Math.sqrt(3) * TILE_WIDTH / 2;
 
 const getNormalY = (imgWidth) => {

@@ -1,4 +1,6 @@
 
+require('klesun-node-tools/scripts/polyfills.js');
+
 const tsNode = require('ts-node');
 
 tsNode.register({transpileOnly: true});
